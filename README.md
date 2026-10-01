@@ -4,7 +4,7 @@ Solution methods for ratio, fraction, and percent questions, classified by the f
 (and the second step when methods share a first step). Meant as data for an app that recognizes a student's
 method from their first step and gives method-specific help.
 
-**Website: https://rahuldave.github.io/ProblemSolving/** (built from this repo into `docs/`).
+**Website: https://rahuldave.com/ProblemSolving/** (built from this repo into `docs/`).
 
 **Or read [REPORT.md](REPORT.md):** the idea, the reuse structure, and a graph for every example question and word problem.
 
