@@ -1,0 +1,9 @@
+.git
+.venv
+site
+docs
+v1
+v2/.cache
+v2/svg
+v2/graphs
+**/__pycache__

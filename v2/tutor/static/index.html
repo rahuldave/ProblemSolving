@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Problem solving, step by step</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --panel: #ffffff; --ink: #1f2328; --muted: #6a6f78; --line: #e2e0d8;
+    --accent: #2f5fd0; --accent-ink: #ffffff; --ok: #1f7a3f; --ok-bg: #e5f4ea; --slip: #9a5b00; --slip-bg: #fff3dc;
+    --trap: #b23b31; --trap-bg: #fde8e5; --hint: #2f5fd0; --hint-bg: #e8eefc; --method: #6b3fb3; --method-bg: #f0e9fb;
+    --chip: #f1f0ea; --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15171a; --panel: #1d2024; --ink: #e8e6e1; --muted: #9aa0a8; --line: #30343a;
+      --accent: #7aa2ff; --accent-ink: #0f1115; --ok: #7dd69a; --ok-bg: #1d3326; --slip: #f0c069; --slip-bg: #3a2d14;
+      --trap: #ff8f84; --trap-bg: #3d1f1c; --hint: #9db8ff; --hint-bg: #1f2943; --method: #c7a6ff; --method-bg: #2d2342;
+      --chip: #262a30; color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 1.25rem 1rem 3rem; display: grid; grid-template-columns: 290px 1fr; gap: 1.5rem; }
+  header { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
+  header h1 { margin: 0; font-size: 1.35rem; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); font-size: .95rem; }
+  nav { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .75rem; align-self: start;
+        position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; }
+  nav h2 { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: .75rem .5rem .35rem; }
+  nav h2:first-child { margin-top: .25rem; }
+  nav button { display: block; width: 100%; text-align: left; border: 0; background: none; color: var(--ink); font: inherit;
+               font-size: .92rem; padding: .35rem .5rem; border-radius: 7px; cursor: pointer; }
+  nav button:hover { background: var(--chip); }
+  nav button.active { background: var(--accent); color: var(--accent-ink); }
+  main { min-width: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem; }
+  .empty { color: var(--muted); }
+  .problem h2 { margin: 0 0 .5rem; font-size: 1.2rem; }
+  .story { margin: 0 0 .75rem; font-size: 1.08rem; }
+  .meta { font-size: .85rem; color: var(--muted); }
+  .thread { margin: 1rem 0; display: flex; flex-direction: column; gap: .45rem; }
+  .msg { padding: .5rem .75rem; border-radius: 10px; white-space: pre-wrap; font-size: .97rem; border-left: 4px solid transparent; }
+  .msg.you { align-self: flex-end; background: var(--chip); font-family: var(--mono); font-size: .92rem; border-left: 0; }
+  .msg.ask { font-weight: 600; padding-left: 0; }
+  .msg.correct, .msg.done { background: var(--ok-bg); border-color: var(--ok); }
+  .msg.slip, .msg.on_track { background: var(--slip-bg); border-color: var(--slip); }
+  .msg.trap { background: var(--trap-bg); border-color: var(--trap); }
+  .msg.unknown, .msg.error { background: var(--trap-bg); border-color: var(--trap); opacity: .9; }
+  .msg.hint { background: var(--hint-bg); border-color: var(--hint); }
+  .msg.method { background: var(--method-bg); border-color: var(--method); }
+  .msg.info { color: var(--muted); }
+  .options { display: flex; flex-direction: column; gap: .4rem; margin: .25rem 0 .75rem; }
+  .options button { text-align: left; padding: .55rem .8rem; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+                    border-radius: 9px; font: inherit; cursor: pointer; }
+  .options button:hover { border-color: var(--accent); }
+  .note { font-size: .85rem; color: var(--muted); margin: -.25rem 0 .5rem; }
+  form { display: flex; gap: .5rem; flex-wrap: wrap; }
+  input[type=text] { flex: 1 1 14rem; min-width: 0; padding: .6rem .75rem; border: 1px solid var(--line); border-radius: 9px;
+                     background: var(--panel); color: var(--ink); font: 1rem var(--mono); }
+  input[type=text]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btn { padding: .55rem .9rem; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+         font: inherit; cursor: pointer; }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .tools { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+  details { margin-top: 1rem; font-size: .9rem; color: var(--muted); }
+  details code { font-family: var(--mono); background: var(--chip); padding: 0 .3rem; border-radius: 4px; color: var(--ink); }
+  @media (max-width: 760px) {
+    .wrap { grid-template-columns: 1fr; }
+    nav { position: static; max-height: 14rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Problem solving, step by step</h1>
+    <p>Write one step at a time. The tutor works out which method you're using and checks each step.</p>
+  </header>
+  <nav id="list" aria-label="Problems"></nav>
+  <main>
+    <div class="card" id="panel"><p class="empty">Pick a problem on the left to start.</p></div>
+    <details>
+      <summary>How to write a step</summary>
+      <p><code>4 x 18 = 72</code> · <code>72 / 6 = 12</code> · <code>2/3 x 18 = 12</code> · <code>12 - 4 = 8</code> ·
+         <code>gcf(6, 8) = 2</code> · <code>lcm(4, 7) = 28</code> · <code>21 &gt; 20</code> · <code>3:4 != 5:7</code> ·
+         <code>plot (3, 4) (5, 7)</code>. Decimals can be rounded: <code>4 / 6 = 0.667</code>.
+         Pick an option by clicking it or typing its number.</p>
+      <p>Each problem links to its map of methods: every first step a student might write, and where each leads.</p>
+    </details>
+  </main>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+let sid = null, current = null;
+
+async function api(path, body) {
+  const r = await fetch(path, {method: body === undefined ? "GET" : "POST",
+    headers: {"Content-Type": "application/json"}, body: body === undefined ? undefined : JSON.stringify(body)});
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r.json();
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+async function loadList() {
+  const items = await api("/api/problems");
+  const nav = $("#list");
+  let group = null;
+  for (const it of items) {
+    if (it.group !== group) { group = it.group; nav.append(el("h2", "", group)); }
+    const b = el("button", "", it.label);
+    b.dataset.key = it.key;
+    b.onclick = () => start(it.key);
+    nav.append(b);
+  }
+  const want = new URLSearchParams(location.search).get("p");
+  if (want) start(want);
+}
+
+async function start(key) {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.key === key));
+  history.replaceState(null, "", "?p=" + encodeURIComponent(key));
+  const s = await api("/api/sessions", {problem: key});
+  sid = s.id; current = key;
+  const panel = $("#panel");
+  panel.replaceChildren();
+  const head = el("div", "problem");
+  head.append(el("h2", "", s.title), el("p", "story", s.story));
+  const meta = el("p", "meta");
+  const a = el("a", "", "Map of methods for this problem");
+  a.href = s.map; a.target = "_blank"; a.rel = "noopener";
+  meta.append(a);
+  head.append(meta);
+  panel.append(head, el("div", "thread"), el("div", "asker"));
+  render(s);
+}
+
+function render(s) {
+  const thread = $(".thread");
+  for (const f of s.feedback) thread.append(el("div", "msg " + f.kind, f.message));
+  const asker = $(".asker");
+  asker.replaceChildren();
+  if (s.done) {
+    const again = el("button", "btn", "Try it again with a different method");
+    again.onclick = () => start(current);
+    asker.append(again);
+    return;
+  }
+  if (s.ask.text) asker.append(el("div", "msg ask", s.ask.text));
+  if (s.ask.options.length) {
+    const box = el("div", "options");
+    s.ask.options.forEach((o, i) => {
+      const b = el("button", "", o);
+      b.onclick = () => send(String(i + 1), o);
+      box.append(b);
+    });
+    asker.append(box);
+  }
+  if (s.ask.note) asker.append(el("p", "note", s.ask.note));
+  const form = el("form");
+  const input = el("input");
+  input.type = "text"; input.autocomplete = "off"; input.spellcheck = false;
+  input.placeholder = s.ask.allow_step ? "e.g. 4 x 18 = 72" : (s.ask.options.length ? "or type its number" : "your answer");
+  input.setAttribute("aria-label", "Your step or answer");
+  const go = el("button", "btn primary", "Check");
+  go.type = "submit";
+  form.append(input, go);
+  form.onsubmit = e => { e.preventDefault(); if (input.value.trim()) send(input.value.trim()); };
+  asker.append(form);
+  const tools = el("div", "tools");
+  for (const [cmd, label] of [["hint", "Hint"], ["where", "Where am I?"], ["done", "I'm done"]]) {
+    const b = el("button", "btn", label);
+    b.onclick = () => command(cmd, label);
+    tools.append(b);
+  }
+  asker.append(tools);
+  input.focus();
+  asker.scrollIntoView({block: "nearest"});
+}
+
+async function send(text, shown) {
+  $(".thread").append(el("div", "msg you", shown || text));
+  try { render(await api(`/api/sessions/${sid}/input`, {text})); }
+  catch (e) { $(".thread").append(el("div", "msg error", e.message)); }
+}
+
+async function command(cmd, label) {
+  try { render(await api(`/api/sessions/${sid}/${cmd}`, {})); }
+  catch (e) { $(".thread").append(el("div", "msg error", e.message)); }
+}
+
+loadList();
+</script>
+</body>
+</html>

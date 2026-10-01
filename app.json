@@ -1,0 +1,6 @@
+{
+  "name": "problemsolving",
+  "healthchecks": {
+    "web": [{ "type": "startup", "name": "web check", "path": "/healthz", "attempts": 5, "wait": 2 }]
+  }
+}
