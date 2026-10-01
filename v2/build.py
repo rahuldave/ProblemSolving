@@ -1,15 +1,20 @@
 """Build v2: expand skills and reductions, check every method on every example,
 derive first-step trees (trees/*.json) and mermaid graphs (graphs/*.md).
 
-Usage: python3 build.py           # validate + generate
-       python3 build.py --demo    # also run the student-step classifier demo
+Usage: python3 build.py             # validate, generate trees, markdown, svg graphs (mmdc), website (quarto)
+       python3 build.py --demo      # also run the student-step classifier demo
+       python3 build.py --no-site   # skip the Quarto website
 """
 
+import hashlib
 import itertools
 import json
 import math
 import re
+import shutil
+import subprocess
 import sys
+import tempfile
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
@@ -565,6 +570,14 @@ def example_graph_parts(qid, ex, variants, prefix="n"):
     return lines, na, root, answer
 
 
+GRAPHS = {}  # name → {"title", "source"}; pages hold {{GRAPH:name}} until embed() fills them in
+
+
+def graph_ref(name, title, source):
+    GRAPHS[name] = {"title": title, "source": source}
+    return "{{GRAPH:" + name + "}}"
+
+
 def edge(lines, a, b, vias):
     text = " / ".join(sorted(v for v in vias if v))
     lines.append(f'  {a} -->|"{esc(text)}"| {b}' if text else f"  {a} --> {b}")
@@ -596,9 +609,10 @@ def question_md(qid, variants, link=lambda u: f"{u}.md", h="#"):
     out += ["", "Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, "
             "**purple** = second step (only where methods share a first step); **yellow** = method; "
             "**green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.", ""]
-    for ex in q["examples"]:
+    for i, ex in enumerate(q["examples"]):
         graph, na = example_graph(qid, ex, variants)
-        out += [f"{h}# {render(q['prompt'], ex['values'])}", "", "```mermaid", graph, "```", ""]
+        title = render(q["prompt"], ex["values"])
+        out += [f"{h}# {title}", "", graph_ref(f"{qid}-{i + 1}", title, graph), ""]
         if na:
             out += ["Not applicable here: " + ", ".join(f"{methods[m]['name']} (`{m}`)" for m in na), ""]
     return "\n".join(out)
@@ -650,7 +664,7 @@ answer. Edge labels name the skill method that produced the step.
 """
 
 
-def index_md():
+def index_graph():
     lines = ["flowchart LR"]
     kinds = {"skill": [], "core": [], "applied": []}
     for qid, q in Q.items():
@@ -665,15 +679,29 @@ def index_md():
               "  classDef core fill:#fff1cc,stroke:#c99a1a,color:#222",
               "  classDef applied fill:#e3edfd,stroke:#5b7fd1,color:#222"]
     lines += [f"  class {','.join(v)} {k}" for k, v in kinds.items() if v]
-    body = ["# Question graphs (v2)", "",
-            "How the questions reuse each other. Green = skill, yellow = core, blue = applied. "
-            "Solid arrows: a method calls that question as a step. Dotted arrows: the applied question *is* the core question in context. "
-            "(compare-fractions also calls itself: *distance from 1* ends by comparing the two gaps.)",
-            "", "```mermaid", "\n".join(lines), "```", "", "| Question | Kind | Methods | Uses |", "|---|---|---|---|"]
-    for qid, q in Q.items():
+    return graph_ref("index", "How the questions reuse each other", "\n".join(lines))
+
+
+INDEX_CAPTION = ("Green = skill, yellow = core, blue = applied. Solid arrows: a method calls that question as a step. "
+                 "Dotted arrows: the applied question *is* the core question in context. "
+                 "(compare-fractions also calls itself: *distance from 1* ends by comparing the two gaps.)")
+
+
+def question_table(link):
+    order = [k for kind in ("core", "applied", "skill") for k, q in Q.items() if q["kind"] == kind]
+    rows = ["| Question | Kind | Methods | Uses |", "|---|---|---|---|"]
+    for qid in order:
+        q = Q[qid]
         u = sorted(uses(qid) | ({q["reduces_to"]["question"]} if q.get("reduces_to") else set()))
-        body.append(f"| [{q['title']}]({qid}.md) | {q['kind']} | {len(methods_of(qid))} | {', '.join(u) or '—'} |")
-    return "\n".join(body) + "\n"
+        rows.append(f"| [{q['title']}]({link(qid)}) | {q['kind']} | {len(methods_of(qid))} | "
+                    + (", ".join(f"[{x}]({link(x)})" for x in u) or "—") + " |")
+    return rows
+
+
+def index_md():
+    return "\n".join(["# Question graphs (v2)", "", "How the questions reuse each other. " + INDEX_CAPTION, "",
+                      index_graph(), ""] + question_table(lambda u: f"{u}.md")
+                     + ["", "Word problems: [word-problems.md](word-problems.md)", ""])
 
 
 # ---------------------------------------------------------------- validation
@@ -841,22 +869,16 @@ DEMOS = [
 def report_md(pages, infos):
     anchor = lambda u: f"#{u}"
     order = [k for kind in ("core", "applied", "skill") for k, q in Q.items() if q["kind"] == kind]
-    index = index_md().split("```mermaid", 1)[1].split("```", 1)[0]
-    body = [REPORT_INTRO, "```mermaid" + index + "```", "",
-            "| Question | Kind | Methods | Uses |", "|---|---|---|---|"]
-    for qid in order:
-        q = Q[qid]
-        u = sorted(uses(qid) | ({q["reduces_to"]["question"]} if q.get("reduces_to") else set()))
-        body.append(f"| [{q['title']}](#{qid}) | {q['kind']} | {len(methods_of(qid))} | "
-                    + (", ".join(f"[{x}](#{x})" for x in u) or "—") + " |")
+    body = [REPORT_INTRO, INDEX_CAPTION, "", index_graph(), ""] + question_table(anchor)
     body += ["", "## Contents", ""] + [f"- [{Q[k]['title']}](#{k}) ({Q[k]['kind']})" for k in order]
     body += ["- [Word problems](#word-problems): extraction concepts and 12 stories", ""]
     for qid in order:
         body += [f'<a name="{qid}"></a>', "", pages[qid](anchor), ""]
     body += [word_problems_md(infos, lambda u: f"#{u}", "##"), ""]
     body += ["## Rebuilding", "", "```sh", "cd v2 && python3 build.py --demo", "```", "",
-             "This checks every method variant against every example, regenerates `v2/trees/`, `v2/graphs/` "
-             "and this report, and runs the classifier on sample student steps.", ""]
+             "This checks every method variant against every example; regenerates `v2/trees/`, `v2/graphs/`, "
+             "the graph images in `v2/svg/` (with `mmdc`), and this report; builds the website in `docs/` "
+             "(with Quarto); and runs the classifier on sample student steps.", ""]
     return "\n".join(body)
 
 
@@ -1082,6 +1104,13 @@ def word_problem_graph(wp, info):
 
 
 def word_problems_md(infos, link=lambda u: f"{u}.md", h="#"):
+    out = word_problems_intro(link, lambda w: f"#{w}", h)
+    for wid in WP:
+        out += [f'<a name="{wid}"></a>', "", word_problem_section(wid, infos[wid], link, h + "#"), ""]
+    return "\n".join(out)
+
+
+def word_problems_intro(link, item_link, h="#"):
     c = EXTRACTION["concepts"]
     out = [f"{h} Word problems", "",
            "A word problem needs **extraction** before any method applies: pull out the quantities, drop the "
@@ -1099,54 +1128,205 @@ def word_problems_md(infos, link=lambda u: f"{u}.md", h="#"):
         out.append(f"| **{v['name']}** `{k}` | {v['does']} | {'; '.join(v.get('cues', [])) or '—'} | {v.get('mistake', '—')} |")
     out += ["", "| Word problem | Maps to | Concepts |", "|---|---|---|"]
     for wid, wp in WP.items():
-        out.append(f"| [{wp['title']}](#{wid}) | [{wp['maps_to']['question']}]({link(wp['maps_to']['question'])}) | "
+        out.append(f"| [{wp['title']}]({item_link(wid)}) | [{wp['maps_to']['question']}]({link(wp['maps_to']['question'])}) | "
                    + ", ".join(c[x]["name"] for x in wp["concepts"]) + " |")
     out.append("")
-    for wid, wp in WP.items():
-        info = infos[wid]
-        mt = wp["maps_to"]
-        out += [f'<a name="{wid}"></a>', "", f"{h}# {wp['title']}", "", f"> {wp['text']}", "",
-                "| Phrase | Value | Counts | Role |", "|---|---|---|---|"]
-        for q in wp["quantities"]:
-            val = q["value"]
-            if "derive" in q:
-                vals, raw = wp_context(wp)
-                val = f"{q['value']} {q['unit']} → **{fmt(vals[q['id']])}** ({q['derive'].get('note', q['derive']['expr'])})"
-            out.append(f"| “{q['text']}” | {val} | {q['counts']} | {q['role']} |")
-        out += ["", f"**Asked:** {wp['unknown']['text']} ({wp['unknown']['unit'] or wp['unknown']['counts']}). "
-                f"**Link:** “{wp['relationship']['cue']}”: {wp['relationship']['note']}", "",
-                f"**Maps to** [{mt['question']}]({link(mt['question'])}): "
-                + ", ".join(f"{k} = {fmt(v)}" for k, v in info["inputs"].items())
-                + (f", then {wp['then'].get('note') or wp['then']['expr']}" if wp.get("then") else "")
-                + f". **Answer:** {wp['answer_text']}.", "",
-                "```mermaid", word_problem_graph(wp, info), "```", "",
-                "| Trap | Mistake | Gives | Caught by the answer? |", "|---|---|---|---|"]
-        for t in info["traps"]:
-            shown = t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"])
-            out.append(f"| {c[t['concept']]['name']} | {t['mistake']} | {shown} | "
-                       + ("**no**: same answer, so ask how they got it" if t["same_as_correct"] else "yes") + " |")
-        diag = diagnostic_firsts(info)
-        if diag:
-            out += ["", "First steps that give a trap away (each method's main route under the wrong reading; "
-                    "no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.", "",
-                    "| Student's first step | Suggests |", "|---|---|"]
-            out += [f"| `{lab}` | {' / '.join(ms)} |" for lab, ms in sorted(diag.items())]
-        out.append("")
+    return out
+
+
+def word_problem_section(wid, info, link, h="#"):
+    c = EXTRACTION["concepts"]
+    wp = WP[wid]
+    mt = wp["maps_to"]
+    out = [f"{h} {wp['title']}", "", f"> {wp['text']}", "",
+           "| Phrase | Value | Counts | Role |", "|---|---|---|---|"]
+    for q in wp["quantities"]:
+        val = q["value"]
+        if "derive" in q:
+            vals, raw = wp_context(wp)
+            val = f"{q['value']} {q['unit']} → **{fmt(vals[q['id']])}** ({q['derive'].get('note', q['derive']['expr'])})"
+        out.append(f"| “{q['text']}” | {val} | {q['counts']} | {q['role']} |")
+    out += ["", f"**Asked:** {wp['unknown']['text']} ({wp['unknown']['unit'] or wp['unknown']['counts']}). "
+            f"**Link:** “{wp['relationship']['cue']}”: {wp['relationship']['note']}", "",
+            f"**Maps to** [{mt['question']}]({link(mt['question'])}): "
+            + ", ".join(f"{k} = {fmt(v)}" for k, v in info["inputs"].items())
+            + (f", then {wp['then'].get('note') or wp['then']['expr']}" if wp.get("then") else "")
+            + f". **Answer:** {wp['answer_text']}.", "",
+            graph_ref(f"wp-{wid}", wp["title"], word_problem_graph(wp, info)), "",
+            "| Trap | Mistake | Gives | Caught by the answer? |", "|---|---|---|---|"]
+    for t in info["traps"]:
+        shown = t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"])
+        out.append(f"| {c[t['concept']]['name']} | {t['mistake']} | {shown} | "
+                   + ("**no**: same answer, so ask how they got it" if t["same_as_correct"] else "yes") + " |")
+    diag = diagnostic_firsts(info)
+    if diag:
+        out += ["", "First steps that give a trap away (each method's main route under the wrong reading; "
+                "no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.", "",
+                "| Student's first step | Suggests |", "|---|---|"]
+        out += [f"| `{lab}` | {' / '.join(ms)} |" for lab, ms in sorted(diag.items())]
     return "\n".join(out)
+
+
+# ---------------------------------------------------------------- svg, embedding, website
+
+SVG = ROOT / "svg"
+SITE = ROOT.parent / "site"   # generated Quarto sources (git-ignored)
+DOCS = ROOT.parent / "docs"   # rendered website (GitHub Pages)
+MERMAID_CONFIG = {"htmlLabels": False, "flowchart": {"htmlLabels": False}}
+
+
+def render_svgs():
+    """Render every registered graph to svg/<name>.svg in one mmdc run, skipping graphs whose source is unchanged.
+    Returns name → natural width in px (None when mmdc is unavailable)."""
+    SVG.mkdir(exist_ok=True)
+    hashes_file = SVG / "hashes.json"
+    hashes = json.loads(hashes_file.read_text()) if hashes_file.exists() else {}
+    digest = {n: hashlib.sha1((json.dumps(MERMAID_CONFIG) + g["source"]).encode()).hexdigest() for n, g in GRAPHS.items()}
+    todo = [n for n in GRAPHS if hashes.get(n) != digest[n] or not (SVG / f"{n}.svg").exists()]
+    if todo and not shutil.which("mmdc"):
+        print("  WARNING mmdc not found; graph images not updated")
+        return None
+    if todo:
+        print(f"  rendering {len(todo)} graph(s) with mmdc …")
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            (tmp / "cfg.json").write_text(json.dumps(MERMAID_CONFIG))
+            (tmp / "in.md").write_text("\n\n".join(f"```mermaid\n{GRAPHS[n]['source']}\n```" for n in todo))
+            subprocess.run(["mmdc", "-q", "-i", "in.md", "-o", "out.md", "-c", "cfg.json", "-b", "white"],
+                           cwd=tmp, check=True, capture_output=True)
+            for i, n in enumerate(todo, 1):
+                shutil.move(tmp / f"out-{i}.svg", SVG / f"{n}.svg")
+                hashes[n] = digest[n]
+    for n, g in GRAPHS.items():
+        (SVG / f"{n}.mmd").write_text(g["source"] + "\n")
+    for f in SVG.iterdir():  # drop images of graphs that no longer exist
+        if f.suffix in (".svg", ".mmd") and f.stem not in GRAPHS:
+            f.unlink()
+            hashes.pop(f.stem, None)
+    hashes_file.write_text(json.dumps({n: hashes[n] for n in sorted(GRAPHS) if n in hashes}, indent=1) + "\n")
+    widths = {}
+    for n in GRAPHS:
+        m = re.search(r"max-width:\s*([\d.]+)px", (SVG / f"{n}.svg").read_text()[:2000])
+        widths[n] = round(float(m[1])) if m else None
+    return widths
+
+
+def embed(text, prefix, mode, widths=None):
+    """Replace graph placeholders: an image for GitHub markdown, a zoomable figure for the website,
+    or a mermaid block when no images exist."""
+    def one(m):
+        n = m[1]
+        g = GRAPHS[n]
+        if mode == "mermaid":
+            return f"```mermaid\n{g['source']}\n```"
+        if mode == "github":
+            return (f"[![{g['title']}]({prefix}{n}.svg)]({prefix}{n}.svg)\n\n"
+                    f"<sub>Click the graph to open it full size · [mermaid source]({prefix}{n}.mmd)</sub>")
+        w = (widths or {}).get(n)
+        size = f' style="width:{w}px"' if w else ""
+        return (f'<figure class="graph fit"><div class="graph-scroll">'
+                f'<img src="{prefix}{n}.svg" alt="{g["title"]}"{size} loading="lazy"></div>'
+                f'<figcaption><button type="button" class="graph-zoom">Actual size</button> · '
+                f'<a href="{prefix}{n}.svg" target="_blank">Open in new tab</a> · '
+                f'<a href="{prefix}{n}.mmd">Mermaid source</a></figcaption></figure>')
+    return re.sub(r"\{\{GRAPH:([\w.-]+)\}\}", one, text)
+
+
+SITE_CSS = """
+.graph { margin: 1rem 0 2rem; }
+.graph-scroll { overflow: auto; max-height: 85vh; border: 1px solid #dee2e6; border-radius: 6px; background: #fff; }
+.graph-scroll img { display: block; max-width: none; cursor: zoom-in; }
+.graph.fit .graph-scroll img { width: 100% !important; height: auto; }
+.graph:not(.fit) .graph-scroll img { cursor: zoom-out; }
+.graph figcaption { font-size: .85rem; color: #6c757d; margin-top: .35rem; }
+.graph figcaption button { border: 1px solid #ced4da; background: #f8f9fa; border-radius: 4px; padding: 0 .5rem; font-size: .85rem; }
+blockquote { font-size: 1.05rem; }
+"""
+
+SITE_JS = """<script>
+document.addEventListener('click', e => {
+  const fig = e.target.closest('.graph');
+  if (!fig) return;
+  if (e.target.matches('.graph-zoom') || e.target.matches('.graph-scroll img')) {
+    const fit = fig.classList.toggle('fit');
+    fig.querySelector('.graph-zoom').textContent = fit ? 'Actual size' : 'Fit to width';
+  }
+});
+</script>
+"""
+
+
+def page(title, body):
+    return f"---\ntitle: {json.dumps(title)}\n---\n\n{body}\n"
+
+
+def strip_heading(md):
+    return md.split("\n", 1)[1].lstrip("\n")
+
+
+def build_site(variants_by_q, infos, widths):
+    """Write Quarto sources to site/ and render the website into docs/."""
+    if not shutil.which("quarto"):
+        print("  WARNING quarto not found; website not built")
+        return
+    if SITE.exists():
+        shutil.rmtree(SITE)
+    for d in ("questions", "word-problems", "svg"):
+        (SITE / d).mkdir(parents=True)
+    for f in SVG.iterdir():
+        if f.suffix in (".svg", ".mmd"):
+            shutil.copy(f, SITE / "svg" / f.name)
+    kinds = {k: [q for q in Q if Q[q]["kind"] == k] for k in ("core", "applied", "skill")}
+    names = {"core": "Core questions", "applied": "Applied questions", "skill": "Skills"}
+    sidebar = ["      - text: Overview", "        href: index.md"]
+    for k, ids in kinds.items():
+        sidebar += [f"      - section: {json.dumps(names[k])}", "        contents:"]
+        sidebar += [f"          - questions/{q}.md" for q in ids]
+    sidebar += ['      - section: "Word problems"', "        contents:", "          - word-problems/index.md"]
+    sidebar += [f"          - word-problems/{w}.md" for w in WP]
+    (SITE / "_quarto.yml").write_text("\n".join([
+        "project:", "  type: website", "  output-dir: ../docs", "  resources:", "    - svg/*",
+        "website:", '  title: "Problem solving by first step"', "  repo-url: https://github.com/rahuldave/ProblemSolving",
+        "  page-navigation: true", "  sidebar:", "    style: docked", "    search: true", "    contents:", *sidebar,
+        "format:", "  html:", "    theme: cosmo", "    css: styles.css", "    toc: true", "    page-layout: full",
+        "    include-after-body: graph.html", ""]))
+    (SITE / "styles.css").write_text(SITE_CSS)
+    (SITE / "graph.html").write_text(SITE_JS)
+
+    intro = REPORT_INTRO.split("\n", 1)[1].replace("(it has its own section)", "(it has its own page)")
+    intro = intro.replace("`v2/build.py`", "[`v2/build.py`](https://github.com/rahuldave/ProblemSolving/blob/main/v2/build.py)")
+    home = (intro + INDEX_CAPTION + "\n\n" + index_graph() + "\n\n" + "\n".join(question_table(lambda u: f"questions/{u}.md"))
+            + "\n\n[Word problems](word-problems/index.md): extraction concepts and 12 stories, drilled down to the arithmetic.\n")
+    (SITE / "index.md").write_text(page("Solving arithmetic problems: methods classified by first step", embed(home, "svg/", "site", widths)))
+    for qid in Q:
+        md = strip_heading(question_md(qid, variants_by_q[qid], lambda u: f"{u}.md", "#"))
+        (SITE / "questions" / f"{qid}.md").write_text(page(Q[qid]["title"], embed(md, "../svg/", "site", widths)))
+    wintro = "\n".join(word_problems_intro(lambda u: f"../questions/{u}.md", lambda w: f"{w}.md", "#"))
+    (SITE / "word-problems" / "index.md").write_text(page("Word problems", embed(strip_heading(wintro), "../svg/", "site", widths)))
+    for wid in WP:
+        md = strip_heading(word_problem_section(wid, infos[wid], lambda u: f"../questions/{u}.md", "#"))
+        (SITE / "word-problems" / f"{wid}.md").write_text(page(WP[wid]["title"], embed(md, "../svg/", "site", widths)))
+
+    print("  rendering website with quarto …")
+    res = subprocess.run(["quarto", "render"], cwd=SITE, capture_output=True, text=True)
+    if res.returncode != 0:
+        print(res.stdout[-2000:], res.stderr[-2000:])
+        raise SystemExit("quarto render failed")
+    (DOCS / ".nojekyll").write_text("")
 
 
 def main():
     ok = check_refs()
-    pages = {}
+    pages, variants_by_q, md_out = {}, {}, {}
     (ROOT / "trees").mkdir(exist_ok=True)
     (ROOT / "graphs").mkdir(exist_ok=True)
     for qid in Q:
-        variants = variants_of(qid)
+        variants = variants_by_q[qid] = variants_of(qid)
         ok &= validate(qid, variants)
         (ROOT / "trees" / f"{qid}.json").write_text(json.dumps(build_tree(qid, variants), indent=2, ensure_ascii=False) + "\n")
-        (ROOT / "graphs" / f"{qid}.md").write_text(question_md(qid, variants))
+        md_out[ROOT / "graphs" / f"{qid}.md"] = ("../svg/", question_md(qid, variants))
         pages[qid] = lambda link, qid=qid, variants=variants: question_md(qid, variants, link, "##")
-    (ROOT / "graphs" / "README.md").write_text(index_md())
+    md_out[ROOT / "graphs" / "README.md"] = ("../svg/", index_md())
     print(f"\n== word problems: {len(WP)}")
     infos = {}
     for wid, wp in WP.items():
@@ -1166,8 +1346,15 @@ def main():
                          "caught_by_answer": not t["same_as_correct"]} for t in i["traps"]],
               "first_steps_revealing_traps": diagnostic_firsts(i)}
         for wid, i in infos.items()}, indent=2, ensure_ascii=False) + "\n")
-    (ROOT / "graphs" / "word-problems.md").write_text(word_problems_md(infos))
-    (ROOT.parent / "REPORT.md").write_text(report_md(pages, infos))
+    md_out[ROOT / "graphs" / "word-problems.md"] = ("../svg/", word_problems_md(infos))
+    md_out[ROOT.parent / "REPORT.md"] = ("v2/svg/", report_md(pages, infos))
+
+    print("\n== graphs and website")
+    widths = render_svgs()
+    for path, (prefix, text) in md_out.items():
+        path.write_text(embed(text, prefix, "github" if widths is not None else "mermaid"))
+    if widths is not None and "--no-site" not in sys.argv:
+        build_site(variants_by_q, infos, widths)
     if "--demo" in sys.argv:
         print("\n== Classifier demo (first example of each question)")
         for qid, steps in DEMOS:

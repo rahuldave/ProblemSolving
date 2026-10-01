@@ -4,7 +4,9 @@ Solution methods for ratio, fraction, and percent questions, classified by the f
 (and the second step when methods share a first step). Meant as data for an app that recognizes a student's
 method from their first step and gives method-specific help.
 
-**Start with [REPORT.md](REPORT.md):** the idea, the reuse structure, and a graph for every example question.
+**Website: https://rahuldave.github.io/ProblemSolving/** (built from this repo into `docs/`).
+
+**Or read [REPORT.md](REPORT.md):** the idea, the reuse structure, and a graph for every example question and word problem.
 
 | Path | What it is |
 |---|---|
@@ -15,12 +17,16 @@ method from their first step and gives method-specific help.
 | `v2/trees/word-problems.json` | Generated: each word problem's answer, each trap's wrong answer, and first steps that give a trap away |
 | `v2/build.py` | Expands skills and reductions, checks every method on every example, generates the outputs below |
 | `v2/trees/*.json` | Generated first-step trees for an app to match student steps against |
-| `v2/graphs/*.md` | Generated mermaid graphs, one page per question |
+| `v2/graphs/*.md` | Generated pages, one per question, plus the word problems |
+| `v2/svg/` | Generated graph images (`.svg`) with their mermaid sources (`.mmd`) |
+| `docs/` | Generated website (Quarto), served by GitHub Pages |
 | `REPORT.md` | Generated single report combining everything |
 | `v1/` | The first, hand-written version (one JSON file), kept for comparison |
 
 ```sh
-cd v2 && python3 build.py --demo   # validate, regenerate, run the classifier demo
+cd v2 && python3 build.py --demo   # validate, regenerate everything, run the classifier demo
+cd v2 && python3 build.py --no-site   # skip the website
 ```
 
-Requires Python 3.9+; no dependencies.
+Requires Python 3.9+ (no packages). Graph images need the mermaid CLI (`mmdc`); the website needs
+[Quarto](https://quarto.org). Without them the build still validates and writes the JSON and markdown.

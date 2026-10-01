@@ -1,0 +1,145 @@
+flowchart LR
+  w0(["Pancakes by the dozen"])
+  w1["2 cups of flour"]
+  w0 --> w1
+  w2["3 eggs (not needed)"]
+  w0 --> w2
+  w3["12 pancakes"]
+  w0 --> w3
+  w4["2 dozen pancakes"]
+  w0 --> w4
+  w5["2 × 12 = 24 (1 dozen = 12)"]
+  w4 --> w5
+  c0(["Solve 2/12 = x/24."])
+  c1(["Answer: 4"])
+  c2["Cross-multiply and divide"]
+  c3["2 × 24 = 48"]
+  c2 --> c3
+  c4["48 ÷ 12 = 4"]
+  c3 --> c4
+  c4 --> c1
+  c5["Scale factor"]
+  c6["24 ÷ 12 = 2"]
+  c5 --> c6
+  c7["2 × 2 = 4"]
+  c6 --> c7
+  c7 --> c1
+  c8["Unit rate"]
+  c9["Write 2/12 as a decimal → ≈ 0.167"]
+  c8 --> c9
+  c10["1/6 × 24 = 4"]
+  c9 --> c10
+  c10 --> c1
+  c11["Inverse rate"]
+  c12["Write 12/2 as a decimal → 6"]
+  c11 --> c12
+  c13["24 ÷ 6 = 4"]
+  c12 --> c13
+  c13 --> c1
+  c14["Ratio table"]
+  c15["12 × 2 = 24"]
+  c14 --> c15
+  c16["2 × 2 = 4"]
+  c15 --> c16
+  c16 --> c1
+  c17["Simplify, then scale"]
+  c18["Simplify 2/12 → 1/6"]
+  c17 --> c18
+  c19["24 ÷ 6 = 4"]
+  c18 --> c19
+  c20["1 × 4 = 4"]
+  c19 --> c20
+  c20 --> c1
+  c21["24 ÷ 12 = 2"]
+  c22{{"divide · across"}}
+  c0 --> c22
+  c22 --> c21
+  c21 --> c5
+  c23["12 ÷ 2 = 6"]
+  c24{{"divide · within"}}
+  c0 --> c24
+  c24 --> c23
+  c23 -->|"to-decimal/divide"| c11
+  c25["2 ÷ 12 ≈ 0.167"]
+  c24 --> c25
+  c25 -->|"to-decimal/divide"| c8
+  c26["2 ÷ 2 = 1"]
+  c27{{"factor · within"}}
+  c0 --> c27
+  c27 --> c26
+  c26 -->|"simplify-fraction/repeated"| c17
+  c28["GCF(2, 12) = 2"]
+  c27 --> c28
+  c28 -->|"simplify-fraction/gcf"| c17
+  c29["2 × 24 = 48"]
+  c30{{"multiply · across"}}
+  c0 --> c30
+  c30 --> c29
+  c29 --> c2
+  c31["12 × 2 = 24"]
+  c32{{"multiply · within"}}
+  c0 --> c32
+  c32 --> c31
+  c31 --> c14
+  c33["2 × 5 = 10"]
+  c32 --> c33
+  c33 -->|"to-decimal/power_of_ten"| c11
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c22,c24,c27,c30,c32 cls
+  class c21,c23,c25,c26,c28,c29,c31,c33 first
+  class c2,c5,c8,c11,c14,c17 method
+  class c9,c12,c18 skill
+  class c3,c4,c6,c7,c10,c13,c15,c16,c19,c20 step
+  class c0,c1 ans
+  w1 -->|"a"| c0
+  w3 -->|"b"| c0
+  w5 -->|"d"| c0
+  w6(["4 cups of flour"])
+  c1 --> w6
+  w7["Reads '2 dozen' as 2 pancakes. → 1/3"]
+  w0 -.->|"Spot numbers written as words"| w7
+  w8["2 × 2 = 4"]
+  w7 -.-> w8
+  w9["Scales the eggs instead of the flour. → 6"]
+  w0 -.->|"Ignore numbers that don't matter"| w9
+  w10["3 × 24 = 72"]
+  w9 -.-> w10
+  w11["3 ÷ 12 = 0.25"]
+  w9 -.-> w11
+  w12["12 ÷ 3 = 4"]
+  w9 -.-> w12
+  w13["GCF(3, 12) = 3"]
+  w9 -.-> w13
+  w14["Flips one side: pancakes over flour. → 144"]
+  w0 -.->|"Keep the same order on both sides"| w14
+  w15["12 × 24 = 288"]
+  w14 -.-> w15
+  w16["24 ÷ 2 = 12"]
+  w14 -.-> w16
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w3,w4 wused
+  class w2 wdist
+  class w5 wop
+  class w6 wfinal
+  class w7,w9,w14 wtrap
+  class w8,w10,w11,w12,w13,w15,w16 wtfirst

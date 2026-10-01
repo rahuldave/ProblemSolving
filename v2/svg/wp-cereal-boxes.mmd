@@ -1,0 +1,166 @@
+flowchart LR
+  w0(["Cereal boxes"])
+  w1["a 12-ounce box"]
+  w0 --> w1
+  w2["costs $3.00"]
+  w0 --> w2
+  w3["a 20-ounce box"]
+  w0 --> w3
+  w4["costs $4.50"]
+  w0 --> w4
+  w5["2 miles from home (not needed)"]
+  w0 --> w5
+  c0(["Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?"])
+  c1(["Answer: the 20-ounce box"])
+  c2["Price per unit"]
+  c3["Write 3/12 as a decimal → 0.25"]
+  c2 --> c3
+  c4["Write 4.5/20 as a decimal → 0.225"]
+  c3 --> c4
+  c5["0.25 #gt; 0.225"]
+  c4 --> c5
+  c5 --> c1
+  c6["Units per dollar"]
+  c7["Write 12/3 as a decimal → 4"]
+  c6 --> c7
+  c8["Write 20/4.5 as a decimal → ≈ 4.444"]
+  c7 --> c8
+  c9["4 #lt; 40/9"]
+  c8 --> c9
+  c9 --> c1
+  c10["Common quantity"]
+  c11["Find a common multiple of 12 and 20 → 60"]
+  c10 --> c11
+  c12["Solve 3/12 = x/60 → 15"]
+  c11 --> c12
+  c13["Solve 4.5/20 = x/60 → 13.5"]
+  c12 --> c13
+  c14["15 #gt; 13.5"]
+  c13 --> c14
+  c14 --> c1
+  c15["Scale one offer to the other's size"]
+  c16["Solve 3/12 = x/20 → 5"]
+  c15 --> c16
+  c17["5 #gt; 4.5"]
+  c16 --> c17
+  c17 --> c1
+  c18["Cross-multiply"]
+  c19["Find the cross products of 3/12 and 4.5/20 → 60/54"]
+  c18 --> c19
+  c20["60 #gt; 54"]
+  c19 --> c20
+  c20 --> c1
+  c21["Compare growth"]
+  c22["4.5 ÷ 3 = 1.5"]
+  c21 --> c22
+  c23["20 ÷ 12 ≈ 1.667"]
+  c22 --> c23
+  c24["1.5 #lt; 5/3"]
+  c23 --> c24
+  c24 --> c1
+  c25["20 ÷ 12 ≈ 1.667"]
+  c26{{"divide · across"}}
+  c0 --> c26
+  c26 --> c25
+  c25 -->|"missing-value/scale_factor"| c15
+  c27["4.5 ÷ 3 = 1.5"]
+  c26 --> c27
+  c27 --> c21
+  c28["12 ÷ 3 = 4"]
+  c29{{"divide · within"}}
+  c0 --> c29
+  c29 --> c28
+  c30["then 20 ÷ 4.5 ≈ 4.444"]
+  c28 --> c30
+  c30 -->|"to-decimal/divide"| c6
+  c31["then 20 ÷ 4 = 5"]
+  c28 --> c31
+  c31 -->|"missing-value/inverse_rate"| c15
+  c32["3 ÷ 12 = 0.25"]
+  c29 --> c32
+  c33["then 4.5 ÷ 20 = 0.225"]
+  c32 --> c33
+  c33 -->|"to-decimal/divide"| c2
+  c34["then 20 × 5 = 100"]
+  c32 --> c34
+  c34 -->|"to-decimal/power_of_ten"| c2
+  c35["then 0.25 × 20 = 5"]
+  c32 --> c35
+  c35 -->|"missing-value/unit_rate"| c15
+  c36["GCF(12, 20) = 4"]
+  c37{{"factor · across"}}
+  c0 --> c37
+  c37 --> c36
+  c36 -->|"common-multiple/gcf_formula"| c10
+  c38["3 ÷ 3 = 1"]
+  c39{{"factor · within"}}
+  c0 --> c39
+  c39 --> c38
+  c38 -->|"simplify-fraction/repeated"| c15
+  c40["GCF(3, 12) = 3"]
+  c39 --> c40
+  c40 -->|"simplify-fraction/gcf"| c15
+  c41["12 × 20 = 240"]
+  c42{{"multiply · across"}}
+  c0 --> c42
+  c42 --> c41
+  c41 -->|"common-multiple/product"| c10
+  c43["3 × 20 = 60"]
+  c42 --> c43
+  c44["then 60 ÷ 12 = 5"]
+  c43 --> c44
+  c44 -->|"missing-value/cross_multiply"| c15
+  c45["then 4.5 × 12 = 54"]
+  c43 --> c45
+  c45 -->|"cross-products/diagonals"| c18
+  c46["LCM(12, 20) = 60"]
+  c42 --> c46
+  c46 -->|"common-multiple/recall"| c10
+  c47["12 × 5 = 60"]
+  c48{{"multiply · within"}}
+  c0 --> c48
+  c48 --> c47
+  c47 -->|"common-multiple/list_multiples"| c10
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c26,c29,c37,c39,c42,c48 cls
+  class c25,c27,c28,c32,c36,c38,c40,c41,c43,c46,c47 first
+  class c30,c31,c33,c34,c35,c44,c45 second
+  class c2,c6,c10,c15,c18,c21 method
+  class c3,c4,c7,c8,c11,c12,c13,c16,c19 skill
+  class c5,c9,c14,c17,c20,c22,c23,c24 step
+  class c0,c1 ans
+  w1 -->|"q1"| c0
+  w2 -->|"p1"| c0
+  w3 -->|"q2"| c0
+  w4 -->|"p2"| c0
+  w6(["the 20-ounce box ($0.225 per ounce vs $0.25)"])
+  c1 --> w6
+  w7["Compares prices only and picks the cheaper box. → the 12-ounce box"]
+  w0 -.->|"Find the pair that forms the ratio"| w7
+  w8["Finds ounces per dollar but picks the smaller one. → the 12-ounce box"]
+  w0 -.->|"Which way wins"| w8
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w2,w3,w4 wused
+  class w5 wdist
+  class w6 wfinal
+  class w7,w8 wtrap

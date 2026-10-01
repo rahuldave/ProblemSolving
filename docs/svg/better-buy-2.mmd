@@ -1,0 +1,115 @@
+flowchart LR
+  n0(["Offer 1: 6 units for $4.2. Offer 2: 10 units for $7.5. Which is the better buy?"])
+  n1(["Answer: first"])
+  n2["Price per unit"]
+  n3["Write 4.2/6 as a decimal → 0.7"]
+  n2 --> n3
+  n4["Write 7.5/10 as a decimal → 0.75"]
+  n3 --> n4
+  n5["0.7 #lt; 0.75"]
+  n4 --> n5
+  n5 --> n1
+  n6["Units per dollar"]
+  n7["Write 6/4.2 as a decimal → ≈ 1.429"]
+  n6 --> n7
+  n8["Write 10/7.5 as a decimal → ≈ 1.333"]
+  n7 --> n8
+  n9["10/7 #gt; 4/3"]
+  n8 --> n9
+  n9 --> n1
+  n10["Common quantity"]
+  n11["Find a common multiple of 6 and 10 → 30"]
+  n10 --> n11
+  n12["Solve 4.2/6 = x/30 → 21"]
+  n11 --> n12
+  n13["Solve 7.5/10 = x/30 → 22.5"]
+  n12 --> n13
+  n14["21 #lt; 22.5"]
+  n13 --> n14
+  n14 --> n1
+  n15["Scale one offer to the other's size"]
+  n16["Solve 4.2/6 = x/10 → 7"]
+  n15 --> n16
+  n17["7 #lt; 7.5"]
+  n16 --> n17
+  n17 --> n1
+  n18["Cross-multiply"]
+  n19["Find the cross products of 4.2/6 and 7.5/10 → 42/45"]
+  n18 --> n19
+  n20["42 #lt; 45"]
+  n19 --> n20
+  n20 --> n1
+  n21["Compare growth"]
+  n22["7.5 ÷ 4.2 ≈ 1.786"]
+  n21 --> n22
+  n23["10 ÷ 6 ≈ 1.667"]
+  n22 --> n23
+  n24["25/14 #gt; 5/3"]
+  n23 --> n24
+  n24 --> n1
+  n25["10 ÷ 6 ≈ 1.667"]
+  n26{{"divide · across"}}
+  n0 --> n26
+  n26 --> n25
+  n25 -->|"missing-value/scale_factor"| n15
+  n27["7.5 ÷ 4.2 ≈ 1.786"]
+  n26 --> n27
+  n27 --> n21
+  n28["4.2 ÷ 6 = 0.7"]
+  n29{{"divide · within"}}
+  n0 --> n29
+  n29 --> n28
+  n30["then 7.5 ÷ 10 = 0.75"]
+  n28 --> n30
+  n30 -->|"to-decimal/divide / to-decimal/power_of_ten"| n2
+  n31["then 0.7 × 10 = 7"]
+  n28 --> n31
+  n31 -->|"missing-value/unit_rate"| n15
+  n32["6 ÷ 4.2 ≈ 1.429"]
+  n29 --> n32
+  n33["then 10 ÷ 7.5 ≈ 1.333"]
+  n32 --> n33
+  n33 -->|"to-decimal/divide"| n6
+  n34["then 10 ÷ 10/7 = 7"]
+  n32 --> n34
+  n34 -->|"missing-value/inverse_rate"| n15
+  n35["GCF(6, 10) = 2"]
+  n36{{"factor · across"}}
+  n0 --> n36
+  n36 --> n35
+  n35 -->|"common-multiple/gcf_formula"| n10
+  n37["4.2 × 10 = 42"]
+  n38{{"multiply · across"}}
+  n0 --> n38
+  n38 --> n37
+  n39["then 42 ÷ 6 = 7"]
+  n37 --> n39
+  n39 -->|"missing-value/cross_multiply"| n15
+  n40["then 7.5 × 6 = 45"]
+  n37 --> n40
+  n40 -->|"cross-products/diagonals"| n18
+  n41["6 × 10 = 60"]
+  n38 --> n41
+  n41 -->|"common-multiple/product"| n10
+  n42["LCM(6, 10) = 30"]
+  n38 --> n42
+  n42 -->|"common-multiple/recall"| n10
+  n43["6 × 5 = 30"]
+  n44{{"multiply · within"}}
+  n0 --> n44
+  n44 --> n43
+  n43 -->|"common-multiple/list_multiples"| n10
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class n26,n29,n36,n38,n44 cls
+  class n25,n27,n28,n32,n35,n37,n41,n42,n43 first
+  class n30,n31,n33,n34,n39,n40 second
+  class n2,n6,n10,n15,n18,n21 method
+  class n3,n4,n7,n8,n11,n12,n13,n16,n19 skill
+  class n5,n9,n14,n17,n20,n22,n23,n24 step
+  class n0,n1 ans

@@ -1,0 +1,232 @@
+flowchart LR
+  w0(["Free throws"])
+  w1["made 3"]
+  w0 --> w1
+  w2["of her 4"]
+  w0 --> w2
+  w3["made 5"]
+  w0 --> w3
+  w4["of his 7"]
+  w0 --> w4
+  c0(["Which is larger: 3/4 or 5/7? (Or are they equal?)"])
+  c1(["Answer: Maya"])
+  c2["Cross-multiply"]
+  c3["Find the cross products of 3/4 and 5/7 → 21/20"]
+  c2 --> c3
+  c4["21 #gt; 20"]
+  c3 --> c4
+  c4 --> c1
+  c5["Common denominator"]
+  c6["Find a common multiple of 4 and 7 → 28"]
+  c5 --> c6
+  c7["Solve 3/4 = x/28 → 21"]
+  c6 --> c7
+  c8["Solve 5/7 = x/28 → 20"]
+  c7 --> c8
+  c9["21 #gt; 20"]
+  c8 --> c9
+  c9 --> c1
+  c10["Rewrite one fraction over the other's denominator"]
+  c11["Solve 3/4 = x/7 → 5.25"]
+  c10 --> c11
+  c12["5.25 #gt; 5"]
+  c11 --> c12
+  c12 --> c1
+  c13["Common numerator"]
+  c14["Find a common multiple of 3 and 5 → 15"]
+  c13 --> c14
+  c15["Solve 4/3 = x/15 → 20"]
+  c14 --> c15
+  c16["Solve 7/5 = x/15 → 21"]
+  c15 --> c16
+  c17["20 #lt; 21"]
+  c16 --> c17
+  c17 --> c1
+  c18["Convert to decimals"]
+  c19["Write 3/4 as a decimal → 0.75"]
+  c18 --> c19
+  c20["Write 5/7 as a decimal → ≈ 0.714"]
+  c19 --> c20
+  c21["0.75 #gt; 5/7"]
+  c20 --> c21
+  c21 --> c1
+  c22["Compare unit rates (flipped fractions)"]
+  c23["Write 4/3 as a decimal → ≈ 1.333"]
+  c22 --> c23
+  c24["Write 7/5 as a decimal → 1.4"]
+  c23 --> c24
+  c25["4/3 #lt; 1.4"]
+  c24 --> c25
+  c25 --> c1
+  c26["Compare scale factors"]
+  c27["5 ÷ 3 ≈ 1.667"]
+  c26 --> c27
+  c28["7 ÷ 4 = 1.75"]
+  c27 --> c28
+  c29["5/3 #lt; 1.75"]
+  c28 --> c29
+  c29 --> c1
+  c30["Graph the points"]
+  c31["plot (3, 4), (5, 7)"]
+  c30 --> c31
+  c32["4 ÷ 3 ≈ 1.333"]
+  c31 --> c32
+  c33["7 ÷ 5 = 1.4"]
+  c32 --> c33
+  c34["4/3 #lt; 1.4"]
+  c33 --> c34
+  c34 --> c1
+  c35["Simplify both"]
+  c36["Simplify 3/4 → 3/4"]
+  c35 --> c36
+  c37["Simplify 5/7 → 5/7"]
+  c36 --> c37
+  c38["3:4 ≠ 5:7"]
+  c37 --> c38
+  c38 --> c1
+  c39["Distance from 1"]
+  c40["4 − 3 = 1"]
+  c39 --> c40
+  c41["7 − 5 = 2"]
+  c40 --> c41
+  c42["Which is larger: 1/4 or 2/7? (Or are they equal?) → second"]
+  c41 --> c42
+  c42 --> c1
+  c43["5 ÷ 3 ≈ 1.667"]
+  c44{{"divide · across"}}
+  c0 --> c44
+  c44 --> c43
+  c43 --> c26
+  c45["7 ÷ 4 = 1.75"]
+  c44 --> c45
+  c45 -->|"missing-value/scale_factor"| c10
+  c46["3 ÷ 4 = 0.75"]
+  c47{{"divide · within"}}
+  c0 --> c47
+  c47 --> c46
+  c48["then 0.75 × 7 = 5.25"]
+  c46 --> c48
+  c48 -->|"missing-value/unit_rate"| c10
+  c49["then 5 ÷ 7 ≈ 0.714"]
+  c46 --> c49
+  c49 -->|"to-decimal/divide"| c18
+  c50["4 ÷ 3 ≈ 1.333"]
+  c47 --> c50
+  c51["then 7 ÷ 4/3 = 5.25"]
+  c50 --> c51
+  c51 -->|"missing-value/inverse_rate"| c10
+  c52["then 7 ÷ 5 = 1.4"]
+  c50 --> c52
+  c52 -->|"to-decimal/divide"| c22
+  c53["then 5 × 2 = 10"]
+  c50 --> c53
+  c53 -->|"to-decimal/power_of_ten"| c22
+  c54["GCF(3, 5) = 1"]
+  c55{{"factor · across"}}
+  c0 --> c55
+  c55 --> c54
+  c54 -->|"common-multiple/gcf_formula"| c13
+  c56["GCF(4, 7) = 1"]
+  c55 --> c56
+  c56 -->|"common-multiple/gcf_formula"| c5
+  c57["GCF(3, 4) = 1"]
+  c58{{"factor · within"}}
+  c0 --> c58
+  c58 --> c57
+  c59["then 3 ÷ 1 = 3"]
+  c57 --> c59
+  c59 -->|"simplify-fraction/gcf"| c10
+  c59 -->|"simplify-fraction/gcf"| c35
+  c60["3 × 7 = 21"]
+  c61{{"multiply · across"}}
+  c0 --> c61
+  c61 --> c60
+  c62["then 5 × 4 = 20"]
+  c60 --> c62
+  c62 -->|"cross-products/diagonals"| c2
+  c63["then 21 ÷ 4 = 5.25"]
+  c60 --> c63
+  c63 -->|"missing-value/cross_multiply"| c10
+  c64["LCM(3, 5) = 15"]
+  c61 --> c64
+  c64 -->|"common-multiple/recall"| c13
+  c65["LCM(4, 7) = 28"]
+  c61 --> c65
+  c65 -->|"common-multiple/recall"| c5
+  c66["3 × 5 = 15"]
+  c61 --> c66
+  c67{{"multiply · within"}}
+  c0 --> c67
+  c67 --> c66
+  c66 -->|"common-multiple/list_multiples / common-multiple/product"| c13
+  c68["4 × 7 = 28"]
+  c61 --> c68
+  c67 --> c68
+  c68 -->|"common-multiple/list_multiples / common-multiple/product"| c5
+  c69["4 × 25 = 100"]
+  c67 --> c69
+  c70["then 3 × 25 = 75"]
+  c69 --> c70
+  c70 -->|"to-decimal/power_of_ten"| c18
+  c70 -->|"to-decimal/power_of_ten"| c10
+  c71["plot (3, 4), (5, 7)"]
+  c72{{"represent · across"}}
+  c0 --> c72
+  c72 --> c71
+  c71 --> c30
+  c73["4 − 3 = 1"]
+  c74{{"subtract · within"}}
+  c0 --> c74
+  c74 --> c73
+  c73 --> c39
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c44,c47,c55,c58,c61,c67,c72,c74 cls
+  class c43,c45,c46,c50,c54,c56,c57,c60,c64,c65,c66,c68,c69,c71,c73 first
+  class c48,c49,c51,c52,c53,c59,c62,c63,c70 second
+  class c2,c5,c10,c13,c18,c22,c26,c30,c35,c39 method
+  class c3,c6,c7,c8,c11,c14,c15,c16,c19,c20,c23,c24,c36,c37,c42 skill
+  class c4,c9,c12,c17,c21,c25,c27,c28,c29,c31,c32,c33,c34,c38,c40,c41 step
+  class c0,c1 ans
+  w1 -->|"a"| c0
+  w2 -->|"b"| c0
+  w3 -->|"c"| c0
+  w4 -->|"d"| c0
+  w5(["Maya (3/4 = 0.75 vs 5/7 ≈ 0.714)"])
+  c1 --> w5
+  w6["Compares shots made only (5 #gt; 3). → Leo"]
+  w0 -.->|"Find the pair that forms the ratio"| w6
+  w7["Compares misses per shot and picks the bigger. → Leo"]
+  w0 -.->|"Which way wins"| w7
+  w8["1 × 7 = 7"]
+  w7 -.-> w8
+  w9["LCM(1, 2) = 2"]
+  w7 -.-> w9
+  w10["1 ÷ 4 = 0.25"]
+  w7 -.-> w10
+  w11["4 ÷ 1 = 4"]
+  w7 -.-> w11
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w2,w3,w4 wused
+  class w5 wfinal
+  class w6,w7 wtrap
+  class w8,w9,w10,w11 wtfirst

@@ -11,84 +11,12 @@ Reading the graphs: **hexagons** group first steps by operation · scope; **blue
 
 ## Write 3/4 as a decimal.
 
-```mermaid
-flowchart LR
-  n0(["Write 3/4 as a decimal."])
-  n1(["Answer: 0.75"])
-  n2["Divide"]
-  n3["3 ÷ 4 = 0.75"]
-  n2 --> n3
-  n3 --> n1
-  n4["Scale to 10, 100, 1000"]
-  n5["4 × 25 = 100"]
-  n4 --> n5
-  n6["3 × 25 = 75"]
-  n5 --> n6
-  n7["75 ÷ 100 = 0.75"]
-  n6 --> n7
-  n7 --> n1
-  n8["3 ÷ 4 = 0.75"]
-  n9{{"divide · within"}}
-  n0 --> n9
-  n9 --> n8
-  n8 --> n2
-  n10["4 × 25 = 100"]
-  n11{{"multiply · within"}}
-  n0 --> n11
-  n11 --> n10
-  n10 --> n4
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n9,n11 cls
-  class n8,n10 first
-  class n2,n4 method
-  class n3,n5,n6,n7 step
-  class n0,n1 ans
-```
+[![Write 3/4 as a decimal.](../svg/to-decimal-1.svg)](../svg/to-decimal-1.svg)
+
+<sub>Click the graph to open it full size · [mermaid source](../svg/to-decimal-1.mmd)</sub>
 
 ## Write 5/8 as a decimal.
 
-```mermaid
-flowchart LR
-  n0(["Write 5/8 as a decimal."])
-  n1(["Answer: 0.625"])
-  n2["Divide"]
-  n3["5 ÷ 8 = 0.625"]
-  n2 --> n3
-  n3 --> n1
-  n4["Scale to 10, 100, 1000"]
-  n5["8 × 125 = 1000"]
-  n4 --> n5
-  n6["5 × 125 = 625"]
-  n5 --> n6
-  n7["625 ÷ 1000 = 0.625"]
-  n6 --> n7
-  n7 --> n1
-  n8["5 ÷ 8 = 0.625"]
-  n9{{"divide · within"}}
-  n0 --> n9
-  n9 --> n8
-  n8 --> n2
-  n10["8 × 125 = 1000"]
-  n11{{"multiply · within"}}
-  n0 --> n11
-  n11 --> n10
-  n10 --> n4
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n9,n11 cls
-  class n8,n10 first
-  class n2,n4 method
-  class n3,n5,n6,n7 step
-  class n0,n1 ans
-```
+[![Write 5/8 as a decimal.](../svg/to-decimal-2.svg)](../svg/to-decimal-2.svg)
+
+<sub>Click the graph to open it full size · [mermaid source](../svg/to-decimal-2.mmd)</sub>

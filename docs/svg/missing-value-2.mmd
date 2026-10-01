@@ -1,0 +1,79 @@
+flowchart LR
+  n0(["Solve 4/6 = x/15."])
+  n1(["Answer: 10"])
+  n2["Cross-multiply and divide"]
+  n3["4 × 15 = 60"]
+  n2 --> n3
+  n4["60 ÷ 6 = 10"]
+  n3 --> n4
+  n4 --> n1
+  n5["Scale factor"]
+  n6["15 ÷ 6 = 2.5"]
+  n5 --> n6
+  n7["4 × 2.5 = 10"]
+  n6 --> n7
+  n7 --> n1
+  n8["Unit rate"]
+  n9["Write 4/6 as a decimal → ≈ 0.667"]
+  n8 --> n9
+  n10["2/3 × 15 = 10"]
+  n9 --> n10
+  n10 --> n1
+  n11["Inverse rate"]
+  n12["Write 6/4 as a decimal → 1.5"]
+  n11 --> n12
+  n13["15 ÷ 1.5 = 10"]
+  n12 --> n13
+  n13 --> n1
+  n14["Simplify, then scale"]
+  n15["Simplify 4/6 → 2/3"]
+  n14 --> n15
+  n16["15 ÷ 3 = 5"]
+  n15 --> n16
+  n17["2 × 5 = 10"]
+  n16 --> n17
+  n17 --> n1
+  n18["15 ÷ 6 = 2.5"]
+  n19{{"divide · across"}}
+  n0 --> n19
+  n19 --> n18
+  n18 --> n5
+  n20["4 ÷ 6 ≈ 0.667"]
+  n21{{"divide · within"}}
+  n0 --> n21
+  n21 --> n20
+  n20 -->|"to-decimal/divide"| n8
+  n22["6 ÷ 4 = 1.5"]
+  n21 --> n22
+  n22 -->|"to-decimal/divide"| n11
+  n23["4 ÷ 2 = 2"]
+  n24{{"factor · within"}}
+  n0 --> n24
+  n24 --> n23
+  n23 -->|"simplify-fraction/repeated"| n14
+  n25["GCF(4, 6) = 2"]
+  n24 --> n25
+  n25 -->|"simplify-fraction/gcf"| n14
+  n26["4 × 15 = 60"]
+  n27{{"multiply · across"}}
+  n0 --> n27
+  n27 --> n26
+  n26 --> n2
+  n28["4 × 25 = 100"]
+  n29{{"multiply · within"}}
+  n0 --> n29
+  n29 --> n28
+  n28 -->|"to-decimal/power_of_ten"| n11
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class n19,n21,n24,n27,n29 cls
+  class n18,n20,n22,n23,n25,n26,n28 first
+  class n2,n5,n8,n11,n14 method
+  class n9,n12,n15 skill
+  class n3,n4,n6,n7,n10,n13,n16,n17 step
+  class n0,n1 ans

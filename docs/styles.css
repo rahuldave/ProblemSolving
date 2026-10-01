@@ -1,0 +1,9 @@
+
+.graph { margin: 1rem 0 2rem; }
+.graph-scroll { overflow: auto; max-height: 85vh; border: 1px solid #dee2e6; border-radius: 6px; background: #fff; }
+.graph-scroll img { display: block; max-width: none; cursor: zoom-in; }
+.graph.fit .graph-scroll img { width: 100% !important; height: auto; }
+.graph:not(.fit) .graph-scroll img { cursor: zoom-out; }
+.graph figcaption { font-size: .85rem; color: #6c757d; margin-top: .35rem; }
+.graph figcaption button { border: 1px solid #ced4da; background: #f8f9fa; border-radius: 4px; padding: 0 .5rem; font-size: .85rem; }
+blockquote { font-size: 1.05rem; }

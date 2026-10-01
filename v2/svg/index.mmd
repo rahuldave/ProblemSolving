@@ -1,0 +1,32 @@
+flowchart LR
+  add_fractions["Add two fractions"]
+  better_buy["Which is the better buy?"]
+  common_multiple["Find a common multiple"]
+  compare_fractions["Compare two fractions"]
+  cross_products["Cross products"]
+  missing_value["Find the missing value in a proportion"]
+  percent_of["Find a percent of a number"]
+  proportion_check["Are two ratios proportional?"]
+  simplify_fraction["Simplify a fraction"]
+  to_decimal["Write a fraction as a decimal"]
+  add_fractions --> common_multiple
+  add_fractions --> cross_products
+  add_fractions --> missing_value
+  add_fractions --> simplify_fraction
+  add_fractions --> to_decimal
+  better_buy -.->|is a| compare_fractions
+  compare_fractions --> common_multiple
+  compare_fractions --> cross_products
+  compare_fractions --> missing_value
+  compare_fractions --> simplify_fraction
+  compare_fractions --> to_decimal
+  missing_value --> simplify_fraction
+  missing_value --> to_decimal
+  percent_of -.->|is a| missing_value
+  proportion_check -.->|is a| compare_fractions
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef core fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef applied fill:#e3edfd,stroke:#5b7fd1,color:#222
+  class common_multiple,cross_products,simplify_fraction,to_decimal skill
+  class add_fractions,compare_fractions,missing_value core
+  class better_buy,percent_of,proportion_check applied

@@ -1,0 +1,103 @@
+flowchart LR
+  w0(["Sharing pizza"])
+  w1["5/6 of a pizza"]
+  w0 --> w1
+  w2["3/4 of a pizza"]
+  w0 --> w2
+  c0(["Find 5/6 + 3/4."])
+  c1(["Answer: 19/12"])
+  c2["Common denominator"]
+  c3["Find a common multiple of 6 and 4 → 12"]
+  c2 --> c3
+  c4["Solve 5/6 = x/12 → 10"]
+  c3 --> c4
+  c5["Solve 3/4 = x/12 → 9"]
+  c4 --> c5
+  c6["10 + 9 = 19"]
+  c5 --> c6
+  c7["Simplify 19/12 → 19/12"]
+  c6 --> c7
+  c7 --> c1
+  c8["Bow-tie (cross-multiply)"]
+  c9["Find the cross products of 5/6 and 3/4 → 20/18"]
+  c8 --> c9
+  c10["6 × 4 = 24"]
+  c9 --> c10
+  c11["20 + 18 = 38"]
+  c10 --> c11
+  c12["Simplify 38/24 → 19/12"]
+  c11 --> c12
+  c12 --> c1
+  c13["Convert to decimals"]
+  c14["Write 5/6 as a decimal → ≈ 0.833"]
+  c13 --> c14
+  c15["Write 3/4 as a decimal → 0.75"]
+  c14 --> c15
+  c16["5/6 + 0.75 = 19/12"]
+  c15 --> c16
+  c16 --> c1
+  c17["5 ÷ 6 ≈ 0.833"]
+  c18{{"divide · within"}}
+  c0 --> c18
+  c18 --> c17
+  c17 -->|"to-decimal/divide"| c13
+  c19["GCF(6, 4) = 2"]
+  c20{{"factor · across"}}
+  c0 --> c20
+  c20 --> c19
+  c19 -->|"common-multiple/gcf_formula"| c2
+  c21["5 × 4 = 20"]
+  c22{{"multiply · across"}}
+  c0 --> c22
+  c22 --> c21
+  c21 -->|"cross-products/diagonals"| c8
+  c23["6 × 4 = 24"]
+  c22 --> c23
+  c23 -->|"common-multiple/product"| c2
+  c24["LCM(6, 4) = 12"]
+  c22 --> c24
+  c24 -->|"common-multiple/recall"| c2
+  c25["6 × 2 = 12"]
+  c26{{"multiply · within"}}
+  c0 --> c26
+  c26 --> c25
+  c25 -->|"common-multiple/list_multiples"| c2
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c18,c20,c22,c26 cls
+  class c17,c19,c21,c23,c24,c25 first
+  class c2,c8,c13 method
+  class c3,c4,c5,c7,c9,c12,c14,c15 skill
+  class c6,c10,c11,c16 step
+  class c0,c1 ans
+  w1 -->|"a"| c0
+  w1 -->|"b"| c0
+  w2 -->|"c"| c0
+  w2 -->|"d"| c0
+  w3(["1 7/12 pizzas"])
+  c1 --> w3
+  w4["Adds tops and bottoms: (5 + 3)/(6 + 4). → 0.8"]
+  w0 -.->|"Recognize the question type"| w4
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w2 wused
+  class w3 wfinal
+  class w4 wtrap

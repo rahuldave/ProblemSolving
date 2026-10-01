@@ -1,0 +1,288 @@
+flowchart LR
+  w0(["Same shade of paint?"])
+  w1["6 cans of blue"]
+  w0 --> w1
+  w2["8 cans of white"]
+  w0 --> w2
+  w3["72 cans of blue"]
+  w0 --> w3
+  w4["96 cans of white"]
+  w0 --> w4
+  c0(["Are 6:8 and 72:96 proportional?"])
+  c1(["Answer: yes"])
+  c2["Cross-multiply"]
+  c3["Find the cross products of 6/8 and 72/96 → 576/576"]
+  c2 --> c3
+  c4["576 = 576"]
+  c3 --> c4
+  c4 --> c1
+  c5["Common denominator"]
+  c6["Find a common multiple of 8 and 96 → 96"]
+  c5 --> c6
+  c7["Solve 6/8 = x/96 → 72"]
+  c6 --> c7
+  c8["Solve 72/96 = x/96 → 72"]
+  c7 --> c8
+  c9["72 = 72"]
+  c8 --> c9
+  c9 --> c1
+  c10["Rewrite one fraction over the other's denominator"]
+  c11["Solve 6/8 = x/96 → 72"]
+  c10 --> c11
+  c12["72 = 72"]
+  c11 --> c12
+  c12 --> c1
+  c13["Common numerator"]
+  c14["Find a common multiple of 6 and 72 → 72"]
+  c13 --> c14
+  c15["Solve 8/6 = x/72 → 96"]
+  c14 --> c15
+  c16["Solve 96/72 = x/72 → 96"]
+  c15 --> c16
+  c17["96 = 96"]
+  c16 --> c17
+  c17 --> c1
+  c18["Convert to decimals"]
+  c19["Write 6/8 as a decimal → 0.75"]
+  c18 --> c19
+  c20["Write 72/96 as a decimal → 0.75"]
+  c19 --> c20
+  c21["0.75 = 0.75"]
+  c20 --> c21
+  c21 --> c1
+  c22["Compare unit rates (flipped fractions)"]
+  c23["Write 8/6 as a decimal → ≈ 1.333"]
+  c22 --> c23
+  c24["Write 96/72 as a decimal → ≈ 1.333"]
+  c23 --> c24
+  c25["4/3 = 4/3"]
+  c24 --> c25
+  c25 --> c1
+  c26["Compare scale factors"]
+  c27["72 ÷ 6 = 12"]
+  c26 --> c27
+  c28["96 ÷ 8 = 12"]
+  c27 --> c28
+  c29["12 = 12"]
+  c28 --> c29
+  c29 --> c1
+  c30["Ratio table"]
+  c31["6 × 12 = 72"]
+  c30 --> c31
+  c32["8 × 12 = 96"]
+  c31 --> c32
+  c33["96 = 96"]
+  c32 --> c33
+  c33 --> c1
+  c34["Graph the points"]
+  c35["plot (6, 8), (72, 96)"]
+  c34 --> c35
+  c36["8 ÷ 6 ≈ 1.333"]
+  c35 --> c36
+  c37["96 ÷ 72 ≈ 1.333"]
+  c36 --> c37
+  c38["4/3 = 4/3"]
+  c37 --> c38
+  c38 --> c1
+  c39["Simplify both"]
+  c40["Simplify 6/8 → 3/4"]
+  c39 --> c40
+  c41["Simplify 72/96 → 3/4"]
+  c40 --> c41
+  c42["3:4 = 3:4"]
+  c41 --> c42
+  c42 --> c1
+  c43["Distance from 1"]
+  c44["8 − 6 = 2"]
+  c43 --> c44
+  c45["96 − 72 = 24"]
+  c44 --> c45
+  c46["Which is larger: 2/8 or 24/96? (Or are they equal?) → equal"]
+  c45 --> c46
+  c46 --> c1
+  c47["72 ÷ 6 = 12"]
+  c48{{"divide · across"}}
+  c0 --> c48
+  c48 --> c47
+  c47 --> c26
+  c49["96 ÷ 8 = 12"]
+  c48 --> c49
+  c49 -->|"missing-value/scale_factor"| c10
+  c50["6 ÷ 8 = 0.75"]
+  c51{{"divide · within"}}
+  c0 --> c51
+  c51 --> c50
+  c52["then 0.75 × 96 = 72"]
+  c50 --> c52
+  c52 -->|"missing-value/unit_rate"| c10
+  c53["then 72 ÷ 96 = 0.75"]
+  c50 --> c53
+  c53 -->|"to-decimal/divide"| c18
+  c54["8 ÷ 6 ≈ 1.333"]
+  c51 --> c54
+  c55["then 96 ÷ 4/3 = 72"]
+  c54 --> c55
+  c55 -->|"missing-value/inverse_rate"| c10
+  c56["then 96 ÷ 72 ≈ 1.333"]
+  c54 --> c56
+  c56 -->|"to-decimal/divide"| c22
+  c57["GCF(6, 72) = 6"]
+  c58{{"factor · across"}}
+  c0 --> c58
+  c58 --> c57
+  c57 -->|"common-multiple/gcf_formula"| c13
+  c59["GCF(8, 96) = 8"]
+  c58 --> c59
+  c59 -->|"common-multiple/gcf_formula"| c5
+  c60["6 ÷ 2 = 3"]
+  c61{{"factor · within"}}
+  c0 --> c61
+  c61 --> c60
+  c62["then 8 ÷ 2 = 4"]
+  c60 --> c62
+  c62 -->|"simplify-fraction/repeated"| c10
+  c62 -->|"simplify-fraction/repeated"| c39
+  c63["GCF(6, 8) = 2"]
+  c61 --> c63
+  c64["then 6 ÷ 2 = 3"]
+  c63 --> c64
+  c64 -->|"simplify-fraction/gcf"| c10
+  c64 -->|"simplify-fraction/gcf"| c39
+  c65["6 × 72 = 432"]
+  c66{{"multiply · across"}}
+  c0 --> c66
+  c66 --> c65
+  c65 -->|"common-multiple/product"| c13
+  c67["6 × 96 = 576"]
+  c66 --> c67
+  c68["then 72 × 8 = 576"]
+  c67 --> c68
+  c68 -->|"cross-products/diagonals"| c2
+  c69["then 576 ÷ 8 = 72"]
+  c67 --> c69
+  c69 -->|"missing-value/cross_multiply"| c10
+  c70["8 × 96 = 768"]
+  c66 --> c70
+  c70 -->|"common-multiple/product"| c5
+  c71["LCM(6, 72) = 72"]
+  c66 --> c71
+  c71 -->|"common-multiple/recall"| c13
+  c72["LCM(8, 96) = 96"]
+  c66 --> c72
+  c72 -->|"common-multiple/recall"| c5
+  c73["6 × 12 = 72"]
+  c74{{"multiply · within"}}
+  c0 --> c74
+  c74 --> c73
+  c75["then 8 × 72 = 576"]
+  c73 --> c75
+  c75 -->|"missing-value/cross_multiply"| c13
+  c76["then 72 ÷ 6 = 12"]
+  c73 --> c76
+  c76 -->|"missing-value/scale_factor"| c13
+  c77["then 8 ÷ 6 ≈ 1.333"]
+  c73 --> c77
+  c77 -->|"to-decimal/divide"| c13
+  c78["then 6 ÷ 8 = 0.75"]
+  c73 --> c78
+  c78 -->|"to-decimal/divide"| c13
+  c79["then 8 × 125 = 1000"]
+  c73 --> c79
+  c79 -->|"to-decimal/power_of_ten"| c13
+  c80["then 6 × 12 = 72"]
+  c73 --> c80
+  c80 -->|"missing-value/ratio_table"| c13
+  c81["then GCF(8, 6) = 2"]
+  c73 --> c81
+  c81 -->|"simplify-fraction/gcf"| c13
+  c82["then 8 ÷ 2 = 4"]
+  c73 --> c82
+  c82 -->|"simplify-fraction/repeated"| c13
+  c83["then 8 × 12 = 96"]
+  c73 --> c83
+  c83 --> c30
+  c84["8 × 12 = 96"]
+  c74 --> c84
+  c85["then 6 × 96 = 576"]
+  c84 --> c85
+  c85 -->|"missing-value/cross_multiply"| c5
+  c86["then 96 ÷ 8 = 12"]
+  c84 --> c86
+  c86 -->|"missing-value/scale_factor"| c5
+  c87["then 6 ÷ 8 = 0.75"]
+  c84 --> c87
+  c87 -->|"to-decimal/divide"| c5
+  c88["then 8 × 125 = 1000"]
+  c84 --> c88
+  c88 -->|"to-decimal/power_of_ten"| c5
+  c89["then 8 ÷ 6 ≈ 1.333"]
+  c84 --> c89
+  c89 -->|"to-decimal/divide"| c5
+  c90["then 8 × 12 = 96"]
+  c84 --> c90
+  c90 -->|"missing-value/ratio_table"| c5
+  c91["then GCF(6, 8) = 2"]
+  c84 --> c91
+  c91 -->|"simplify-fraction/gcf"| c5
+  c92["then 6 ÷ 2 = 3"]
+  c84 --> c92
+  c92 -->|"simplify-fraction/repeated"| c5
+  c93["then 6 × 12 = 72"]
+  c84 --> c93
+  c93 -->|"missing-value/ratio_table"| c10
+  c94["8 × 125 = 1000"]
+  c74 --> c94
+  c95["then 6 × 125 = 750"]
+  c94 --> c95
+  c95 -->|"to-decimal/power_of_ten"| c18
+  c95 -->|"to-decimal/power_of_ten"| c10
+  c96["plot (6, 8), (72, 96)"]
+  c97{{"represent · across"}}
+  c0 --> c97
+  c97 --> c96
+  c96 --> c34
+  c98["8 − 6 = 2"]
+  c99{{"subtract · within"}}
+  c0 --> c99
+  c99 --> c98
+  c98 --> c43
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c48,c51,c58,c61,c66,c74,c97,c99 cls
+  class c47,c49,c50,c54,c57,c59,c60,c63,c65,c67,c70,c71,c72,c73,c84,c94,c96,c98 first
+  class c52,c53,c55,c56,c62,c64,c68,c69,c75,c76,c77,c78,c79,c80,c81,c82,c83,c85,c86,c87,c88,c89,c90,c91,c92,c93,c95 second
+  class c2,c5,c10,c13,c18,c22,c26,c30,c34,c39,c43 method
+  class c3,c6,c7,c8,c11,c14,c15,c16,c19,c20,c23,c24,c40,c41,c46 skill
+  class c4,c9,c12,c17,c21,c25,c27,c28,c29,c31,c32,c33,c35,c36,c37,c38,c42,c44,c45 step
+  class c0,c1 ans
+  w1 -->|"a"| c0
+  w2 -->|"b"| c0
+  w3 -->|"c"| c0
+  w4 -->|"d"| c0
+  w5(["Yes: both are 3 blue to 4 white"])
+  c1 --> w5
+  w6["Compares the differences (2 more white vs 24 more white). → no"]
+  w0 -.->|"Scale, don't add"| w6
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w2,w3,w4 wused
+  class w5 wfinal
+  class w6 wtrap

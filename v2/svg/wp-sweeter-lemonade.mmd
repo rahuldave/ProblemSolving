@@ -1,0 +1,237 @@
+flowchart LR
+  w0(["Whose lemonade is sweeter?"])
+  w1["4 spoons of sugar"]
+  w0 --> w1
+  w2["6 glasses"]
+  w0 --> w2
+  w3["10 spoons of sugar"]
+  w0 --> w3
+  w4["14 glasses"]
+  w0 --> w4
+  c0(["Which is larger: 4/6 or 10/14? (Or are they equal?)"])
+  c1(["Answer: Ann"])
+  c2["Cross-multiply"]
+  c3["Find the cross products of 4/6 and 10/14 → 56/60"]
+  c2 --> c3
+  c4["56 #lt; 60"]
+  c3 --> c4
+  c4 --> c1
+  c5["Common denominator"]
+  c6["Find a common multiple of 6 and 14 → 42"]
+  c5 --> c6
+  c7["Solve 4/6 = x/42 → 28"]
+  c6 --> c7
+  c8["Solve 10/14 = x/42 → 30"]
+  c7 --> c8
+  c9["28 #lt; 30"]
+  c8 --> c9
+  c9 --> c1
+  c10["Rewrite one fraction over the other's denominator"]
+  c11["Solve 4/6 = x/14 → 28/3"]
+  c10 --> c11
+  c12["28/3 #lt; 10"]
+  c11 --> c12
+  c12 --> c1
+  c13["Common numerator"]
+  c14["Find a common multiple of 4 and 10 → 20"]
+  c13 --> c14
+  c15["Solve 6/4 = x/20 → 30"]
+  c14 --> c15
+  c16["Solve 14/10 = x/20 → 28"]
+  c15 --> c16
+  c17["30 #gt; 28"]
+  c16 --> c17
+  c17 --> c1
+  c18["Convert to decimals"]
+  c19["Write 4/6 as a decimal → ≈ 0.667"]
+  c18 --> c19
+  c20["Write 10/14 as a decimal → ≈ 0.714"]
+  c19 --> c20
+  c21["2/3 #lt; 5/7"]
+  c20 --> c21
+  c21 --> c1
+  c22["Compare unit rates (flipped fractions)"]
+  c23["Write 6/4 as a decimal → 1.5"]
+  c22 --> c23
+  c24["Write 14/10 as a decimal → 1.4"]
+  c23 --> c24
+  c25["1.5 #gt; 1.4"]
+  c24 --> c25
+  c25 --> c1
+  c26["Compare scale factors"]
+  c27["10 ÷ 4 = 2.5"]
+  c26 --> c27
+  c28["14 ÷ 6 ≈ 2.333"]
+  c27 --> c28
+  c29["2.5 #gt; 7/3"]
+  c28 --> c29
+  c29 --> c1
+  c30["Graph the points"]
+  c31["plot (4, 6), (10, 14)"]
+  c30 --> c31
+  c32["6 ÷ 4 = 1.5"]
+  c31 --> c32
+  c33["14 ÷ 10 = 1.4"]
+  c32 --> c33
+  c34["1.5 #gt; 1.4"]
+  c33 --> c34
+  c34 --> c1
+  c35["Simplify both"]
+  c36["Simplify 4/6 → 2/3"]
+  c35 --> c36
+  c37["Simplify 10/14 → 5/7"]
+  c36 --> c37
+  c38["2:3 ≠ 5:7"]
+  c37 --> c38
+  c38 --> c1
+  c39["Distance from 1"]
+  c40["6 − 4 = 2"]
+  c39 --> c40
+  c41["14 − 10 = 4"]
+  c40 --> c41
+  c42["Which is larger: 2/6 or 4/14? (Or are they equal?) → first"]
+  c41 --> c42
+  c42 --> c1
+  c43["10 ÷ 4 = 2.5"]
+  c44{{"divide · across"}}
+  c0 --> c44
+  c44 --> c43
+  c43 --> c26
+  c45["14 ÷ 6 ≈ 2.333"]
+  c44 --> c45
+  c45 -->|"missing-value/scale_factor"| c10
+  c46["4 ÷ 6 ≈ 0.667"]
+  c47{{"divide · within"}}
+  c0 --> c47
+  c47 --> c46
+  c48["then 2/3 × 14 = 28/3"]
+  c46 --> c48
+  c48 -->|"missing-value/unit_rate"| c10
+  c49["then 10 ÷ 14 ≈ 0.714"]
+  c46 --> c49
+  c49 -->|"to-decimal/divide"| c18
+  c50["6 ÷ 4 = 1.5"]
+  c47 --> c50
+  c51["then 14 ÷ 1.5 ≈ 9.333"]
+  c50 --> c51
+  c51 -->|"missing-value/inverse_rate"| c10
+  c52["then 14 ÷ 10 = 1.4"]
+  c50 --> c52
+  c52 -->|"to-decimal/divide / to-decimal/power_of_ten"| c22
+  c53["GCF(4, 10) = 2"]
+  c54{{"factor · across"}}
+  c0 --> c54
+  c54 --> c53
+  c53 -->|"common-multiple/gcf_formula"| c13
+  c55["GCF(6, 14) = 2"]
+  c54 --> c55
+  c55 -->|"common-multiple/gcf_formula"| c5
+  c56["4 ÷ 2 = 2"]
+  c57{{"factor · within"}}
+  c0 --> c57
+  c57 --> c56
+  c58["then 6 ÷ 2 = 3"]
+  c56 --> c58
+  c58 -->|"simplify-fraction/repeated"| c10
+  c58 -->|"simplify-fraction/repeated"| c35
+  c59["GCF(4, 6) = 2"]
+  c57 --> c59
+  c60["then 4 ÷ 2 = 2"]
+  c59 --> c60
+  c60 -->|"simplify-fraction/gcf"| c10
+  c60 -->|"simplify-fraction/gcf"| c35
+  c61["4 × 10 = 40"]
+  c62{{"multiply · across"}}
+  c0 --> c62
+  c62 --> c61
+  c61 -->|"common-multiple/product"| c13
+  c63["4 × 14 = 56"]
+  c62 --> c63
+  c64["then 10 × 6 = 60"]
+  c63 --> c64
+  c64 -->|"cross-products/diagonals"| c2
+  c65["then 56 ÷ 6 ≈ 9.333"]
+  c63 --> c65
+  c65 -->|"missing-value/cross_multiply"| c10
+  c66["6 × 14 = 84"]
+  c62 --> c66
+  c66 -->|"common-multiple/product"| c5
+  c67["LCM(4, 10) = 20"]
+  c62 --> c67
+  c67 -->|"common-multiple/recall"| c13
+  c68["LCM(6, 14) = 42"]
+  c62 --> c68
+  c68 -->|"common-multiple/recall"| c5
+  c69["4 × 25 = 100"]
+  c70{{"multiply · within"}}
+  c0 --> c70
+  c70 --> c69
+  c71["then 6 × 25 = 150"]
+  c69 --> c71
+  c71 -->|"to-decimal/power_of_ten"| c10
+  c71 -->|"to-decimal/power_of_ten"| c22
+  c72["4 × 5 = 20"]
+  c70 --> c72
+  c72 -->|"common-multiple/list_multiples"| c13
+  c73["6 × 7 = 42"]
+  c70 --> c73
+  c73 -->|"common-multiple/list_multiples"| c5
+  c74["plot (4, 6), (10, 14)"]
+  c75{{"represent · across"}}
+  c0 --> c75
+  c75 --> c74
+  c74 --> c30
+  c76["6 − 4 = 2"]
+  c77{{"subtract · within"}}
+  c0 --> c77
+  c77 --> c76
+  c76 --> c39
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class c44,c47,c54,c57,c62,c70,c75,c77 cls
+  class c43,c45,c46,c50,c53,c55,c56,c59,c61,c63,c66,c67,c68,c69,c72,c73,c74,c76 first
+  class c48,c49,c51,c52,c58,c60,c64,c65,c71 second
+  class c2,c5,c10,c13,c18,c22,c26,c30,c35,c39 method
+  class c3,c6,c7,c8,c11,c14,c15,c16,c19,c20,c23,c24,c36,c37,c42 skill
+  class c4,c9,c12,c17,c21,c25,c27,c28,c29,c31,c32,c33,c34,c38,c40,c41 step
+  class c0,c1 ans
+  w1 -->|"a"| c0
+  w2 -->|"b"| c0
+  w3 -->|"c"| c0
+  w4 -->|"d"| c0
+  w5(["Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)"])
+  c1 --> w5
+  w6["Compares glasses per spoon and calls the bigger one sweeter. → Joe"]
+  w0 -.->|"Which way wins"| w6
+  w7["6 × 10 = 60"]
+  w6 -.-> w7
+  w8["plot (6, 4), (14, 10)"]
+  w6 -.-> w8
+  w9["Compares spoons of sugar only (10 #gt; 4). → Ann (same answer!)"]
+  w0 -.->|"Find the pair that forms the ratio"| w9
+  w10["Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter. → Joe"]
+  w0 -.->|"Scale, don't add"| w10
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
+  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
+  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
+  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
+  class w0 wstory
+  class w1,w2,w3,w4 wused
+  class w5 wfinal
+  class w6,w9,w10 wtrap
+  class w7,w8 wtfirst
