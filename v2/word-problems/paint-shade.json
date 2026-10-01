@@ -1,0 +1,84 @@
+{
+  "id": "paint-shade",
+  "title": "Same shade of paint?",
+  "text": "Paint A mixes 6 cans of blue with 8 cans of white. Paint B mixes 72 cans of blue with 96 cans of white. Will the two paints be the same shade?",
+  "concepts": [
+    "question_type",
+    "rate_pair",
+    "multiplicative",
+    "answer_in_context"
+  ],
+  "quantities": [
+    {
+      "id": "blue_a",
+      "text": "6 cans of blue",
+      "value": 6,
+      "unit": "cans",
+      "counts": "blue in A",
+      "role": "used"
+    },
+    {
+      "id": "white_a",
+      "text": "8 cans of white",
+      "value": 8,
+      "unit": "cans",
+      "counts": "white in A",
+      "role": "used"
+    },
+    {
+      "id": "blue_b",
+      "text": "72 cans of blue",
+      "value": 72,
+      "unit": "cans",
+      "counts": "blue in B",
+      "role": "used"
+    },
+    {
+      "id": "white_b",
+      "text": "96 cans of white",
+      "value": 96,
+      "unit": "cans",
+      "counts": "white in B",
+      "role": "used"
+    }
+  ],
+  "unknown": {
+    "text": "same shade?",
+    "counts": "yes/no",
+    "unit": ""
+  },
+  "relationship": {
+    "cue": "mixes … with",
+    "note": "Same shade means the same blue : white ratio."
+  },
+  "maps_to": {
+    "question": "proportion-check",
+    "with": {
+      "a": "blue_a",
+      "b": "white_a",
+      "c": "blue_b",
+      "d": "white_b"
+    },
+    "answer_map": {
+      "proportional": "yes",
+      "not proportional": "no"
+    }
+  },
+  "answer": "yes",
+  "answer_text": "Yes: both are 3 blue to 4 white",
+  "traps": [
+    {
+      "concept": "multiplicative",
+      "mistake": "Compares the differences (2 more white vs 24 more white).",
+      "maps_to": {
+        "question": "proportion-check",
+        "with": {
+          "a": "subtract(white_a, blue_a)",
+          "b": 1,
+          "c": "subtract(white_b, blue_b)",
+          "d": 1
+        }
+      }
+    }
+  ]
+}

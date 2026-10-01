@@ -1,0 +1,55 @@
+{
+  "id": "pizza-shared",
+  "title": "Sharing pizza",
+  "text": "Sam ate 5/6 of a pizza and Kim ate 3/4 of a pizza. How much pizza did they eat in all?",
+  "concepts": [
+    "question_type",
+    "quantity",
+    "answer_in_context"
+  ],
+  "quantities": [
+    {
+      "id": "sam",
+      "text": "5/6 of a pizza",
+      "value": "5/6",
+      "unit": "pizzas",
+      "counts": "Sam's share",
+      "role": "used"
+    },
+    {
+      "id": "kim",
+      "text": "3/4 of a pizza",
+      "value": "3/4",
+      "unit": "pizzas",
+      "counts": "Kim's share",
+      "role": "used"
+    }
+  ],
+  "unknown": {
+    "text": "how much in all",
+    "counts": "pizza eaten",
+    "unit": "pizzas"
+  },
+  "relationship": {
+    "cue": "in all",
+    "note": "Add the two fractions."
+  },
+  "maps_to": {
+    "question": "add-fractions",
+    "with": {
+      "a": "num(sam)",
+      "b": "den(sam)",
+      "c": "num(kim)",
+      "d": "den(kim)"
+    }
+  },
+  "answer": "19/12",
+  "answer_text": "1 7/12 pizzas",
+  "traps": [
+    {
+      "concept": "question_type",
+      "mistake": "Adds tops and bottoms: (5 + 3)/(6 + 4).",
+      "expr": "divide(add(num(sam), num(kim)), add(den(sam), den(kim)))"
+    }
+  ]
+}

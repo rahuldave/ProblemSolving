@@ -1,0 +1,77 @@
+{
+  "id": "walk-to-school",
+  "title": "Walking to school",
+  "text": "There are 60 students in a class. 35% of them walk to school, and 10 ride bikes. How many students walk to school?",
+  "concepts": [
+    "question_type",
+    "distractor"
+  ],
+  "quantities": [
+    {
+      "id": "students",
+      "text": "60 students",
+      "value": 60,
+      "unit": "students",
+      "counts": "the class",
+      "role": "used"
+    },
+    {
+      "id": "walk",
+      "text": "35% of them walk",
+      "value": 35,
+      "unit": "percent",
+      "counts": "walkers",
+      "role": "used"
+    },
+    {
+      "id": "bikes",
+      "text": "10 ride bikes",
+      "value": 10,
+      "unit": "students",
+      "counts": "bike riders",
+      "role": "distractor"
+    }
+  ],
+  "unknown": {
+    "text": "how many students walk",
+    "counts": "walkers",
+    "unit": "students"
+  },
+  "relationship": {
+    "cue": "% of them",
+    "note": "'them' is the 60 students."
+  },
+  "maps_to": {
+    "question": "percent-of",
+    "with": {
+      "p": "walk",
+      "n": "students"
+    }
+  },
+  "answer": 21,
+  "answer_text": "21 students",
+  "traps": [
+    {
+      "concept": "distractor",
+      "mistake": "Takes the 10 bike riders out of the class first.",
+      "maps_to": {
+        "question": "percent-of",
+        "with": {
+          "p": "walk",
+          "n": "subtract(students, bikes)"
+        }
+      }
+    },
+    {
+      "concept": "rate_pair",
+      "mistake": "Takes 35% of the 10 bike riders.",
+      "maps_to": {
+        "question": "percent-of",
+        "with": {
+          "p": "walk",
+          "n": "bikes"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "id": "pancakes-dozen",
+  "title": "Pancakes by the dozen",
+  "text": "A pancake recipe uses 2 cups of flour and 3 eggs to make 12 pancakes. How many cups of flour are needed for 2 dozen pancakes?",
+  "concepts": [
+    "implicit_number",
+    "distractor",
+    "rate_pair",
+    "correspondence"
+  ],
+  "quantities": [
+    {
+      "id": "flour",
+      "text": "2 cups of flour",
+      "value": 2,
+      "unit": "cups",
+      "counts": "flour",
+      "role": "used"
+    },
+    {
+      "id": "eggs",
+      "text": "3 eggs",
+      "value": 3,
+      "unit": "eggs",
+      "counts": "eggs",
+      "role": "distractor"
+    },
+    {
+      "id": "pancakes",
+      "text": "12 pancakes",
+      "value": 12,
+      "unit": "pancakes",
+      "counts": "pancakes",
+      "role": "used"
+    },
+    {
+      "id": "target",
+      "text": "2 dozen pancakes",
+      "value": 2,
+      "unit": "dozen",
+      "counts": "pancakes wanted",
+      "role": "used",
+      "use_value": 24,
+      "concepts": [
+        "implicit_number"
+      ],
+      "note": "2 dozen = 24"
+    }
+  ],
+  "unknown": {
+    "text": "how many cups of flour",
+    "counts": "flour",
+    "unit": "cups"
+  },
+  "relationship": {
+    "cue": "to make",
+    "note": "2 cups of flour per 12 pancakes."
+  },
+  "maps_to": {
+    "question": "missing-value",
+    "with": {
+      "a": "flour",
+      "b": "pancakes",
+      "d": "target"
+    }
+  },
+  "answer": 4,
+  "answer_text": "4 cups of flour",
+  "traps": [
+    {
+      "concept": "implicit_number",
+      "mistake": "Reads '2 dozen' as 2 pancakes.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "flour",
+          "b": "pancakes",
+          "d": "raw(target)"
+        }
+      }
+    },
+    {
+      "concept": "distractor",
+      "mistake": "Scales the eggs instead of the flour.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "eggs",
+          "b": "pancakes",
+          "d": "target"
+        }
+      }
+    },
+    {
+      "concept": "correspondence",
+      "mistake": "Flips one side: pancakes over flour.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "pancakes",
+          "b": "flour",
+          "d": "target"
+        }
+      }
+    }
+  ]
+}

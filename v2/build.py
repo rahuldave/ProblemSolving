@@ -243,6 +243,8 @@ def exec_step(st, env, trace):
         st = dict(st, hidden=True)
     x, y = (val(a, env) for a in st["args"])
     result = apply_op(op, x, y)
+    if st.get("requires_nonnegative") and result < 0:
+        raise NotApplicable(f"{result} is negative")
     if st.get("requires_integer") and result.denominator != 1:
         raise NotApplicable(f"{result} is not whole")
     env[st["out"]] = result
@@ -830,7 +832,7 @@ DEMOS = [
 
 # ---------------------------------------------------------------- main
 
-def report_md(pages):
+def report_md(pages, infos):
     anchor = lambda u: f"#{u}"
     order = [k for kind in ("core", "applied", "skill") for k, q in Q.items() if q["kind"] == kind]
     index = index_md().split("```mermaid", 1)[1].split("```", 1)[0]
@@ -841,13 +843,234 @@ def report_md(pages):
         u = sorted(uses(qid) | ({q["reduces_to"]["question"]} if q.get("reduces_to") else set()))
         body.append(f"| [{q['title']}](#{qid}) | {q['kind']} | {len(methods_of(qid))} | "
                     + (", ".join(f"[{x}](#{x})" for x in u) or "—") + " |")
-    body += ["", "## Contents", ""] + [f"- [{Q[k]['title']}](#{k}) ({Q[k]['kind']})" for k in order] + [""]
+    body += ["", "## Contents", ""] + [f"- [{Q[k]['title']}](#{k}) ({Q[k]['kind']})" for k in order]
+    body += ["- [Word problems](#word-problems): extraction concepts and 12 stories", ""]
     for qid in order:
         body += [f'<a name="{qid}"></a>', "", pages[qid](anchor), ""]
+    body += [word_problems_md(infos, lambda u: f"#{u}", "##"), ""]
     body += ["## Rebuilding", "", "```sh", "cd v2 && python3 build.py --demo", "```", "",
              "This checks every method variant against every example, regenerates `v2/trees/`, `v2/graphs/` "
              "and this report, and runs the classifier on sample student steps.", ""]
     return "\n".join(body)
+
+
+# ---------------------------------------------------------------- word problems
+
+EXTRACTION = json.loads((ROOT / "extraction.json").read_text())
+WP = {p.stem: json.loads(p.read_text()) for p in sorted((ROOT / "word-problems").glob("*.json"))}
+_variants_cache = {}
+
+
+def cached_variants(qid):
+    if qid not in _variants_cache:
+        _variants_cache[qid] = variants_of(qid)
+    return _variants_cache[qid]
+
+
+def wp_context(wp):
+    vals = {q["id"]: num(q.get("use_value", q["value"])) for q in wp["quantities"]}
+    raw = {q["id"]: num(q["value"]) for q in wp["quantities"]}
+    return vals, raw
+
+
+def wp_eval(expr, vals, raw):
+    """Evaluate a mapping expression: a quantity id, a number, or op(args) incl. num(), den(), raw()."""
+    if not isinstance(expr, str):
+        return num(expr)
+    expr = expr.strip()
+    m = re.fullmatch(r"(\w+)\((.*)\)", expr)
+    if m:
+        if m[1] == "raw":
+            return raw[m[2].strip()]
+        args = [wp_eval(a, vals, raw) for a in split_top(m[2])]
+        if m[1] == "num":
+            return Fraction(args[0].numerator)
+        if m[1] == "den":
+            return Fraction(args[0].denominator)
+        return apply_op(m[1], *args)
+    if re.fullmatch(r"[\d.]+", expr):
+        return num(expr)
+    return vals[expr]
+
+
+def solve(qid, values, main_route_only=False):
+    """Answer from the first applicable variant (defaults first), plus first steps a solver could take:
+    from every variant, or only each method's main route (its first applicable variant)."""
+    answer, firsts, seen = None, {}, set()
+    for v in cached_variants(qid):
+        if main_route_only and v["method"] in seen:
+            continue
+        try:
+            env, trace = run(v["steps"], values)
+        except NotApplicable:
+            continue
+        seen.add(v["method"])
+        if answer is None:
+            answer = outputs_of(qid, env)
+        vis = visible(trace)
+        if vis:
+            firsts.setdefault(label_key(*vis[0]), {"label": label(*vis[0]), "methods": set()})["methods"].add(v["method"])
+    return answer, firsts
+
+
+
+def interpret(wp, reading, is_trap=False):
+    """Final answer (and first steps) for the correct reading or a trap."""
+    vals, raw = wp_context(wp)
+    firsts, inputs = {}, None
+    if "expr" in reading:
+        result = wp_eval(reading["expr"], vals, raw)
+    elif "answer" in reading and "maps_to" not in reading:
+        result = reading["answer"]
+    else:
+        mt = reading["maps_to"]
+        inputs = {k: wp_eval(e, vals, raw) for k, e in mt["with"].items()}
+        result, firsts = solve(mt["question"], inputs, main_route_only=is_trap)
+        if is_trap and any(not isinstance(e, str) for e in mt["with"].values()):
+            firsts = {}  # a count encoded as count/1 isn't a real reading of the methods; diagnose by answer
+        amap = mt.get("answer_map", wp["maps_to"].get("answer_map"))
+        if isinstance(result, str) and amap:
+            result = amap.get(result, result)
+    if reading.get("then"):
+        result = wp_eval(reading["then"]["expr"], {**vals, "result": result}, raw)
+    return result, firsts, inputs
+
+
+def same_answer(a, b):
+    if isinstance(a, str) or isinstance(b, str):
+        return str(a) == str(b)
+    return num(a) == num(b)
+
+
+def check_word_problem(wp):
+    """Returns (ok, report dict)."""
+    vals, raw = wp_context(wp)
+    result, firsts, inputs = interpret(wp, wp)
+    ok = same_answer(result, wp["answer"])
+    traps = []
+    for t in wp.get("traps", []):
+        tr, tfirsts, tinputs = interpret(wp, t, is_trap=True)
+        traps.append({**t, "computed": tr, "inputs": tinputs, "firsts": tfirsts,
+                      "same_as_correct": same_answer(tr, result)})
+    for c in wp["concepts"] + [t["concept"] for t in wp.get("traps", [])]:
+        if c not in EXTRACTION["concepts"]:
+            print(f"  ERROR {wp['id']}: unknown concept {c}")
+            ok = False
+    mt = wp["maps_to"]
+    if set(mt["with"]) != set(Q[mt["question"]]["inputs"]):
+        print(f"  ERROR {wp['id']}: maps_to inputs don't match {mt['question']}")
+        ok = False
+    return ok, {"result": result, "firsts": firsts, "inputs": inputs, "traps": traps}
+
+
+def diagnostic_firsts(info):
+    """First steps that only a trap reading produces: seeing one tells you which extraction went wrong."""
+    correct = set(info["firsts"])
+    out = {}
+    for t in info["traps"]:
+        for key, f in t["firsts"].items():
+            if key not in correct:
+                out.setdefault(f["label"], []).append(t["mistake"])
+    return out
+
+
+def word_problem_graph(wp, info):
+    lines = ["flowchart LR"]
+    ids = itertools.count()
+    nid = lambda: f"w{next(ids)}"
+    styles = {"story": [], "used": [], "distractor": [], "question": [], "step": [], "ans": [], "trap": []}
+
+    def node(kind, text, o="[", c="]"):
+        n = nid()
+        lines.append(f'  {n}{o}"{esc(text)}"{c}')
+        styles[kind].append(n)
+        return n
+
+    story = node("story", wp["title"], "([", "])")
+    mt = wp["maps_to"]
+    vals, raw = wp_context(wp)
+    prompt = render(Q[mt["question"]]["prompt"], info["inputs"]).rstrip(".")
+    qn = node("question", f"{Q[mt['question']]['title']}: {prompt}")
+    used_ids = {n for e in mt["with"].values() if isinstance(e, str) for n in re.findall(r"[A-Za-z_]\w*", e)}
+    for q in wp["quantities"]:
+        extra = f" = {fmt(num(q['use_value']))} {q.get('note', '').split('= ')[-1].split()[-1] if q.get('note') else ''}".rstrip() if "use_value" in q else ""
+        kind = "distractor" if q["role"] == "distractor" else "used"
+        qq = node(kind, f"{q['text']}{extra}" + (" (not needed)" if kind == "distractor" else ""))
+        lines.append(f"  {story} --> {qq}")
+        if q["id"] in used_ids:
+            inp = next(k for k, e in mt["with"].items() if isinstance(e, str) and q["id"] in re.findall(r"[A-Za-z_]\w*", e))
+            lines.append(f'  {qq} -->|"{inp}"| {qn}')
+    last = qn
+    if wp.get("then"):
+        core, _, _ = interpret(wp, {"maps_to": mt})
+        r = node("step", f"result {fmt(core) if not isinstance(core, str) else core}")
+        lines.append(f"  {last} --> {r}")
+        t = node("step", wp["then"].get("note") or wp["then"]["expr"])
+        lines.append(f"  {r} --> {t}")
+        last = t
+    ans = node("ans", f"Answer: {wp['answer_text']}", "([", "])")
+    lines.append(f"  {last} --> {ans}")
+    for t in info["traps"]:
+        shown = t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"])
+        tn = node("trap", f"{t['mistake']} → {shown}" + ("  (same answer!)" if t["same_as_correct"] else ""))
+        lines.append(f'  {story} -.->|"{esc(EXTRACTION["concepts"][t["concept"]]["name"])}"| {tn}')
+    lines += [
+        "  classDef story fill:#fde4e1,stroke:#c4554a,color:#222",
+        "  classDef used fill:#e3edfd,stroke:#5b7fd1,color:#222",
+        "  classDef distractor fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777",
+        "  classDef question fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold",
+        "  classDef step fill:#ffffff,stroke:#999,color:#222",
+        "  classDef ans fill:#e3f4e6,stroke:#3f9a55,color:#222",
+        "  classDef trap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33",
+    ]
+    lines += [f"  class {','.join(v)} {k}" for k, v in styles.items() if v]
+    return "\n".join(lines)
+
+
+def word_problems_md(infos, link=lambda u: f"{u}.md", h="#"):
+    c = EXTRACTION["concepts"]
+    out = [f"{h} Word problems", "",
+           "A word problem needs **extraction** before any method applies: pull out the quantities, drop the "
+           "distractors, pair the right numbers in the right order, and recognize which question the story is. "
+           "Each problem below maps to one of the questions above; its **traps** are common wrong extractions, "
+           "written as alternative mappings so the wrong answer each one produces is computed, not guessed. "
+           "That lets an app diagnose an extraction mistake from a student's answer, and often from their first step.", "",
+           f"{h}# Extraction concepts", "", "| Concept | What the student does | Cues | Typical mistake |", "|---|---|---|---|"]
+    for k, v in c.items():
+        out.append(f"| **{v['name']}** `{k}` | {v['does']} | {'; '.join(v.get('cues', [])) or '—'} | {v.get('mistake', '—')} |")
+    out += ["", "| Word problem | Maps to | Concepts |", "|---|---|---|"]
+    for wid, wp in WP.items():
+        out.append(f"| [{wp['title']}](#{wid}) | [{wp['maps_to']['question']}]({link(wp['maps_to']['question'])}) | "
+                   + ", ".join(c[x]["name"] for x in wp["concepts"]) + " |")
+    out.append("")
+    for wid, wp in WP.items():
+        info = infos[wid]
+        mt = wp["maps_to"]
+        out += [f'<a name="{wid}"></a>', "", f"{h}# {wp['title']}", "", f"> {wp['text']}", "",
+                "| Phrase | Value | Counts | Role |", "|---|---|---|---|"]
+        for q in wp["quantities"]:
+            val = q["value"] if "use_value" not in q else f"{q['value']} {q['unit']} → **{fmt(num(q['use_value']))}**"
+            out.append(f"| “{q['text']}” | {val} | {q['counts']} | {q['role']} |")
+        out += ["", f"**Asked:** {wp['unknown']['text']} ({wp['unknown']['unit'] or wp['unknown']['counts']}). "
+                f"**Link:** “{wp['relationship']['cue']}”: {wp['relationship']['note']}", "",
+                f"**Maps to** [{mt['question']}]({link(mt['question'])}): "
+                + ", ".join(f"{k} = {fmt(v)}" for k, v in info["inputs"].items())
+                + (f", then {wp['then'].get('note') or wp['then']['expr']}" if wp.get("then") else "")
+                + f". **Answer:** {wp['answer_text']}.", "",
+                "```mermaid", word_problem_graph(wp, info), "```", "",
+                "| Trap | Mistake | Gives | Caught by the answer? |", "|---|---|---|---|"]
+        for t in info["traps"]:
+            shown = t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"])
+            out.append(f"| {c[t['concept']]['name']} | {t['mistake']} | {shown} | "
+                       + ("**no**: same answer, so ask how they got it" if t["same_as_correct"] else "yes") + " |")
+        diag = diagnostic_firsts(info)
+        if diag:
+            out += ["", "First steps that give a trap away (each method's main route under the wrong reading; "
+                    "no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.", "",
+                    "| Student's first step | Suggests |", "|---|---|"]
+            out += [f"| `{lab}` | {' / '.join(ms)} |" for lab, ms in sorted(diag.items())]
+        out.append("")
+    return "\n".join(out)
 
 
 def main():
@@ -862,7 +1085,27 @@ def main():
         (ROOT / "graphs" / f"{qid}.md").write_text(question_md(qid, variants))
         pages[qid] = lambda link, qid=qid, variants=variants: question_md(qid, variants, link, "##")
     (ROOT / "graphs" / "README.md").write_text(index_md())
-    (ROOT.parent / "REPORT.md").write_text(report_md(pages))
+    print(f"\n== word problems: {len(WP)}")
+    infos = {}
+    for wid, wp in WP.items():
+        wok, info = check_word_problem(wp)
+        ok &= wok
+        infos[wid] = info
+        res = info["result"] if isinstance(info["result"], str) else fmt(info["result"])
+        print(f"  {'ok ' if wok else 'BAD'} {wid:22s} {res:18s} traps: "
+              + ", ".join((t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"]))
+                          + ("(=!)" if t["same_as_correct"] else "") for t in info["traps"]))
+    (ROOT / "trees" / "word-problems.json").write_text(json.dumps({
+        wid: {"maps_to": WP[wid]["maps_to"]["question"],
+              "inputs": {k: fmt(v) for k, v in i["inputs"].items()},
+              "answer": i["result"] if isinstance(i["result"], str) else fmt(i["result"]),
+              "traps": [{"concept": t["concept"], "mistake": t["mistake"],
+                         "answer": t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"]),
+                         "caught_by_answer": not t["same_as_correct"]} for t in i["traps"]],
+              "first_steps_revealing_traps": diagnostic_firsts(i)}
+        for wid, i in infos.items()}, indent=2, ensure_ascii=False) + "\n")
+    (ROOT / "graphs" / "word-problems.md").write_text(word_problems_md(infos))
+    (ROOT.parent / "REPORT.md").write_text(report_md(pages, infos))
     if "--demo" in sys.argv:
         print("\n== Classifier demo (first example of each question)")
         for qid, steps in DEMOS:

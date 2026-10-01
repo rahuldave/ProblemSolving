@@ -10,6 +10,9 @@ method from their first step and gives method-specific help.
 |---|---|
 | `v2/questions/*.json` | The data: skills, core questions, and applied questions (one file each) |
 | `v2/vocabulary.json` | Schema: step types, skill calls (`use`), reductions, classification levels |
+| `v2/extraction.json` | Extraction concepts for word problems: quantities, distractors, rate pairs, order, 'more' vs 'in all', … |
+| `v2/word-problems/*.json` | Word problems annotated with extractions, the question each maps to, and traps (wrong extractions) |
+| `v2/trees/word-problems.json` | Generated: each word problem's answer, each trap's wrong answer, and first steps that give a trap away |
 | `v2/build.py` | Expands skills and reductions, checks every method on every example, generates the outputs below |
 | `v2/trees/*.json` | Generated first-step trees for an app to match student steps against |
 | `v2/graphs/*.md` | Generated mermaid graphs, one page per question |

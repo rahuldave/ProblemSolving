@@ -1,0 +1,117 @@
+{
+  "id": "sweeter-lemonade",
+  "title": "Whose lemonade is sweeter?",
+  "text": "Joe mixes 4 spoons of sugar into 6 glasses of lemonade. Ann mixes 10 spoons of sugar into 14 glasses. Whose lemonade is sweeter?",
+  "concepts": [
+    "question_type",
+    "rate_pair",
+    "direction",
+    "multiplicative",
+    "answer_in_context"
+  ],
+  "quantities": [
+    {
+      "id": "joe_sugar",
+      "text": "4 spoons of sugar",
+      "value": 4,
+      "unit": "spoons",
+      "counts": "Joe's sugar",
+      "role": "used"
+    },
+    {
+      "id": "joe_glasses",
+      "text": "6 glasses",
+      "value": 6,
+      "unit": "glasses",
+      "counts": "Joe's lemonade",
+      "role": "used"
+    },
+    {
+      "id": "ann_sugar",
+      "text": "10 spoons of sugar",
+      "value": 10,
+      "unit": "spoons",
+      "counts": "Ann's sugar",
+      "role": "used"
+    },
+    {
+      "id": "ann_glasses",
+      "text": "14 glasses",
+      "value": 14,
+      "unit": "glasses",
+      "counts": "Ann's lemonade",
+      "role": "used"
+    }
+  ],
+  "unknown": {
+    "text": "whose is sweeter",
+    "counts": "person",
+    "unit": "name"
+  },
+  "relationship": {
+    "cue": "mixes … into",
+    "note": "Sweetness is sugar per glass; the bigger fraction is sweeter."
+  },
+  "maps_to": {
+    "question": "compare-fractions",
+    "with": {
+      "a": "joe_sugar",
+      "b": "joe_glasses",
+      "c": "ann_sugar",
+      "d": "ann_glasses"
+    },
+    "answer_map": {
+      "first": "Joe",
+      "second": "Ann",
+      "equal": "they taste the same"
+    }
+  },
+  "answer": "Ann",
+  "answer_text": "Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)",
+  "traps": [
+    {
+      "concept": "direction",
+      "mistake": "Compares glasses per spoon and calls the bigger one sweeter.",
+      "maps_to": {
+        "question": "compare-fractions",
+        "with": {
+          "a": "joe_glasses",
+          "b": "joe_sugar",
+          "c": "ann_glasses",
+          "d": "ann_sugar"
+        }
+      }
+    },
+    {
+      "concept": "rate_pair",
+      "mistake": "Compares spoons of sugar only (10 > 4).",
+      "maps_to": {
+        "question": "compare-fractions",
+        "with": {
+          "a": "joe_sugar",
+          "b": 1,
+          "c": "ann_sugar",
+          "d": 1
+        }
+      }
+    },
+    {
+      "concept": "multiplicative",
+      "mistake": "Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter.",
+      "maps_to": {
+        "question": "compare-fractions",
+        "with": {
+          "a": "subtract(joe_glasses, joe_sugar)",
+          "b": 1,
+          "c": "subtract(ann_glasses, ann_sugar)",
+          "d": 1
+        },
+        "answer_map": {
+          "first": "Ann",
+          "second": "Joe",
+          "equal": "they taste the same"
+        }
+      }
+    }
+  ]
+}

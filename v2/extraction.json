@@ -1,0 +1,91 @@
+{
+  "description": "Extraction concepts: what a student must pull out of a word problem before any of the computation methods apply. Each word problem in word-problems/ is annotated with these, maps to a question in questions/, and lists traps — wrong extractions written as alternative mappings so the build can compute the wrong answer each one produces.",
+
+  "concepts": {
+    "question_type": {
+      "name": "Recognize the question type",
+      "does": "Decide which question the story is: missing value, compare, better buy, proportion check, percent of, add fractions.",
+      "cues": ["at the same rate / speed", "how many … for …", "which is the better buy / deal", "who is better / sweeter / faster", "same taste / shade", "% of, % off, tip, tax", "in all, altogether (with fractions)"],
+      "mistake": "Solving a different question than the one asked (sale price instead of savings)."
+    },
+    "quantity": {
+      "name": "Pull out each quantity",
+      "does": "Write each number with its unit and what it counts: 4 spoons (of sugar), 6 glasses (of lemonade).",
+      "mistake": "Keeping the number but losing what it counts, so it gets used in the wrong place."
+    },
+    "implicit_number": {
+      "name": "Spot numbers written as words",
+      "does": "Turn words into numbers.",
+      "cues": ["a dozen = 12", "a pair = 2", "half = 1/2", "twice = 2 ×", "a quarter = 1/4", "a / an / each = 1"],
+      "mistake": "Reading '2 dozen' as 2."
+    },
+    "unit_conversion": {
+      "name": "Make units match",
+      "does": "Convert so both sides of a ratio use the same units.",
+      "cues": ["minutes ↔ hours", "cents ↔ dollars", "inches ↔ feet"],
+      "mistake": "Mixing hours on one side with minutes on the other."
+    },
+    "rate_pair": {
+      "name": "Find the pair that forms the ratio",
+      "does": "Identify which two quantities belong together.",
+      "cues": ["per", "for every", "each", "to make", "out of", "for", "stands for", "in (150 miles in 3 hours)"],
+      "mistake": "Pairing the wrong two numbers."
+    },
+    "correspondence": {
+      "name": "Keep the same order on both sides",
+      "does": "If the known ratio is sugar : lemonade, the unknown ratio must be sugar : lemonade too.",
+      "mistake": "Flipping one side: 4/6 = 18/x instead of 4/6 = x/18."
+    },
+    "distractor": {
+      "name": "Ignore numbers that don't matter",
+      "does": "Recognize numbers the question doesn't need.",
+      "mistake": "Using a distractor in place of a real quantity."
+    },
+    "unknown": {
+      "name": "Name the unknown",
+      "does": "Say what's asked for and in what unit, before computing.",
+      "mistake": "Computing a related number that isn't the one asked for."
+    },
+    "delta_vs_total": {
+      "name": "'More' vs 'in all'",
+      "does": "Decide whether a number is an increase or a new total, and whether the answer should be.",
+      "cues": ["more", "additional", "another", "in all", "altogether", "total", "already", "left"],
+      "mistake": "Answering the total when the extra amount was asked for, or the reverse."
+    },
+    "multiplicative": {
+      "name": "Scale, don't add",
+      "does": "Proportional quantities grow by the same factor, not by the same amount.",
+      "mistake": "'18 more glasses, so 18 more spoons.'"
+    },
+    "direction": {
+      "name": "Which way wins",
+      "does": "In a comparison, decide whether the bigger or smaller ratio is better, and which ratio (sugar per glass, or glasses per spoon) the story is about.",
+      "cues": ["cheaper", "sweeter", "better rate", "faster", "stronger"],
+      "mistake": "Picking the bigger number when the smaller one wins, or comparing the flipped ratio."
+    },
+    "follow_up": {
+      "name": "Finish the story",
+      "does": "A step after the core computation: subtract what's already used, find the price after a discount.",
+      "mistake": "Stopping after the core computation."
+    },
+    "answer_in_context": {
+      "name": "Answer in the story's terms",
+      "does": "Name the person or offer, give units, write 19/12 as 1 7/12.",
+      "mistake": "Answering 'first' or a bare number."
+    }
+  },
+
+  "word_problem_fields": {
+    "id": "matches the file name",
+    "title": "short name",
+    "text": "the story",
+    "concepts": "extraction concepts this problem exercises",
+    "quantities": "[{id, text (phrase from the story), value (as written; fractions like '5/6' allowed), use_value? (after conversion or reading a word as a number), unit, counts, role: used | distractor, concepts?}]",
+    "unknown": "{text, counts, unit}",
+    "relationship": "{cue, note}: the phrase that ties the rate pair together",
+    "maps_to": "{question, with: {input: expression}, answer_map?}. Expressions use quantity ids and the tree expression syntax (add(x, y), num(q), den(q), …).",
+    "then": "optional {expr, note}: follow-up computed from `result` (the question's answer) and quantity ids",
+    "answer": "expected final answer; answer_text says it in context",
+    "traps": "[{concept, mistake, maps_to? | answer?, then?}]: a wrong extraction; the build computes its answer and reports whether that answer gives the mistake away"
+  }
+}

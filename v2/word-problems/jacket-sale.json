@@ -1,0 +1,68 @@
+{
+  "id": "jacket-sale",
+  "title": "Jacket on sale",
+  "text": "A jacket normally costs $80. This week it is 15% off. How much does the jacket cost this week?",
+  "concepts": [
+    "question_type",
+    "unknown",
+    "follow_up"
+  ],
+  "quantities": [
+    {
+      "id": "price",
+      "text": "costs $80",
+      "value": 80,
+      "unit": "dollars",
+      "counts": "original price",
+      "role": "used"
+    },
+    {
+      "id": "off",
+      "text": "15% off",
+      "value": 15,
+      "unit": "percent",
+      "counts": "discount",
+      "role": "used"
+    }
+  ],
+  "unknown": {
+    "text": "how much does it cost this week",
+    "counts": "sale price",
+    "unit": "dollars"
+  },
+  "relationship": {
+    "cue": "% off",
+    "note": "15% of the original price is taken off."
+  },
+  "maps_to": {
+    "question": "percent-of",
+    "with": {
+      "p": "off",
+      "n": "price"
+    }
+  },
+  "then": {
+    "expr": "subtract(price, result)",
+    "note": "subtract the savings from the original price"
+  },
+  "answer": 68,
+  "answer_text": "$68",
+  "traps": [
+    {
+      "concept": "unknown",
+      "mistake": "Answers the savings instead of the new price.",
+      "maps_to": {
+        "question": "percent-of",
+        "with": {
+          "p": "off",
+          "n": "price"
+        }
+      }
+    },
+    {
+      "concept": "question_type",
+      "mistake": "Takes off $15 instead of 15%.",
+      "expr": "subtract(price, off)"
+    }
+  ]
+}

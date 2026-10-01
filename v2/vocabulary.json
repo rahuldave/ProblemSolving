@@ -26,7 +26,7 @@
   },
 
   "steps": {
-    "primitive": { "op": "add | subtract | multiply | divide | gcf | lcm | floor_div | mod | plot | compare", "args": "names, numeric literals, or [x, y] pairs", "out": "result name", "text": "hint template", "hidden": "bookkeeping a student wouldn't write" },
+    "primitive": { "op": "add | subtract | multiply | divide | gcf | lcm | floor_div | mod | plot | compare", "args": "names, numeric literals, or [x, y] pairs", "out": "result name", "text": "hint template", "hidden": "bookkeeping a student wouldn't write", "requires_integer / requires_nonnegative": "the method doesn't apply when the result isn't whole / is negative" },
     "use": { "op": "use", "question": "id of the question to call", "method": "optional: force one of its methods", "with": "callee input → caller name or literal", "out": "callee output → caller name" },
     "search": "on a multiply step: {var, until: [out, target]} | {var, until_power_of_ten: out} | {var, until_divisible_by: [out, divisor]}; var tries 1, 2, 3, … (a ratio table, listing multiples)",
     "repeat": { "op": "repeat", "init": "name → starting name", "choose": "{var, any: 'common_factor', of: [x, y]} picked fresh each round", "steps": "sub-steps run each round; stops when no common factor is left" },

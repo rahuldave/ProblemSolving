@@ -1,0 +1,432 @@
+{
+  "cereal-boxes": {
+    "maps_to": "better-buy",
+    "inputs": {
+      "q1": "12",
+      "p1": "3",
+      "q2": "20",
+      "p2": "4.5"
+    },
+    "answer": "the 20-ounce box",
+    "traps": [
+      {
+        "concept": "rate_pair",
+        "mistake": "Compares prices only and picks the cheaper box.",
+        "answer": "the 12-ounce box",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "direction",
+        "mistake": "Finds ounces per dollar but picks the smaller one.",
+        "answer": "the 12-ounce box",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {}
+  },
+  "free-throws": {
+    "maps_to": "compare-fractions",
+    "inputs": {
+      "a": "3",
+      "b": "4",
+      "c": "5",
+      "d": "7"
+    },
+    "answer": "Maya",
+    "traps": [
+      {
+        "concept": "rate_pair",
+        "mistake": "Compares shots made only (5 > 3).",
+        "answer": "Leo",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "direction",
+        "mistake": "Compares misses per shot and picks the bigger.",
+        "answer": "Leo",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "1 × 7 = 7": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "LCM(1, 2) = 2": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "1 ÷ 4 = 0.25": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "4 ÷ 1 = 4": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "2 ÷ 1 = 2": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "1 × 2 = 2": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "plot (1, 4), (2, 7)": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "GCF(1, 4) = 1": [
+        "Compares misses per shot and picks the bigger."
+      ],
+      "4 − 1 = 3": [
+        "Compares misses per shot and picks the bigger."
+      ]
+    }
+  },
+  "jacket-sale": {
+    "maps_to": "percent-of",
+    "inputs": {
+      "p": "15",
+      "n": "80"
+    },
+    "answer": "68",
+    "traps": [
+      {
+        "concept": "unknown",
+        "mistake": "Answers the savings instead of the new price.",
+        "answer": "12",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "question_type",
+        "mistake": "Takes off $15 instead of 15%.",
+        "answer": "65",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {}
+  },
+  "lemonade-in-all": {
+    "maps_to": "missing-value",
+    "inputs": {
+      "a": "4",
+      "b": "6",
+      "d": "18"
+    },
+    "answer": "8",
+    "traps": [
+      {
+        "concept": "follow_up",
+        "mistake": "Stops at the sugar for all 18 glasses.",
+        "answer": "12",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "delta_vs_total",
+        "mistake": "Reads 18 as 18 more glasses.",
+        "answer": "12",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "multiplicative",
+        "mistake": "Adds instead of scaling: 12 more glasses, so 12 more spoons.",
+        "answer": "12",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {}
+  },
+  "lemonade-more-sugar": {
+    "maps_to": "missing-value",
+    "inputs": {
+      "a": "4",
+      "b": "6",
+      "d": "18"
+    },
+    "answer": "12",
+    "traps": [
+      {
+        "concept": "delta_vs_total",
+        "mistake": "Finds the sugar for all 24 glasses instead of the 18 extra.",
+        "answer": "16",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "delta_vs_total",
+        "mistake": "Reads 18 as the new total and subtracts the 4 spoons already used.",
+        "answer": "8",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "correspondence",
+        "mistake": "Flips one side: glasses over sugar = x over glasses.",
+        "answer": "27",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "distractor",
+        "mistake": "Pairs sugar with the 6 cups of water instead of the 6 glasses.",
+        "answer": "12",
+        "caught_by_answer": false
+      },
+      {
+        "concept": "multiplicative",
+        "mistake": "Adds instead of scaling: 18 more glasses, so 18 more spoons.",
+        "answer": "18",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "4 × 24 = 96": [
+        "Finds the sugar for all 24 glasses instead of the 18 extra."
+      ],
+      "24 ÷ 6 = 4": [
+        "Finds the sugar for all 24 glasses instead of the 18 extra."
+      ],
+      "6 × 4 = 24": [
+        "Finds the sugar for all 24 glasses instead of the 18 extra."
+      ],
+      "6 × 18 = 108": [
+        "Flips one side: glasses over sugar = x over glasses."
+      ],
+      "18 ÷ 4 = 4.5": [
+        "Flips one side: glasses over sugar = x over glasses."
+      ]
+    }
+  },
+  "map-scale": {
+    "maps_to": "missing-value",
+    "inputs": {
+      "a": "25",
+      "b": "1",
+      "d": "3.5"
+    },
+    "answer": "87.5",
+    "traps": [
+      {
+        "concept": "correspondence",
+        "mistake": "Flips one side: inches over miles.",
+        "answer": "0.14",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "rate_pair",
+        "mistake": "Divides the scale by the map distance.",
+        "answer": "50/7",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "1 × 3.5 = 3.5": [
+        "Flips one side: inches over miles."
+      ],
+      "3.5 ÷ 25 = 0.14": [
+        "Flips one side: inches over miles."
+      ]
+    }
+  },
+  "paint-shade": {
+    "maps_to": "proportion-check",
+    "inputs": {
+      "a": "6",
+      "b": "8",
+      "c": "72",
+      "d": "96"
+    },
+    "answer": "yes",
+    "traps": [
+      {
+        "concept": "multiplicative",
+        "mistake": "Compares the differences (2 more white vs 24 more white).",
+        "answer": "no",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {}
+  },
+  "pancakes-dozen": {
+    "maps_to": "missing-value",
+    "inputs": {
+      "a": "2",
+      "b": "12",
+      "d": "24"
+    },
+    "answer": "4",
+    "traps": [
+      {
+        "concept": "implicit_number",
+        "mistake": "Reads '2 dozen' as 2 pancakes.",
+        "answer": "1/3",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "distractor",
+        "mistake": "Scales the eggs instead of the flour.",
+        "answer": "6",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "correspondence",
+        "mistake": "Flips one side: pancakes over flour.",
+        "answer": "144",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "2 × 2 = 4": [
+        "Reads '2 dozen' as 2 pancakes."
+      ],
+      "3 × 24 = 72": [
+        "Scales the eggs instead of the flour."
+      ],
+      "3 ÷ 12 = 0.25": [
+        "Scales the eggs instead of the flour."
+      ],
+      "12 ÷ 3 = 4": [
+        "Scales the eggs instead of the flour."
+      ],
+      "GCF(3, 12) = 3": [
+        "Scales the eggs instead of the flour."
+      ],
+      "12 × 24 = 288": [
+        "Flips one side: pancakes over flour."
+      ],
+      "24 ÷ 2 = 12": [
+        "Flips one side: pancakes over flour."
+      ]
+    }
+  },
+  "pizza-shared": {
+    "maps_to": "add-fractions",
+    "inputs": {
+      "a": "5",
+      "b": "6",
+      "c": "3",
+      "d": "4"
+    },
+    "answer": "19/12",
+    "traps": [
+      {
+        "concept": "question_type",
+        "mistake": "Adds tops and bottoms: (5 + 3)/(6 + 4).",
+        "answer": "0.8",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {}
+  },
+  "sweeter-lemonade": {
+    "maps_to": "compare-fractions",
+    "inputs": {
+      "a": "4",
+      "b": "6",
+      "c": "10",
+      "d": "14"
+    },
+    "answer": "Ann",
+    "traps": [
+      {
+        "concept": "direction",
+        "mistake": "Compares glasses per spoon and calls the bigger one sweeter.",
+        "answer": "Joe",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "rate_pair",
+        "mistake": "Compares spoons of sugar only (10 > 4).",
+        "answer": "Ann",
+        "caught_by_answer": false
+      },
+      {
+        "concept": "multiplicative",
+        "mistake": "Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter.",
+        "answer": "Joe",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "6 × 10 = 60": [
+        "Compares glasses per spoon and calls the bigger one sweeter."
+      ],
+      "plot (6, 4), (14, 10)": [
+        "Compares glasses per spoon and calls the bigger one sweeter."
+      ]
+    }
+  },
+  "train-minutes": {
+    "maps_to": "missing-value",
+    "inputs": {
+      "a": "150",
+      "b": "3",
+      "d": "1.5"
+    },
+    "answer": "75",
+    "traps": [
+      {
+        "concept": "unit_conversion",
+        "mistake": "Uses 90 without converting minutes to hours.",
+        "answer": "4500",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "correspondence",
+        "mistake": "Flips one side: hours over miles.",
+        "answer": "0.03",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "150 × 90 = 13500": [
+        "Uses 90 without converting minutes to hours."
+      ],
+      "90 ÷ 3 = 30": [
+        "Uses 90 without converting minutes to hours."
+      ],
+      "3 × 30 = 90": [
+        "Uses 90 without converting minutes to hours."
+      ],
+      "3 × 1.5 = 4.5": [
+        "Flips one side: hours over miles."
+      ],
+      "1.5 ÷ 150 = 0.01": [
+        "Flips one side: hours over miles."
+      ]
+    }
+  },
+  "walk-to-school": {
+    "maps_to": "percent-of",
+    "inputs": {
+      "p": "35",
+      "n": "60"
+    },
+    "answer": "21",
+    "traps": [
+      {
+        "concept": "distractor",
+        "mistake": "Takes the 10 bike riders out of the class first.",
+        "answer": "17.5",
+        "caught_by_answer": true
+      },
+      {
+        "concept": "rate_pair",
+        "mistake": "Takes 35% of the 10 bike riders.",
+        "answer": "3.5",
+        "caught_by_answer": true
+      }
+    ],
+    "first_steps_revealing_traps": {
+      "50 ÷ 100 = 0.5": [
+        "Takes the 10 bike riders out of the class first."
+      ],
+      "35 × 50 = 1750": [
+        "Takes the 10 bike riders out of the class first."
+      ],
+      "50 ÷ 10 = 5": [
+        "Takes the 10 bike riders out of the class first."
+      ],
+      "10 ÷ 100 = 0.1": [
+        "Takes 35% of the 10 bike riders."
+      ],
+      "35 × 10 = 350": [
+        "Takes 35% of the 10 bike riders."
+      ],
+      "10 ÷ 10 = 1": [
+        "Takes 35% of the 10 bike riders."
+      ]
+    }
+  }
+}

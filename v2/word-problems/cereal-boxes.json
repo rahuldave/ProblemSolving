@@ -1,0 +1,112 @@
+{
+  "id": "cereal-boxes",
+  "title": "Cereal boxes",
+  "text": "A 12-ounce box of cereal costs $3.00 and a 20-ounce box costs $4.50. The store is 2 miles from home. Which box is the better buy?",
+  "concepts": [
+    "question_type",
+    "rate_pair",
+    "direction",
+    "distractor",
+    "answer_in_context"
+  ],
+  "quantities": [
+    {
+      "id": "small_oz",
+      "text": "a 12-ounce box",
+      "value": 12,
+      "unit": "ounces",
+      "counts": "cereal in the small box",
+      "role": "used"
+    },
+    {
+      "id": "small_price",
+      "text": "costs $3.00",
+      "value": "3.00",
+      "unit": "dollars",
+      "counts": "price of the small box",
+      "role": "used"
+    },
+    {
+      "id": "big_oz",
+      "text": "a 20-ounce box",
+      "value": 20,
+      "unit": "ounces",
+      "counts": "cereal in the big box",
+      "role": "used"
+    },
+    {
+      "id": "big_price",
+      "text": "costs $4.50",
+      "value": "4.50",
+      "unit": "dollars",
+      "counts": "price of the big box",
+      "role": "used"
+    },
+    {
+      "id": "distance",
+      "text": "2 miles from home",
+      "value": 2,
+      "unit": "miles",
+      "counts": "distance to the store",
+      "role": "distractor"
+    }
+  ],
+  "unknown": {
+    "text": "which box is the better buy",
+    "counts": "choice",
+    "unit": "box"
+  },
+  "relationship": {
+    "cue": "box … costs",
+    "note": "Each box pairs ounces with dollars; compare dollars per ounce, and the smaller wins."
+  },
+  "maps_to": {
+    "question": "better-buy",
+    "with": {
+      "q1": "small_oz",
+      "p1": "small_price",
+      "q2": "big_oz",
+      "p2": "big_price"
+    },
+    "answer_map": {
+      "first": "the 12-ounce box",
+      "second": "the 20-ounce box",
+      "same": "they're the same value"
+    }
+  },
+  "answer": "the 20-ounce box",
+  "answer_text": "the 20-ounce box ($0.225 per ounce vs $0.25)",
+  "traps": [
+    {
+      "concept": "rate_pair",
+      "mistake": "Compares prices only and picks the cheaper box.",
+      "maps_to": {
+        "question": "better-buy",
+        "with": {
+          "q1": 1,
+          "p1": "small_price",
+          "q2": 1,
+          "p2": "big_price"
+        }
+      }
+    },
+    {
+      "concept": "direction",
+      "mistake": "Finds ounces per dollar but picks the smaller one.",
+      "maps_to": {
+        "question": "better-buy",
+        "with": {
+          "q1": "small_oz",
+          "p1": "small_price",
+          "q2": "big_oz",
+          "p2": "big_price"
+        },
+        "answer_map": {
+          "first": "the 20-ounce box",
+          "second": "the 12-ounce box",
+          "same": "they're the same value"
+        }
+      }
+    }
+  ]
+}

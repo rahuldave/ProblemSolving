@@ -1,0 +1,94 @@
+{
+  "id": "lemonade-in-all",
+  "title": "Lemonade: how many in all",
+  "text": "Joe used 4 spoons of sugar to make the first 6 glasses of lemonade. He wants 18 glasses in all. How many more spoons of sugar does he need?",
+  "concepts": [
+    "delta_vs_total",
+    "follow_up",
+    "rate_pair",
+    "multiplicative"
+  ],
+  "quantities": [
+    {
+      "id": "sugar",
+      "text": "4 spoons of sugar",
+      "value": 4,
+      "unit": "spoons",
+      "counts": "sugar already used",
+      "role": "used"
+    },
+    {
+      "id": "glasses",
+      "text": "the first 6 glasses",
+      "value": 6,
+      "unit": "glasses",
+      "counts": "lemonade made",
+      "role": "used"
+    },
+    {
+      "id": "total",
+      "text": "18 glasses in all",
+      "value": 18,
+      "unit": "glasses",
+      "counts": "lemonade wanted in total",
+      "role": "used",
+      "concepts": [
+        "delta_vs_total"
+      ]
+    }
+  ],
+  "unknown": {
+    "text": "how many more spoons",
+    "counts": "extra sugar",
+    "unit": "spoons"
+  },
+  "relationship": {
+    "cue": "to make",
+    "note": "4 spoons per 6 glasses; 18 is a total, so the answer is total sugar minus sugar already used."
+  },
+  "maps_to": {
+    "question": "missing-value",
+    "with": {
+      "a": "sugar",
+      "b": "glasses",
+      "d": "total"
+    }
+  },
+  "then": {
+    "expr": "subtract(result, sugar)",
+    "note": "subtract the sugar already used"
+  },
+  "answer": 8,
+  "answer_text": "8 more spoons of sugar",
+  "traps": [
+    {
+      "concept": "follow_up",
+      "mistake": "Stops at the sugar for all 18 glasses.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "sugar",
+          "b": "glasses",
+          "d": "total"
+        }
+      }
+    },
+    {
+      "concept": "delta_vs_total",
+      "mistake": "Reads 18 as 18 more glasses.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "sugar",
+          "b": "glasses",
+          "d": "total"
+        }
+      }
+    },
+    {
+      "concept": "multiplicative",
+      "mistake": "Adds instead of scaling: 12 more glasses, so 12 more spoons.",
+      "expr": "subtract(total, glasses)"
+    }
+  ]
+}

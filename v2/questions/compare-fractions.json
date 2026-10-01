@@ -121,8 +121,8 @@
       "best_when": "Both fractions are just below 1 (7/8 vs 9/10).",
       "watch_out": "Comparing the gaps is a smaller compare-fractions question.",
       "steps": [
-        { "op": "subtract", "args": ["b", "a"], "out": "r1", "text": "{a}/{b} is {r1}/{b} away from 1." },
-        { "op": "subtract", "args": ["d", "c"], "out": "r2", "text": "{c}/{d} is {r2}/{d} away from 1." },
+        { "op": "subtract", "args": ["b", "a"], "out": "r1", "requires_nonnegative": true, "text": "{a}/{b} is {r1}/{b} away from 1." },
+        { "op": "subtract", "args": ["d", "c"], "out": "r2", "requires_nonnegative": true, "text": "{c}/{d} is {r2}/{d} away from 1." },
         { "op": "use", "question": "compare-fractions", "with": { "a": "r1", "b": "b", "c": "r2", "d": "d" }, "out": { "answer": "gap" }, "text": "Compare the gaps {r1}/{b} and {r2}/{d}." },
         { "op": "map", "args": ["gap"], "out": "answer", "table": { "first": "second", "second": "first", "equal": "equal", "not equal": "not equal" }, "hidden": true }
       ]

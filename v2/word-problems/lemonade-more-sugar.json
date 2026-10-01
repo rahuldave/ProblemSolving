@@ -1,0 +1,129 @@
+{
+  "id": "lemonade-more-sugar",
+  "title": "Lemonade: more sugar",
+  "text": "Joe is having a party. He has 6 cups of water and 4 spoons of sugar, which make 6 glasses of lemonade. He needs 18 more glasses of lemonade. How many more spoons of sugar does he need?",
+  "concepts": [
+    "question_type",
+    "quantity",
+    "rate_pair",
+    "correspondence",
+    "distractor",
+    "delta_vs_total",
+    "multiplicative",
+    "unknown"
+  ],
+  "quantities": [
+    {
+      "id": "water",
+      "text": "6 cups of water",
+      "value": 6,
+      "unit": "cups",
+      "counts": "water",
+      "role": "distractor"
+    },
+    {
+      "id": "sugar",
+      "text": "4 spoons of sugar",
+      "value": 4,
+      "unit": "spoons",
+      "counts": "sugar",
+      "role": "used"
+    },
+    {
+      "id": "glasses",
+      "text": "6 glasses of lemonade",
+      "value": 6,
+      "unit": "glasses",
+      "counts": "lemonade",
+      "role": "used"
+    },
+    {
+      "id": "more",
+      "text": "18 more glasses",
+      "value": 18,
+      "unit": "glasses",
+      "counts": "extra lemonade",
+      "role": "used",
+      "concepts": [
+        "delta_vs_total"
+      ]
+    }
+  ],
+  "unknown": {
+    "text": "how many more spoons of sugar",
+    "counts": "extra sugar",
+    "unit": "spoons"
+  },
+  "relationship": {
+    "cue": "which make",
+    "note": "4 spoons of sugar go with 6 glasses; the water is a distractor for a question about sugar."
+  },
+  "maps_to": {
+    "question": "missing-value",
+    "with": {
+      "a": "sugar",
+      "b": "glasses",
+      "d": "more"
+    }
+  },
+  "answer": 12,
+  "answer_text": "12 more spoons of sugar",
+  "traps": [
+    {
+      "concept": "delta_vs_total",
+      "mistake": "Finds the sugar for all 24 glasses instead of the 18 extra.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "sugar",
+          "b": "glasses",
+          "d": "add(glasses, more)"
+        }
+      }
+    },
+    {
+      "concept": "delta_vs_total",
+      "mistake": "Reads 18 as the new total and subtracts the 4 spoons already used.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "sugar",
+          "b": "glasses",
+          "d": "more"
+        }
+      },
+      "then": {
+        "expr": "subtract(result, sugar)"
+      }
+    },
+    {
+      "concept": "correspondence",
+      "mistake": "Flips one side: glasses over sugar = x over glasses.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "glasses",
+          "b": "sugar",
+          "d": "more"
+        }
+      }
+    },
+    {
+      "concept": "distractor",
+      "mistake": "Pairs sugar with the 6 cups of water instead of the 6 glasses.",
+      "maps_to": {
+        "question": "missing-value",
+        "with": {
+          "a": "sugar",
+          "b": "water",
+          "d": "more"
+        }
+      }
+    },
+    {
+      "concept": "multiplicative",
+      "mistake": "Adds instead of scaling: 18 more glasses, so 18 more spoons.",
+      "expr": "more"
+    }
+  ]
+}
