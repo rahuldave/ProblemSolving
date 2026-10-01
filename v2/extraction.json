@@ -80,7 +80,7 @@
     "title": "short name",
     "text": "the story",
     "concepts": "extraction concepts this problem exercises",
-    "quantities": "[{id, text (phrase from the story), value (as written; fractions like '5/6' allowed), use_value? (after conversion or reading a word as a number), unit, counts, role: used | distractor, concepts?}]",
+    "quantities": "[{id, text (phrase from the story), value (as written; fractions like '5/6' allowed), derive? ({expr, note}: an arithmetic step that converts the written value, e.g. multiply(target, 12) for '2 dozen'; names in expr mean the values as written), unit, counts, role: used | distractor, concepts?}]",
     "unknown": "{text, counts, unit}",
     "relationship": "{cue, note}: the phrase that ties the rate pair together",
     "maps_to": "{question, with: {input: expression}, answer_map?}. Expressions use quantity ids and the tree expression syntax (add(x, y), num(q), den(q), …).",

@@ -462,6 +462,12 @@ def esc(s):
 
 
 def example_graph(qid, ex, variants):
+    body, na, _, _ = example_graph_parts(qid, ex, variants)
+    return "\n".join(["flowchart LR"] + body), na
+
+
+def example_graph_parts(qid, ex, variants, prefix="n"):
+    """Mermaid lines (no header) for one example, plus the root and answer node ids so callers can attach to them."""
     q, methods = Q[qid], methods_of(qid)
     mental = {key_of({"op": m["op"], "args": m["args"]}) for m in q.get("mental_first_steps", [])}
     runs = {}
@@ -474,8 +480,8 @@ def example_graph(qid, ex, variants):
         runs.setdefault(v["method"], []).append((v, env, trace))
 
     ids = itertools.count()
-    nid = lambda: f"n{next(ids)}"
-    lines = ["flowchart LR"]
+    nid = lambda: f"{prefix}{next(ids)}"
+    lines = []
     styles = {"cls": [], "first": [], "second": [], "method": [], "skill": [], "step": [], "ans": []}
 
     def node(kind, text, shape="[]"):
@@ -556,7 +562,7 @@ def example_graph(qid, ex, variants):
         if ns:
             lines.append(f"  class {','.join(ns)} {kind}")
     na = sorted(mid for mid, rs in runs.items() if not rs)
-    return "\n".join(lines), na
+    return lines, na, root, answer
 
 
 def edge(lines, a, b, vias):
@@ -868,8 +874,9 @@ def cached_variants(qid):
 
 
 def wp_context(wp):
-    vals = {q["id"]: num(q.get("use_value", q["value"])) for q in wp["quantities"]}
+    """Values as used (after any derive step) and as written."""
     raw = {q["id"]: num(q["value"]) for q in wp["quantities"]}
+    vals = {q["id"]: wp_eval(q["derive"]["expr"], raw, raw) if "derive" in q else raw[q["id"]] for q in wp["quantities"]}
     return vals, raw
 
 
@@ -975,10 +982,12 @@ def diagnostic_firsts(info):
 
 
 def word_problem_graph(wp, info):
+    """Story → quantities (→ conversion steps) → the mapped question's full method graph → follow-up step → answer.
+    Traps hang off the story with the first steps that give each one away."""
     lines = ["flowchart LR"]
     ids = itertools.count()
     nid = lambda: f"w{next(ids)}"
-    styles = {"story": [], "used": [], "distractor": [], "question": [], "step": [], "ans": [], "trap": []}
+    styles = {"wstory": [], "wused": [], "wdist": [], "wop": [], "wfinal": [], "wtrap": [], "wtfirst": []}
 
     def node(kind, text, o="[", c="]"):
         n = nid()
@@ -986,42 +995,87 @@ def word_problem_graph(wp, info):
         styles[kind].append(n)
         return n
 
-    story = node("story", wp["title"], "([", "])")
-    mt = wp["maps_to"]
+    def build(expr, nodes, values, raw, note=""):
+        """Draw an expression as operation nodes; returns (node feeding the result or None, value)."""
+        if not isinstance(expr, str) or re.fullmatch(r"[\d.]+", expr.strip()):
+            return None, num(expr)
+        expr = expr.strip()
+        m = re.fullmatch(r"(\w+)\((.*)\)", expr)
+        if not m:
+            return nodes[expr], values[expr]
+        if m[1] == "raw":
+            return nodes[m[2].strip()], raw[m[2].strip()]
+        parts = [build(a, nodes, values, raw) for a in split_top(m[2])]
+        if m[1] in ("num", "den"):
+            v = parts[0][1]
+            return parts[0][0], Fraction(v.numerator if m[1] == "num" else v.denominator)
+        x, y = parts[0][1], parts[1][1]
+        result = apply_op(m[1], x, y)
+        on = node("wop", label({"op": m[1]}, [x, y], result) + (f" ({note})" if note else ""))
+        for src, _ in parts:
+            if src:
+                lines.append(f"  {src} --> {on}")
+        return on, result
+
     vals, raw = wp_context(wp)
-    prompt = render(Q[mt["question"]]["prompt"], info["inputs"]).rstrip(".")
-    qn = node("question", f"{Q[mt['question']]['title']}: {prompt}")
-    used_ids = {n for e in mt["with"].values() if isinstance(e, str) for n in re.findall(r"[A-Za-z_]\w*", e)}
+    mt = wp["maps_to"]
+    qid = mt["question"]
+    story = node("wstory", wp["title"], "([", "])")
+
+    # quantities, with conversion steps drawn as operations
+    effective = {}
     for q in wp["quantities"]:
-        extra = f" = {fmt(num(q['use_value']))} {q.get('note', '').split('= ')[-1].split()[-1] if q.get('note') else ''}".rstrip() if "use_value" in q else ""
-        kind = "distractor" if q["role"] == "distractor" else "used"
-        qq = node(kind, f"{q['text']}{extra}" + (" (not needed)" if kind == "distractor" else ""))
-        lines.append(f"  {story} --> {qq}")
-        if q["id"] in used_ids:
-            inp = next(k for k, e in mt["with"].items() if isinstance(e, str) and q["id"] in re.findall(r"[A-Za-z_]\w*", e))
-            lines.append(f'  {qq} -->|"{inp}"| {qn}')
-    last = qn
+        distract = q["role"] == "distractor"
+        qn = node("wdist" if distract else "wused", q["text"] + (" (not needed)" if distract else ""))
+        lines.append(f"  {story} --> {qn}")
+        effective[q["id"]] = qn
+        if "derive" in q:
+            effective[q["id"]], _ = build(q["derive"]["expr"], {q["id"]: qn}, raw, raw, q["derive"].get("note", ""))
+
+    # the mapped question, drawn with every method's operations
+    core, _, _ = interpret(wp, {"maps_to": mt})
+    ex = {"values": {k: fmt(v) for k, v in info["inputs"].items()}, "answer": core if isinstance(core, str) else fmt(core)}
+    body, _, root, answer = example_graph_parts(qid, ex, cached_variants(qid), prefix="c")
+    lines += body
+    for k, e in mt["with"].items():
+        src, _ = build(e, effective, vals, raw)
+        if src:
+            lines.append(f'  {src} -->|"{k}"| {root}')
+
+    # follow-up step and the answer in the story's terms
+    last = answer
     if wp.get("then"):
-        core, _, _ = interpret(wp, {"maps_to": mt})
-        r = node("step", f"result {fmt(core) if not isinstance(core, str) else core}")
-        lines.append(f"  {last} --> {r}")
-        t = node("step", wp["then"].get("note") or wp["then"]["expr"])
-        lines.append(f"  {r} --> {t}")
-        last = t
-    ans = node("ans", f"Answer: {wp['answer_text']}", "([", "])")
-    lines.append(f"  {last} --> {ans}")
+        last, _ = build(wp["then"]["expr"], {**effective, "result": answer}, {**vals, "result": core}, raw,
+                        wp["then"].get("note", ""))
+    final = node("wfinal", wp["answer_text"], "([", "])")
+    lines.append(f"  {last} --> {final}")
+
+    # traps and the first steps that give them away
+    correct = set(info["firsts"])
     for t in info["traps"]:
         shown = t["computed"] if isinstance(t["computed"], str) else fmt(t["computed"])
-        tn = node("trap", f"{t['mistake']} → {shown}" + ("  (same answer!)" if t["same_as_correct"] else ""))
+        tn = node("wtrap", f"{t['mistake']} → {shown}" + (" (same answer!)" if t["same_as_correct"] else ""))
         lines.append(f'  {story} -.->|"{esc(EXTRACTION["concepts"][t["concept"]]["name"])}"| {tn}')
+        tells = [f["label"] for key, f in t["firsts"].items() if key not in correct][:4]
+        for lab in tells:
+            fn = node("wtfirst", lab)
+            lines.append(f"  {tn} -.-> {fn}")
+
     lines += [
-        "  classDef story fill:#fde4e1,stroke:#c4554a,color:#222",
-        "  classDef used fill:#e3edfd,stroke:#5b7fd1,color:#222",
-        "  classDef distractor fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777",
-        "  classDef question fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold",
+        "  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222",
+        "  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222",
+        "  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222",
+        "  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold",
+        "  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222",
         "  classDef step fill:#ffffff,stroke:#999,color:#222",
-        "  classDef ans fill:#e3f4e6,stroke:#3f9a55,color:#222",
-        "  classDef trap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33",
+        "  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222",
+        "  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222",
+        "  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222",
+        "  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777",
+        "  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222",
+        "  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold",
+        "  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33",
+        "  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33",
     ]
     lines += [f"  class {','.join(v)} {k}" for k, v in styles.items() if v]
     return "\n".join(lines)
@@ -1035,6 +1089,11 @@ def word_problems_md(infos, link=lambda u: f"{u}.md", h="#"):
            "Each problem below maps to one of the questions above; its **traps** are common wrong extractions, "
            "written as alternative mappings so the wrong answer each one produces is computed, not guessed. "
            "That lets an app diagnose an extraction mistake from a student's answer, and often from their first step.", "",
+           "Each graph drills from the story down to the arithmetic: **story** → its **quantities** (grey dashed = not needed; "
+           "white boxes are arithmetic steps, such as converting 2 dozen to 24) → the mapped question with **every method's "
+           "first steps and operations**, exactly as in the question graphs → the **follow-up step**, if any → the "
+           "**answer in the story's terms** (green). **Red dashed** branches are traps, each with the first steps "
+           "that give it away (steps no correct reading starts with).", "",
            f"{h}# Extraction concepts", "", "| Concept | What the student does | Cues | Typical mistake |", "|---|---|---|---|"]
     for k, v in c.items():
         out.append(f"| **{v['name']}** `{k}` | {v['does']} | {'; '.join(v.get('cues', [])) or '—'} | {v.get('mistake', '—')} |")
@@ -1049,7 +1108,10 @@ def word_problems_md(infos, link=lambda u: f"{u}.md", h="#"):
         out += [f'<a name="{wid}"></a>', "", f"{h}# {wp['title']}", "", f"> {wp['text']}", "",
                 "| Phrase | Value | Counts | Role |", "|---|---|---|---|"]
         for q in wp["quantities"]:
-            val = q["value"] if "use_value" not in q else f"{q['value']} {q['unit']} → **{fmt(num(q['use_value']))}**"
+            val = q["value"]
+            if "derive" in q:
+                vals, raw = wp_context(wp)
+                val = f"{q['value']} {q['unit']} → **{fmt(vals[q['id']])}** ({q['derive'].get('note', q['derive']['expr'])})"
             out.append(f"| “{q['text']}” | {val} | {q['counts']} | {q['role']} |")
         out += ["", f"**Asked:** {wp['unknown']['text']} ({wp['unknown']['unit'] or wp['unknown']['counts']}). "
                 f"**Link:** “{wp['relationship']['cue']}”: {wp['relationship']['note']}", "",

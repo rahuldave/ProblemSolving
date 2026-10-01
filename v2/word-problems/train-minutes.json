@@ -31,11 +31,13 @@
       "unit": "minutes",
       "counts": "new time",
       "role": "used",
-      "use_value": 1.5,
       "concepts": [
         "unit_conversion"
       ],
-      "note": "90 minutes = 1.5 hours"
+      "derive": {
+        "expr": "divide(minutes, 60)",
+        "note": "60 minutes = 1 hour"
+      }
     }
   ],
   "unknown": {
