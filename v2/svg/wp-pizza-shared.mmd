@@ -1,103 +1,326 @@
 flowchart LR
-  w0(["Sharing pizza"])
-  w1["5/6 of a pizza"]
-  w0 --> w1
-  w2["3/4 of a pizza"]
-  w0 --> w2
-  c0(["Find 5/6 + 3/4."])
-  c1(["Answer: 19/12"])
-  c2["Common denominator"]
-  c3["Find a common multiple of 6 and 4 → 12"]
-  c2 --> c3
-  c4["Solve 5/6 = x/12 → 10"]
-  c3 --> c4
-  c5["Solve 3/4 = x/12 → 9"]
-  c4 --> c5
-  c6["10 + 9 = 19"]
-  c5 --> c6
-  c7["Simplify 19/12 → 19/12"]
-  c6 --> c7
-  c7 --> c1
-  c8["Bow-tie (cross-multiply)"]
-  c9["Find the cross products of 5/6 and 3/4 → 20/18"]
-  c8 --> c9
-  c10["6 × 4 = 24"]
-  c9 --> c10
-  c11["20 + 18 = 38"]
-  c10 --> c11
-  c12["Simplify 38/24 → 19/12"]
-  c11 --> c12
-  c12 --> c1
-  c13["Convert to decimals"]
-  c14["Write 5/6 as a decimal → ≈ 0.833"]
-  c13 --> c14
-  c15["Write 3/4 as a decimal → 0.75"]
-  c14 --> c15
-  c16["5/6 + 0.75 = 19/12"]
-  c15 --> c16
-  c16 --> c1
-  c17["5 ÷ 6 ≈ 0.833"]
-  c18{{"divide · within"}}
-  c0 --> c18
-  c18 --> c17
-  c17 -->|"to-decimal/divide"| c13
-  c19["GCF(6, 4) = 2"]
-  c20{{"factor · across"}}
-  c0 --> c20
-  c20 --> c19
-  c19 -->|"common-multiple/gcf_formula"| c2
-  c21["5 × 4 = 20"]
-  c22{{"multiply · across"}}
-  c0 --> c22
-  c22 --> c21
-  c21 -->|"cross-products/diagonals"| c8
-  c23["6 × 4 = 24"]
-  c22 --> c23
-  c23 -->|"common-multiple/product"| c2
-  c24["LCM(6, 4) = 12"]
-  c22 --> c24
-  c24 -->|"common-multiple/recall"| c2
-  c25["6 × 2 = 12"]
-  c26{{"multiply · within"}}
-  c0 --> c26
-  c26 --> c25
-  c25 -->|"common-multiple/list_multiples"| c2
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c18,c20,c22,c26 cls
-  class c17,c19,c21,c23,c24,c25 first
-  class c2,c8,c13 method
-  class c3,c4,c5,c7,c9,c12,c14,c15 skill
-  class c6,c10,c11,c16 step
-  class c0,c1 ans
-  w1 -->|"a"| c0
-  w1 -->|"b"| c0
-  w2 -->|"c"| c0
-  w2 -->|"d"| c0
-  w3(["1 7/12 pizzas"])
-  c1 --> w3
-  w4["Adds tops and bottoms: (5 + 3)/(6 + 4). → 0.8"]
-  w0 -.->|"Recognize the question type"| w4
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2 wused
-  class w3 wfinal
-  class w4 wtrap
+  n0(["Story<br/>Sharing pizza"])
+  n4["Add the tops<br/>5 + 3 = 8"]
+  n5["Add the bottoms<br/>6 + 4 = 10"]
+  n6["Write tops over bottoms<br/>8 ÷ 10 = 0.8"]
+  n7(["0.8 ✗"])
+  n135(["Answer<br/>1 7/12 pizzas"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3{{"× What kind of question is this?"}}
+    n8["How do you say 19/12 of a pizza?<br/>1 7/12 pizzas"]
+  end
+  subgraph nf1["Add two fractions (as on its own page)"]
+    direction LR
+    n9(["Find 5/6 + 3/4."])
+    n10(["Answer: 19/12"])
+    n11{{"× Which first step?"}}
+    n12["Divide the top by the bottom<br/>3 ÷ 4 = 0.75<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n13[["Write the first fraction as a decimal<br/>Write 5/6 as a decimal → ≈ 0.833"]]
+    n14["Add the decimals<br/>5/6 + 0.75 = 19/12"]
+    n15["Divide the top by the bottom<br/>5 ÷ 6 ≈ 0.833<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n16[["Write the second fraction as a decimal<br/>Write 3/4 as a decimal → 0.75"]]
+    n17["Add the decimals<br/>5/6 + 0.75 = 19/12"]
+    n18["Find the greatest common factor<br/>GCF(6, 4) = 2<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n19["Divide one number by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find a common multiple]"]
+    n20["Multiply by the other number<br/>3 × 4 = 12<br/>[in: Find a common multiple]"]
+    n21{"all"}
+    n22{"all"}
+    n23[["Rewrite the first fraction over 12<br/>Solve 5/6 = x/12 → 10"]]
+    n24[["Rewrite the second fraction over 12<br/>Solve 3/4 = x/12 → 9"]]
+    n25["Add the new tops<br/>10 + 9 = 19"]
+    n26[["Simplify the sum<br/>Simplify 19/12 → 19 and 12"]]
+    n27["Recall the least common multiple<br/>LCM(6, 4) = 12<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n28{"all"}
+    n29{"all"}
+    n30[["Rewrite the first fraction over 12<br/>Solve 5/6 = x/12 → 10"]]
+    n31[["Rewrite the second fraction over 12<br/>Solve 3/4 = x/12 → 9"]]
+    n32["Add the new tops<br/>10 + 9 = 19"]
+    n33[["Simplify the sum<br/>Simplify 19/12 → 19 and 12"]]
+    n34["Multiply the second top by the first bottom<br/>3 × 6 = 18<br/>[multiply · across]<br/>[in: Cross products]"]
+    n35["Multiply the first top by the second bottom<br/>5 × 4 = 20<br/>[in: Cross products]"]
+    n36["Multiply the bottoms<br/>6 × 4 = 24"]
+    n37["Add the cross products for the new top<br/>20 + 18 = 38"]
+    n38[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n39["Multiply the first top by the second bottom<br/>5 × 4 = 20<br/>[multiply · across]<br/>[in: Cross products]"]
+    n40["Multiply the second top by the first bottom<br/>3 × 6 = 18<br/>[in: Cross products]"]
+    n41["Multiply the bottoms<br/>6 × 4 = 24"]
+    n42["Add the cross products for the new top<br/>20 + 18 = 38"]
+    n43[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n44["Multiply the two numbers<br/>6 × 4 = 24<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n45{{"× Which next step?"}}
+    n46["Multiply across the diagonal<br/>5 × 24 = 120<br/>[in: Find the missing value in a proportion]"]
+    n47["Divide by the remaining number<br/>120 ÷ 6 = 20<br/>[in: Find the missing value in a proportion]"]
+    n48[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n49["Add the new tops<br/>20 + 18 = 38"]
+    n50[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n51["Find the scale factor between the bottoms<br/>24 ÷ 6 = 4<br/>[in: Find the missing value in a proportion]"]
+    n52["Scale the top by the same factor<br/>5 × 4 = 20<br/>[in: Find the missing value in a proportion]"]
+    n53[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n54["Add the new tops<br/>20 + 18 = 38"]
+    n55[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n56["Divide the top by the bottom<br/>5 ÷ 6 ≈ 0.833<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n57["Scale up to 24<br/>5/6 × 24 = 20<br/>[in: Find the missing value in a proportion]"]
+    n58[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n59["Add the new tops<br/>20 + 18 = 38"]
+    n60[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n61["Divide the top by the bottom<br/>6 ÷ 5 = 1.2<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n62["Divide by that rate<br/>24 ÷ 1.2 = 20<br/>[in: Find the missing value in a proportion]"]
+    n63[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n64["Add the new tops<br/>20 + 18 = 38"]
+    n65[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n66["Scale the bottom up to 10, 100, or 1000<br/>5 × 2 = 10<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n67["Scale the top by the same factor<br/>6 × 2 = 12<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n68["Read off the decimal<br/>12 ÷ 10 = 1.2<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n69["Divide by that rate<br/>24 ÷ 1.2 = 20<br/>[in: Find the missing value in a proportion]"]
+    n70[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n71["Add the new tops<br/>20 + 18 = 38"]
+    n72[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n73["Build the bottom up by 2, 3, 4, … until it reaches 24<br/>6 × 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n74["Scale the top by the same factor<br/>3 × 6 = 18<br/>[in: Find the missing value in a proportion]"]
+    n75[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n76["Add the new tops<br/>20 + 18 = 38"]
+    n77[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n78["Find the greatest common factor<br/>GCF(5, 6) = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n79{"all"}
+    n80{"all"}
+    n81["Divide the top by the GCF<br/>5 ÷ 1 = 5<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n82["Divide the bottom by the GCF<br/>6 ÷ 1 = 6<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n83["Find the scale factor from the simplified bottom<br/>24 ÷ 6 = 4<br/>[in: Find the missing value in a proportion]"]
+    n84["Scale the simplified top<br/>5 × 4 = 20<br/>[in: Find the missing value in a proportion]"]
+    n85[["Rewrite the second fraction over 24<br/>Solve 3/4 = x/24 → 18"]]
+    n86["Add the new tops<br/>20 + 18 = 38"]
+    n87[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n88["Multiply across the diagonal<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n89["Divide by the remaining number<br/>72 ÷ 4 = 18<br/>[in: Find the missing value in a proportion]"]
+    n90[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n91["Add the new tops<br/>20 + 18 = 38"]
+    n92[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n93["Find the scale factor between the bottoms<br/>24 ÷ 4 = 6<br/>[in: Find the missing value in a proportion]"]
+    n94["Divide the top by the bottom<br/>3 ÷ 4 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n95["Scale up to 24<br/>0.75 × 24 = 18<br/>[in: Find the missing value in a proportion]"]
+    n96[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n97["Add the new tops<br/>20 + 18 = 38"]
+    n98[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n99["Scale the bottom up to 10, 100, or 1000<br/>4 × 25 = 100<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n100["Scale the top by the same factor<br/>3 × 25 = 75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n101["Read off the decimal<br/>75 ÷ 100 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n102["Scale up to 24<br/>0.75 × 24 = 18<br/>[in: Find the missing value in a proportion]"]
+    n103[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n104["Add the new tops<br/>20 + 18 = 38"]
+    n105[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n106["Divide the top by the bottom<br/>4 ÷ 3 ≈ 1.333<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n107["Divide by that rate<br/>24 ÷ 4/3 = 18<br/>[in: Find the missing value in a proportion]"]
+    n108[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n109["Add the new tops<br/>20 + 18 = 38"]
+    n110[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n111["Find the greatest common factor<br/>GCF(3, 4) = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n112{"all"}
+    n113{"all"}
+    n114["Divide the top by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n115["Divide the bottom by the GCF<br/>4 ÷ 1 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n116["Find the scale factor from the simplified bottom<br/>24 ÷ 4 = 6<br/>[in: Find the missing value in a proportion]"]
+    n117["Scale the simplified top<br/>3 × 6 = 18<br/>[in: Find the missing value in a proportion]"]
+    n118[["Rewrite the first fraction over 24<br/>Solve 5/6 = x/24 → 20"]]
+    n119["Add the new tops<br/>20 + 18 = 38"]
+    n120[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n121["Multiply the first top by the second bottom<br/>5 × 4 = 20<br/>[in: Cross products]"]
+    n122["Multiply the second top by the first bottom<br/>3 × 6 = 18<br/>[in: Cross products]"]
+    n123["Add the cross products for the new top<br/>20 + 18 = 38"]
+    n124[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n125["Multiply the second top by the first bottom<br/>3 × 6 = 18<br/>[in: Cross products]"]
+    n126["Multiply the first top by the second bottom<br/>5 × 4 = 20<br/>[in: Cross products]"]
+    n127["Add the cross products for the new top<br/>20 + 18 = 38"]
+    n128[["Simplify the sum<br/>Simplify 38/24 → 19 and 12"]]
+    n129["List multiples of 6 until 4 divides one<br/>6 × 2 = 12<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n130["Scale the bottom up to 10, 100, or 1000<br/>4 × 25 = 100<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n131["Scale the top by the same factor<br/>3 × 25 = 75<br/>[in: Write a fraction as a decimal]"]
+    n132["Read off the decimal<br/>75 ÷ 100 = 0.75<br/>[in: Write a fraction as a decimal]"]
+    n133[["Write the first fraction as a decimal<br/>Write 5/6 as a decimal → ≈ 0.833"]]
+    n134["Add the decimals<br/>5/6 + 0.75 = 19/12"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 -->|"✓ 'In all': add the two fractions"| n2
+  n4 --> n5
+  n5 --> n6
+  n6 --> n7
+  n3 -.->|"✗ Recognize the question type: Add the tops and add the bottoms"| n4
+  n1 --> n8
+  n8 --> n2
+  n9 --> n11
+  n11 -->|"Convert to decimals"| n12
+  n13 --> n14
+  n14 --> n10
+  n12 --> n13
+  n11 -->|"Convert to decimals"| n15
+  n16 --> n17
+  n17 --> n10
+  n15 --> n16
+  n11 -->|"Common denominator"| n18
+  n19 --> n20
+  n21 --> n23
+  n23 --> n22
+  n21 --> n24
+  n24 --> n22
+  n20 --> n21
+  n22 --> n25
+  n25 --> n26
+  n26 --> n10
+  n18 --> n19
+  n11 -->|"Common denominator"| n27
+  n28 --> n30
+  n30 --> n29
+  n28 --> n31
+  n31 --> n29
+  n29 --> n32
+  n32 --> n33
+  n33 --> n10
+  n27 --> n28
+  n11 -->|"Bow-tie (cross-multiply)"| n34
+  n35 --> n36
+  n36 --> n37
+  n37 --> n38
+  n38 --> n10
+  n34 --> n35
+  n11 -->|"Bow-tie (cross-multiply)"| n39
+  n40 --> n41
+  n41 --> n42
+  n42 --> n43
+  n43 --> n10
+  n39 --> n40
+  n11 -->|"Bow-tie (cross-multiply) or Common denominator"| n44
+  n44 --> n45
+  n45 -->|"Common denominator"| n46
+  n47 --> n48
+  n48 --> n49
+  n49 --> n50
+  n50 --> n10
+  n46 --> n47
+  n45 -->|"Common denominator"| n51
+  n52 --> n53
+  n53 --> n54
+  n54 --> n55
+  n55 --> n10
+  n51 --> n52
+  n45 -->|"Common denominator"| n56
+  n57 --> n58
+  n58 --> n59
+  n59 --> n60
+  n60 --> n10
+  n56 --> n57
+  n45 -->|"Common denominator"| n61
+  n62 --> n63
+  n63 --> n64
+  n64 --> n65
+  n65 --> n10
+  n61 --> n62
+  n45 -->|"Common denominator"| n66
+  n67 --> n68
+  n68 --> n69
+  n69 --> n70
+  n70 --> n71
+  n71 --> n72
+  n72 --> n10
+  n66 --> n67
+  n45 -->|"Common denominator"| n73
+  n73 --> n52
+  n74 --> n75
+  n75 --> n76
+  n76 --> n77
+  n77 --> n10
+  n73 --> n74
+  n45 -->|"Common denominator"| n78
+  n79 --> n81
+  n81 --> n80
+  n79 --> n82
+  n82 --> n80
+  n80 --> n83
+  n83 --> n84
+  n84 --> n85
+  n85 --> n86
+  n86 --> n87
+  n87 --> n10
+  n78 --> n79
+  n45 -->|"Common denominator"| n88
+  n89 --> n90
+  n90 --> n91
+  n91 --> n92
+  n92 --> n10
+  n88 --> n89
+  n45 -->|"Common denominator"| n93
+  n93 --> n74
+  n45 -->|"Common denominator"| n94
+  n95 --> n96
+  n96 --> n97
+  n97 --> n98
+  n98 --> n10
+  n94 --> n95
+  n45 -->|"Common denominator"| n99
+  n100 --> n101
+  n101 --> n102
+  n102 --> n103
+  n103 --> n104
+  n104 --> n105
+  n105 --> n10
+  n99 --> n100
+  n45 -->|"Common denominator"| n106
+  n107 --> n108
+  n108 --> n109
+  n109 --> n110
+  n110 --> n10
+  n106 --> n107
+  n45 -->|"Common denominator"| n111
+  n112 --> n114
+  n114 --> n113
+  n112 --> n115
+  n115 --> n113
+  n113 --> n116
+  n116 --> n117
+  n117 --> n118
+  n118 --> n119
+  n119 --> n120
+  n120 --> n10
+  n111 --> n112
+  n45 -->|"Bow-tie (cross-multiply)"| n121
+  n122 --> n123
+  n123 --> n124
+  n124 --> n10
+  n121 --> n122
+  n45 -->|"Bow-tie (cross-multiply)"| n125
+  n126 --> n127
+  n127 --> n128
+  n128 --> n10
+  n125 --> n126
+  n11 -->|"Common denominator"| n129
+  n129 --> n28
+  n11 -->|"Convert to decimals"| n130
+  n131 --> n132
+  n132 --> n133
+  n133 --> n134
+  n134 --> n10
+  n130 --> n131
+  n2 ==>|"a: 5/6 of a pizza<br/>b: 5/6 of a pizza<br/>c: 3/4 of a pizza<br/>d: 3/4 of a pizza"| n9
+  n10 --> n135
+  linkStyle 6 stroke:#c4554a,color:#c4554a
+  linkStyle 161 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n21,n22,n28,n29,n79,n80,n112,n113 k_all
+  class n13,n16,n23,n24,n26,n30,n31,n33,n38,n43,n48,n50,n53,n55,n58,n60,n63,n65,n70,n72,n75,n77,n85,n87,n90,n92,n96,n98,n103,n105,n108,n110,n118,n120,n124,n128,n133 k_call
+  class n3,n11,n45 k_choice
+  class n10,n135 k_end
+  class n12,n15,n18,n27,n34,n39,n44,n129,n130 k_first
+  class n0,n9 k_start
+  class n4,n5,n6,n8,n14,n17,n19,n20,n25,n32,n35,n36,n37,n40,n41,n42,n46,n47,n49,n51,n52,n54,n56,n57,n59,n61,n62,n64,n66,n67,n68,n69,n71,n73,n74,n76,n78,n81,n82,n83,n84,n86,n88,n89,n91,n93,n94,n95,n97,n99,n100,n101,n102,n104,n106,n107,n109,n111,n114,n115,n116,n117,n119,n121,n122,n123,n125,n126,n127,n131,n132,n134 k_step
+  class n7 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

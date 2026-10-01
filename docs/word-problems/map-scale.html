@@ -330,41 +330,89 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>On a map, 1 inch stands for 25 miles. Two towns are 3.5 inches apart on the map. How far apart are they really?</p>
 </blockquote>
+<p><strong>Asked:</strong> how far apart really (miles). <strong>Is a:</strong> <a href="../questions/missing-value.html">Find the missing value in a proportion</a>. <strong>Answer:</strong> 87.5 miles.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“1 inch”</td>
-<td>1</td>
+<td>1 inch</td>
 <td>map distance</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“25 miles”</td>
-<td>25</td>
+<td>25 miles</td>
 <td>real distance</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“3.5 inches apart”</td>
-<td>3.5</td>
+<td>3.5 inches</td>
 <td>map distance between the towns</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how far apart really (miles). <strong>Link:</strong> “stands for”: 25 real miles per 1 map inch.</p>
-<p><strong>Maps to</strong> <a href="../questions/missing-value.html">missing-value</a>: a = 25, b = 1, d = 3.5. <strong>Answer:</strong> 87.5 miles.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Same scale, new distance: a missing value</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Which two quantities go together?</td>
+<td>Find the pair that forms the ratio</td>
+<td>25 real miles for each 1 map inch</td>
+<td>The scale and the map distance → 50/7</td>
+</tr>
+<tr class="odd">
+<td>What gets scaled up?</td>
+<td>Name the unknown</td>
+<td>The 3.5 inches between the towns</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Which way round does the ratio go?</td>
+<td>Keep the same order on both sides</td>
+<td>Miles over inches on both sides</td>
+<td>Inches over miles on one side → 0.14</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-map-scale.svg" alt="Map scale" style="width:2944px" loading="lazy" class="figure-img">
+<img src="../svg/wp-map-scale.svg" alt="Map scale" style="width:4140px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -375,50 +423,35 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Keep the same order on both sides</td>
-<td>Flips one side: inches over miles.</td>
-<td>0.14</td>
-<td>yes</td>
-</tr>
-<tr class="even">
 <td>Find the pair that forms the ratio</td>
 <td>Divides the scale by the map distance.</td>
 <td>50/7</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>1 × 3.5 = 3.5</code></td>
-<td>Flips one side: inches over miles.</td>
+<td>—</td>
 </tr>
 <tr class="even">
-<td><code>3.5 ÷ 25 = 0.14</code></td>
+<td>Keep the same order on both sides</td>
 <td>Flips one side: inches over miles.</td>
+<td>0.14</td>
+<td>yes</td>
+<td><code>1 × 3.5 = 3.5</code>, <code>3.5 ÷ 25 = 0.14</code></td>
 </tr>
 </tbody>
 </table>

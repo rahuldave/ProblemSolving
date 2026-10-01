@@ -1,142 +1,138 @@
 flowchart LR
-  w0(["Lemonade: more sugar"])
-  w1["6 cups of water (not needed)"]
-  w0 --> w1
-  w2["4 spoons of sugar"]
-  w0 --> w2
-  w3["6 glasses of lemonade"]
-  w0 --> w3
-  w4["18 more glasses"]
-  w0 --> w4
-  c0(["Solve 4/6 = x/18."])
-  c1(["Answer: 12"])
-  c2["Cross-multiply and divide"]
-  c3["4 × 18 = 72"]
-  c2 --> c3
-  c4["72 ÷ 6 = 12"]
-  c3 --> c4
-  c4 --> c1
-  c5["Scale factor"]
-  c6["18 ÷ 6 = 3"]
-  c5 --> c6
-  c7["4 × 3 = 12"]
-  c6 --> c7
-  c7 --> c1
-  c8["Unit rate"]
-  c9["Write 4/6 as a decimal → ≈ 0.667"]
-  c8 --> c9
-  c10["2/3 × 18 = 12"]
-  c9 --> c10
-  c10 --> c1
-  c11["Inverse rate"]
-  c12["Write 6/4 as a decimal → 1.5"]
-  c11 --> c12
-  c13["18 ÷ 1.5 = 12"]
-  c12 --> c13
-  c13 --> c1
-  c14["Ratio table"]
-  c15["6 × 3 = 18"]
-  c14 --> c15
-  c16["4 × 3 = 12"]
-  c15 --> c16
-  c16 --> c1
-  c17["Simplify, then scale"]
-  c18["Simplify 4/6 → 2/3"]
-  c17 --> c18
-  c19["18 ÷ 3 = 6"]
-  c18 --> c19
-  c20["2 × 6 = 12"]
-  c19 --> c20
-  c20 --> c1
-  c21["18 ÷ 6 = 3"]
-  c22{{"divide · across"}}
-  c0 --> c22
-  c22 --> c21
-  c21 --> c5
-  c23["4 ÷ 6 ≈ 0.667"]
-  c24{{"divide · within"}}
-  c0 --> c24
-  c24 --> c23
-  c23 -->|"to-decimal/divide"| c8
-  c25["6 ÷ 4 = 1.5"]
-  c24 --> c25
-  c25 -->|"to-decimal/divide"| c11
-  c26["4 ÷ 2 = 2"]
-  c27{{"factor · within"}}
-  c0 --> c27
-  c27 --> c26
-  c26 -->|"simplify-fraction/repeated"| c17
-  c28["GCF(4, 6) = 2"]
-  c27 --> c28
-  c28 -->|"simplify-fraction/gcf"| c17
-  c29["4 × 18 = 72"]
-  c30{{"multiply · across"}}
-  c0 --> c30
-  c30 --> c29
-  c29 --> c2
-  c31["4 × 25 = 100"]
-  c32{{"multiply · within"}}
-  c0 --> c32
-  c32 --> c31
-  c31 -->|"to-decimal/power_of_ten"| c11
-  c33["6 × 3 = 18"]
-  c32 --> c33
-  c33 --> c14
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c22,c24,c27,c30,c32 cls
-  class c21,c23,c25,c26,c28,c29,c31,c33 first
-  class c2,c5,c8,c11,c14,c17 method
-  class c9,c12,c18 skill
-  class c3,c4,c6,c7,c10,c13,c15,c16,c19,c20 step
-  class c0,c1 ans
-  w2 -->|"a"| c0
-  w3 -->|"b"| c0
-  w4 -->|"d"| c0
-  w5(["12 more spoons of sugar"])
-  c1 --> w5
-  w6["Finds the sugar for all 24 glasses instead of the 18 extra. → 16"]
-  w0 -.->|"'More' vs 'in all'"| w6
-  w7["4 × 24 = 96"]
-  w6 -.-> w7
-  w8["24 ÷ 6 = 4"]
-  w6 -.-> w8
-  w9["6 × 4 = 24"]
-  w6 -.-> w9
-  w10["Reads 18 as the new total and subtracts the 4 spoons already used. → 8"]
-  w0 -.->|"'More' vs 'in all'"| w10
-  w11["Flips one side: glasses over sugar = x over glasses. → 27"]
-  w0 -.->|"Keep the same order on both sides"| w11
-  w12["6 × 18 = 108"]
-  w11 -.-> w12
-  w13["18 ÷ 4 = 4.5"]
-  w11 -.-> w13
-  w14["Pairs sugar with the 6 cups of water instead of the 6 glasses. → 12 (same answer!)"]
-  w0 -.->|"Ignore numbers that don't matter"| w14
-  w15["Adds instead of scaling: 18 more glasses, so 18 more spoons. → 18"]
-  w0 -.->|"Scale, don't add"| w15
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w2,w3,w4 wused
-  class w1 wdist
-  class w5 wfinal
-  class w6,w10,w11,w14,w15 wtrap
-  class w7,w8,w9,w12,w13 wtfirst
+  n0(["Story<br/>Lemonade: more sugar"])
+  n5[["Find the missing value in a proportion<br/>Solve 4/6 = x/18 → 12"]]
+  n6(["12 ✗<br/>same answer as the correct reading!"])
+  n8[["Find the missing value in a proportion<br/>Solve 6/4 = x/18 → 27"]]
+  n9(["27 ✗<br/>gives itself away: 6 × 18 = 108, 18 ÷ 4 = 4.5"])
+  n11["Add the glasses already made<br/>6 + 18 = 24"]
+  n12[["Find the missing value in a proportion<br/>Solve 4/6 = x/24 → 16"]]
+  n13(["16 ✗<br/>gives itself away: 4 × 24 = 96, 24 ÷ 6 = 4"])
+  n14[["Find the missing value in a proportion<br/>Solve 4/6 = x/18 → 12"]]
+  n15["Subtract the sugar already used<br/>12 − 4 = 8"]
+  n16(["8 ✗"])
+  n18(["18 ✗"])
+  n47(["Answer<br/>12 more spoons of sugar"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Same recipe, more glasses: a missing value"]
+    n4{{"× Which two quantities go together?"}}
+    n7{{"× Which way round does the ratio go?"}}
+    n10{{"× Is 18 the extra glasses or the total?"}}
+    n17{{"× How does the sugar change when the glasses go up?"}}
+  end
+  subgraph nf1["Find the missing value in a proportion (as on its own page)"]
+    direction LR
+    n19(["Solve 4/6 = x/18."])
+    n20(["Answer: 12"])
+    n21{{"× Which first step?"}}
+    n22["Find the scale factor between the bottoms<br/>18 ÷ 6 = 3<br/>[divide · across]"]
+    n23["Scale the top by the same factor<br/>4 × 3 = 12"]
+    n24["Divide the top by the bottom<br/>4 ÷ 6 ≈ 0.667<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n25["Scale up to 18<br/>2/3 × 18 = 12"]
+    n26["Divide the top by the bottom<br/>6 ÷ 4 = 1.5<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n27["Divide by that rate<br/>18 ÷ 1.5 = 12"]
+    n28["Divide the top by a shared factor<br/>4 ÷ 2 = 2<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n29["Divide the bottom by the same factor<br/>6 ÷ 2 = 3<br/>[in: Simplify a fraction]"]
+    n30["Find the scale factor from the simplified bottom<br/>18 ÷ 3 = 6"]
+    n31["Scale the simplified top<br/>2 × 6 = 12"]
+    n32["Find the greatest common factor<br/>GCF(4, 6) = 2<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n33{"all"}
+    n34{"all"}
+    n35["Divide the top by the GCF<br/>4 ÷ 2 = 2<br/>[in: Simplify a fraction]"]
+    n36["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Simplify a fraction]"]
+    n37["Find the scale factor from the simplified bottom<br/>18 ÷ 3 = 6"]
+    n38["Scale the simplified top<br/>2 × 6 = 12"]
+    n39["Multiply across the diagonal<br/>4 × 18 = 72<br/>[multiply · across]"]
+    n40["Divide by the remaining number<br/>72 ÷ 6 = 12"]
+    n41["Scale the bottom up to 10, 100, or 1000<br/>4 × 25 = 100<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n42["Scale the top by the same factor<br/>6 × 25 = 150<br/>[in: Write a fraction as a decimal]"]
+    n43["Read off the decimal<br/>150 ÷ 100 = 1.5<br/>[in: Write a fraction as a decimal]"]
+    n44["Divide by that rate<br/>18 ÷ 1.5 = 12"]
+    n45["Build the bottom up by 2, 3, 4, … until it reaches 18<br/>6 × 3 = 18<br/>[multiply · within]"]
+    n46["Scale the top by the same factor<br/>4 × 3 = 12"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 -->|"✓ 4 spoons of sugar with 6 glasses"| n2
+  n5 --> n6
+  n4 -.->|"✗ Find the pair that forms the ratio: 4 spoons of sugar with 6 cups of water"| n5
+  n1 --> n7
+  n7 -->|"✓ Sugar over glasses on both sides"| n2
+  n8 --> n9
+  n7 -.->|"✗ Keep the same order on both sides: Glasses over sugar on one side"| n8
+  n1 --> n10
+  n10 -->|"✓ 18 is the extra glasses"| n2
+  n11 --> n12
+  n12 --> n13
+  n10 -.->|"✗ 'More' vs 'in all': 18 more makes 24 in all, so use 24"| n11
+  n14 --> n15
+  n15 --> n16
+  n10 -.->|"✗ 'More' vs 'in all': 18 is the total, so subtract the sugar used"| n14
+  n1 --> n17
+  n17 -->|"✓ It scales by the same factor"| n2
+  n17 -.->|"✗ Scale, don't add: It goes up by the same 18"| n18
+  n19 --> n21
+  n21 -->|"Scale factor"| n22
+  n23 --> n20
+  n22 --> n23
+  n21 -->|"Unit rate"| n24
+  n25 --> n20
+  n24 --> n25
+  n21 -->|"Inverse rate"| n26
+  n27 --> n20
+  n26 --> n27
+  n21 -->|"Simplify, then scale"| n28
+  n29 --> n30
+  n30 --> n31
+  n31 --> n20
+  n28 --> n29
+  n21 -->|"Simplify, then scale"| n32
+  n33 --> n35
+  n35 --> n34
+  n33 --> n36
+  n36 --> n34
+  n34 --> n37
+  n37 --> n38
+  n38 --> n20
+  n32 --> n33
+  n21 -->|"Cross-multiply and divide"| n39
+  n40 --> n20
+  n39 --> n40
+  n21 -->|"Inverse rate"| n41
+  n42 --> n43
+  n43 --> n44
+  n44 --> n20
+  n41 --> n42
+  n21 -->|"Ratio table"| n45
+  n46 --> n20
+  n45 --> n46
+  n2 ==>|"a: 4 spoons of sugar<br/>b: 6 glasses of lemonade<br/>d: 18 more glasses"| n19
+  n20 --> n47
+  linkStyle 6 stroke:#c4554a,color:#c4554a
+  linkStyle 10 stroke:#c4554a,color:#c4554a
+  linkStyle 15 stroke:#c4554a,color:#c4554a
+  linkStyle 18 stroke:#c4554a,color:#c4554a
+  linkStyle 21 stroke:#c4554a,color:#c4554a
+  linkStyle 57 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n33,n34 k_all
+  class n5,n8,n12,n14 k_call
+  class n4,n7,n10,n17,n21 k_choice
+  class n20,n47 k_end
+  class n22,n24,n26,n28,n32,n39,n41,n45 k_first
+  class n0,n19 k_start
+  class n3,n11,n15,n23,n25,n27,n29,n30,n31,n35,n36,n37,n38,n40,n42,n43,n44,n46 k_step
+  class n6,n9,n13,n16,n18 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

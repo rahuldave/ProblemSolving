@@ -4,10 +4,9 @@
   "text": "Joe mixes 4 spoons of sugar into 6 glasses of lemonade. Ann mixes 10 spoons of sugar into 14 glasses. Whose lemonade is sweeter?",
   "concepts": [
     "question_type",
-    "rate_pair",
     "direction",
-    "multiplicative",
-    "answer_in_context"
+    "rate_pair",
+    "multiplicative"
   ],
   "quantities": [
     {
@@ -15,103 +14,145 @@
       "text": "4 spoons of sugar",
       "value": 4,
       "unit": "spoons",
-      "counts": "Joe's sugar",
-      "role": "used"
+      "counts": "Joe's sugar"
     },
     {
       "id": "joe_glasses",
       "text": "6 glasses",
       "value": 6,
       "unit": "glasses",
-      "counts": "Joe's lemonade",
-      "role": "used"
+      "counts": "Joe's lemonade"
     },
     {
       "id": "ann_sugar",
       "text": "10 spoons of sugar",
       "value": 10,
       "unit": "spoons",
-      "counts": "Ann's sugar",
-      "role": "used"
+      "counts": "Ann's sugar"
     },
     {
       "id": "ann_glasses",
       "text": "14 glasses",
       "value": 14,
       "unit": "glasses",
-      "counts": "Ann's lemonade",
-      "role": "used"
+      "counts": "Ann's lemonade"
     }
   ],
-  "unknown": {
-    "text": "whose is sweeter",
-    "counts": "person",
+  "asks": {
+    "text": "whose lemonade is sweeter",
     "unit": "name"
   },
-  "relationship": {
-    "cue": "mixes … into",
-    "note": "Sweetness is sugar per glass; the bigger fraction is sweeter."
-  },
-  "maps_to": {
-    "question": "compare-fractions",
-    "with": {
-      "a": "joe_sugar",
-      "b": "joe_glasses",
-      "c": "ann_sugar",
-      "d": "ann_glasses"
-    },
-    "answer_map": {
-      "first": "Joe",
-      "second": "Ann",
-      "equal": "they taste the same"
-    }
-  },
-  "answer": "Ann",
-  "answer_text": "Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)",
-  "traps": [
+  "extract": [
     {
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Whose mix is stronger: compare two fractions",
+          "correct": true,
+          "question": "compare-fractions",
+          "binds": {
+            "a": "joe_sugar",
+            "b": "joe_glasses",
+            "c": "ann_sugar",
+            "d": "ann_glasses"
+          },
+          "answer_map": {
+            "first": "Joe",
+            "second": "Ann",
+            "equal": "they taste the same"
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
       "concept": "direction",
-      "mistake": "Compares glasses per spoon and calls the bigger one sweeter.",
-      "maps_to": {
-        "question": "compare-fractions",
-        "with": {
-          "a": "joe_glasses",
-          "b": "joe_sugar",
-          "c": "ann_glasses",
-          "d": "ann_sugar"
-        }
-      }
-    },
-    {
-      "concept": "rate_pair",
-      "mistake": "Compares spoons of sugar only (10 > 4).",
-      "maps_to": {
-        "question": "compare-fractions",
-        "with": {
-          "a": "joe_sugar",
-          "b": 1,
-          "c": "ann_sugar",
-          "d": 1
-        }
-      }
-    },
-    {
-      "concept": "multiplicative",
-      "mistake": "Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter.",
-      "maps_to": {
-        "question": "compare-fractions",
-        "with": {
-          "a": "subtract(joe_glasses, joe_sugar)",
-          "b": 1,
-          "c": "subtract(ann_glasses, ann_sugar)",
-          "d": 1
+      "say": "What measures sweetness?",
+      "options": [
+        {
+          "say": "Sugar per glass: more is sweeter",
+          "correct": true
         },
-        "answer_map": {
-          "first": "Ann",
-          "second": "Joe",
-          "equal": "they taste the same"
+        {
+          "say": "Glasses per spoon: more is sweeter",
+          "trap": "Compares glasses per spoon and calls the bigger one sweeter.",
+          "binds": {
+            "a": "joe_glasses",
+            "b": "joe_sugar",
+            "c": "ann_glasses",
+            "d": "ann_sugar"
+          }
         }
-      }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "rate_pair",
+      "say": "What do you compare?",
+      "options": [
+        {
+          "say": "Each mix's sugar per glass",
+          "correct": true
+        },
+        {
+          "say": "Just the spoons of sugar",
+          "trap": "Compares spoons of sugar only (10 > 4).",
+          "binds": {
+            "b": 1,
+            "d": 1
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "multiplicative",
+      "say": "How do the mixes differ?",
+      "options": [
+        {
+          "say": "By ratio",
+          "correct": true
+        },
+        {
+          "say": "By difference: glasses minus spoons",
+          "trap": "Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter.",
+          "steps": [
+            {
+              "op": "subtract",
+              "args": [
+                "joe_glasses",
+                "joe_sugar"
+              ],
+              "out": "joe_gap",
+              "say": "Subtract Joe's spoons from his glasses"
+            },
+            {
+              "op": "subtract",
+              "args": [
+                "ann_glasses",
+                "ann_sugar"
+              ],
+              "out": "ann_gap",
+              "say": "Subtract Ann's spoons from her glasses"
+            }
+          ],
+          "binds": {
+            "a": "joe_gap",
+            "b": 1,
+            "c": "ann_gap",
+            "d": 1
+          },
+          "answer_map": {
+            "first": "Ann",
+            "second": "Joe",
+            "equal": "they taste the same"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "answer": "Ann",
+  "answer_text": "Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)"
 }

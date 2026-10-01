@@ -2,14 +2,14 @@
 
 `common-multiple` · skill · prompt: *Find a common multiple of {x} and {y}.*
 
-| Method | Idea | Steps use |
-|---|---|---|
-| **Know the LCM** `recall` | Recognize the least common multiple directly. | — |
-| **List multiples** `list_multiples` | Count up by {x} until you reach a number {y} divides. | — |
-| **Multiply them** `product` | {x} × {y} is always a common multiple. | — |
-| **Use the GCF** `gcf_formula` | LCM = {x} ÷ GCF × {y}. | — |
+| Method | Idea | Best when | Calls |
+|---|---|---|---|
+| **Know the LCM** `recall` | Recognize the least common multiple directly. | Small, familiar numbers. | — |
+| **List multiples** `list_multiples` | Count up by {x} until you reach a number {y} divides. | Small numbers. | — |
+| **Multiply them** `product` | {x} × {y} is always a common multiple. | The numbers share no factors (then it's also the least). | — |
+| **Use the GCF** `gcf_formula` | LCM = {x} ÷ GCF × {y}. | Large numbers whose GCF you can find. | — |
 
-Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, **purple** = second step (only where methods share a first step); **yellow** = method; **green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.
+Each graph starts at the question and branches at **× Which first step?** into every first step a student might write. Methods that share a first step meet there and split at **× Which next step?**. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.
 
 ## Find a common multiple of 4 and 6.
 

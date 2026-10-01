@@ -2,18 +2,18 @@
 
 `missing-value` · core · prompt: *Solve {a}/{b} = x/{d}.*
 
-Uses: [simplify-fraction](simplify-fraction.md), [to-decimal](to-decimal.md)
+Its methods call: [simplify-fraction](simplify-fraction.md), [to-decimal](to-decimal.md)
 
-| Method | Idea | Steps use |
-|---|---|---|
-| **Cross-multiply and divide** `cross_multiply` | {a} × {d} = {b} × x, so x = {a} × {d} ÷ {b}. | — |
-| **Scale factor** `scale_factor` | Find what turns {b} into {d}, then do the same to {a}. | — |
-| **Unit rate** `unit_rate` | Find the value per 1, then scale up to {d}. | to-decimal |
-| **Inverse rate** `inverse_rate` | Find how many of the second quantity per 1 of the first, then divide. | to-decimal |
-| **Ratio table** `ratio_table` | Build {a}:{b} up by ×2, ×3, … until the second term reaches {d}. | — |
-| **Simplify, then scale** `simplify_then_scale` | Reduce {a}/{b} first so a whole-number scale factor appears. | simplify-fraction |
+| Method | Idea | Best when | Calls |
+|---|---|---|---|
+| **Cross-multiply and divide** `cross_multiply` | {a} × {d} = {b} × x, so x = {a} × {d} ÷ {b}. | Always works; most useful when there's no whole-number scale factor. | — |
+| **Scale factor** `scale_factor` | Find what turns {b} into {d}, then do the same to {a}. | {d} is a whole-number multiple of {b}. | — |
+| **Unit rate** `unit_rate` | Find the value per 1, then scale up to {d}. | {a}/{b} is a friendly decimal. | [to-decimal](to-decimal.md) |
+| **Inverse rate** `inverse_rate` | Find how many of the second quantity per 1 of the first, then divide. | {b}/{a} is a friendly number. | [to-decimal](to-decimal.md) |
+| **Ratio table** `ratio_table` | Build {a}:{b} up by ×2, ×3, … until the second term reaches {d}. | {d} is a small whole-number multiple of {b}. | — |
+| **Simplify, then scale** `simplify_then_scale` | Reduce {a}/{b} first so a whole-number scale factor appears. | {a}/{b} isn't in lowest terms. | [simplify-fraction](simplify-fraction.md) |
 
-Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, **purple** = second step (only where methods share a first step); **yellow** = method; **green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.
+Each graph starts at the question and branches at **× Which first step?** into every first step a student might write. Methods that share a first step meet there and split at **× Which next step?**. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.
 
 ## Solve 3/5 = x/40.
 

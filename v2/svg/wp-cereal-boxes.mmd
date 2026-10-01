@@ -1,166 +1,235 @@
 flowchart LR
-  w0(["Cereal boxes"])
-  w1["a 12-ounce box"]
-  w0 --> w1
-  w2["costs $3.00"]
-  w0 --> w2
-  w3["a 20-ounce box"]
-  w0 --> w3
-  w4["costs $4.50"]
-  w0 --> w4
-  w5["2 miles from home (not needed)"]
-  w0 --> w5
-  c0(["Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?"])
-  c1(["Answer: the 20-ounce box"])
-  c2["Price per unit"]
-  c3["Write 3/12 as a decimal → 0.25"]
-  c2 --> c3
-  c4["Write 4.5/20 as a decimal → 0.225"]
-  c3 --> c4
-  c5["0.25 #gt; 0.225"]
-  c4 --> c5
-  c5 --> c1
-  c6["Units per dollar"]
-  c7["Write 12/3 as a decimal → 4"]
-  c6 --> c7
-  c8["Write 20/4.5 as a decimal → ≈ 4.444"]
-  c7 --> c8
-  c9["4 #lt; 40/9"]
-  c8 --> c9
-  c9 --> c1
-  c10["Common quantity"]
-  c11["Find a common multiple of 12 and 20 → 60"]
-  c10 --> c11
-  c12["Solve 3/12 = x/60 → 15"]
-  c11 --> c12
-  c13["Solve 4.5/20 = x/60 → 13.5"]
-  c12 --> c13
-  c14["15 #gt; 13.5"]
-  c13 --> c14
-  c14 --> c1
-  c15["Scale one offer to the other's size"]
-  c16["Solve 3/12 = x/20 → 5"]
-  c15 --> c16
-  c17["5 #gt; 4.5"]
-  c16 --> c17
-  c17 --> c1
-  c18["Cross-multiply"]
-  c19["Find the cross products of 3/12 and 4.5/20 → 60/54"]
-  c18 --> c19
-  c20["60 #gt; 54"]
-  c19 --> c20
-  c20 --> c1
-  c21["Compare growth"]
-  c22["4.5 ÷ 3 = 1.5"]
-  c21 --> c22
-  c23["20 ÷ 12 ≈ 1.667"]
-  c22 --> c23
-  c24["1.5 #lt; 5/3"]
-  c23 --> c24
-  c24 --> c1
-  c25["20 ÷ 12 ≈ 1.667"]
-  c26{{"divide · across"}}
-  c0 --> c26
-  c26 --> c25
-  c25 -->|"missing-value/scale_factor"| c15
-  c27["4.5 ÷ 3 = 1.5"]
-  c26 --> c27
-  c27 --> c21
-  c28["12 ÷ 3 = 4"]
-  c29{{"divide · within"}}
-  c0 --> c29
-  c29 --> c28
-  c30["then 20 ÷ 4.5 ≈ 4.444"]
-  c28 --> c30
-  c30 -->|"to-decimal/divide"| c6
-  c31["then 20 ÷ 4 = 5"]
-  c28 --> c31
-  c31 -->|"missing-value/inverse_rate"| c15
-  c32["3 ÷ 12 = 0.25"]
-  c29 --> c32
-  c33["then 4.5 ÷ 20 = 0.225"]
-  c32 --> c33
-  c33 -->|"to-decimal/divide"| c2
-  c34["then 20 × 5 = 100"]
-  c32 --> c34
-  c34 -->|"to-decimal/power_of_ten"| c2
-  c35["then 0.25 × 20 = 5"]
-  c32 --> c35
-  c35 -->|"missing-value/unit_rate"| c15
-  c36["GCF(12, 20) = 4"]
-  c37{{"factor · across"}}
-  c0 --> c37
-  c37 --> c36
-  c36 -->|"common-multiple/gcf_formula"| c10
-  c38["3 ÷ 3 = 1"]
-  c39{{"factor · within"}}
-  c0 --> c39
-  c39 --> c38
-  c38 -->|"simplify-fraction/repeated"| c15
-  c40["GCF(3, 12) = 3"]
-  c39 --> c40
-  c40 -->|"simplify-fraction/gcf"| c15
-  c41["12 × 20 = 240"]
-  c42{{"multiply · across"}}
-  c0 --> c42
-  c42 --> c41
-  c41 -->|"common-multiple/product"| c10
-  c43["3 × 20 = 60"]
-  c42 --> c43
-  c44["then 60 ÷ 12 = 5"]
-  c43 --> c44
-  c44 -->|"missing-value/cross_multiply"| c15
-  c45["then 4.5 × 12 = 54"]
-  c43 --> c45
-  c45 -->|"cross-products/diagonals"| c18
-  c46["LCM(12, 20) = 60"]
-  c42 --> c46
-  c46 -->|"common-multiple/recall"| c10
-  c47["12 × 5 = 60"]
-  c48{{"multiply · within"}}
-  c0 --> c48
-  c48 --> c47
-  c47 -->|"common-multiple/list_multiples"| c10
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c26,c29,c37,c39,c42,c48 cls
-  class c25,c27,c28,c32,c36,c38,c40,c41,c43,c46,c47 first
-  class c30,c31,c33,c34,c35,c44,c45 second
-  class c2,c6,c10,c15,c18,c21 method
-  class c3,c4,c7,c8,c11,c12,c13,c16,c19 skill
-  class c5,c9,c14,c17,c20,c22,c23,c24 step
-  class c0,c1 ans
-  w1 -->|"q1"| c0
-  w2 -->|"p1"| c0
-  w3 -->|"q2"| c0
-  w4 -->|"p2"| c0
-  w6(["the 20-ounce box ($0.225 per ounce vs $0.25)"])
-  c1 --> w6
-  w7["Compares prices only and picks the cheaper box. → the 12-ounce box"]
-  w0 -.->|"Find the pair that forms the ratio"| w7
-  w8["Finds ounces per dollar but picks the smaller one. → the 12-ounce box"]
-  w0 -.->|"Which way wins"| w8
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2,w3,w4 wused
-  class w5 wdist
-  class w6 wfinal
-  class w7,w8 wtrap
+  n0(["Story<br/>Cereal boxes"])
+  n6[["Which is the better buy?<br/>Offer 1: 1 units for $3. Offer 2: 1 units for $4.5. Which is the better buy → the 12-ounce box"]]
+  n7(["the 12-ounce box ✗"])
+  n9[["Which is the better buy?<br/>Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy → the 12-ounce box"]]
+  n10(["the 12-ounce box ✗"])
+  n90(["Answer<br/>the 20-ounce box ($0.225 per ounce vs $0.25)"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Which costs less for what you get: a better buy"]
+    n4["Which number isn't needed?<br/>2 miles from home"]
+    n5{{"× What do you compare?"}}
+    n8{{"× Which way wins?"}}
+  end
+  subgraph nf1["Which is the better buy? (as on its own page)"]
+    direction LR
+    n11(["Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?"])
+    n12(["Answer: second"])
+    n13{{"× Which first step?"}}
+    n14["Find the scale factor between the bottoms<br/>20 ÷ 12 ≈ 1.667<br/>[divide · across]<br/>[in: Find the missing value in a proportion]"]
+    n15{{"× Which next step?"}}
+    n16["Scale the top by the same factor<br/>3 × 5/3 = 5<br/>[in: Find the missing value in a proportion]"]
+    n17["Same bottom, so compare the tops<br/>5 ＞ 4.5"]
+    n18["Find how much the top grows<br/>4.5 ÷ 3 = 1.5"]
+    n19["If the top grows faster, the second fraction is bigger<br/>1.5 ＜ 5/3"]
+    n20["Find how much the top grows<br/>4.5 ÷ 3 = 1.5<br/>[divide · across]"]
+    n21["Find how much the bottom grows<br/>20 ÷ 12 ≈ 1.667"]
+    n22["If the top grows faster, the second fraction is bigger<br/>1.5 ＜ 5/3"]
+    n23["Divide the top by the bottom<br/>12 ÷ 3 = 4<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n24{{"× Which next step?"}}
+    n25["Divide the top by the bottom<br/>20 ÷ 4.5 ≈ 4.444<br/>[in: Write a fraction as a decimal]"]
+    n26["The smaller flipped rate is the bigger fraction<br/>4 ＜ 40/9"]
+    n27["Divide by that rate<br/>20 ÷ 4 = 5<br/>[in: Find the missing value in a proportion]"]
+    n28["Divide the top by the bottom<br/>20 ÷ 4.5 ≈ 4.444<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n29[["Find the first fraction's flipped rate<br/>Write 12/3 as a decimal → 4"]]
+    n30["The smaller flipped rate is the bigger fraction<br/>4 ＜ 40/9"]
+    n31["Divide the top by the bottom<br/>3 ÷ 12 = 0.25<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n32{{"× Which next step?"}}
+    n33["Divide the top by the bottom<br/>4.5 ÷ 20 = 0.225<br/>[in: Write a fraction as a decimal]"]
+    n34["Compare the decimals<br/>0.25 ＞ 0.225"]
+    n35["Scale the bottom up to 10, 100, or 1000<br/>20 × 5 = 100<br/>[in: Write a fraction as a decimal]"]
+    n36["Scale the top by the same factor<br/>4.5 × 5 = 22.5<br/>[in: Write a fraction as a decimal]"]
+    n37["Read off the decimal<br/>22.5 ÷ 100 = 0.225<br/>[in: Write a fraction as a decimal]"]
+    n38["Compare the decimals<br/>0.25 ＞ 0.225"]
+    n39["Scale up to 20<br/>0.25 × 20 = 5<br/>[in: Find the missing value in a proportion]"]
+    n40["Divide the top by the bottom<br/>4.5 ÷ 20 = 0.225<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n41[["Write the first fraction as a decimal<br/>Write 3/12 as a decimal → 0.25"]]
+    n42["Compare the decimals<br/>0.25 ＞ 0.225"]
+    n43["Find the greatest common factor<br/>GCF(12, 20) = 4<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n44["Divide one number by the GCF<br/>12 ÷ 4 = 3<br/>[in: Find a common multiple]"]
+    n45["Multiply by the other number<br/>3 × 20 = 60<br/>[in: Find a common multiple]"]
+    n46{"all"}
+    n47{"all"}
+    n48[["Rewrite the first fraction over 60<br/>Solve 3/12 = x/60 → 15"]]
+    n49[["Rewrite the second fraction over 60<br/>Solve 4.5/20 = x/60 → 13.5"]]
+    n50["Same bottom, so compare the tops<br/>15 ＞ 13.5"]
+    n51["Divide the top by a shared factor<br/>3 ÷ 3 = 1<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n52["Divide the bottom by the same factor<br/>12 ÷ 3 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n53["Find the scale factor from the simplified bottom<br/>20 ÷ 4 = 5<br/>[in: Find the missing value in a proportion]"]
+    n54["Scale the simplified top<br/>1 × 5 = 5<br/>[in: Find the missing value in a proportion]"]
+    n55["Same bottom, so compare the tops<br/>5 ＞ 4.5"]
+    n56["Find the greatest common factor<br/>GCF(3, 12) = 3<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n57{"all"}
+    n58{"all"}
+    n59["Divide the top by the GCF<br/>3 ÷ 3 = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n60["Divide the bottom by the GCF<br/>12 ÷ 3 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n61["Find the scale factor from the simplified bottom<br/>20 ÷ 4 = 5<br/>[in: Find the missing value in a proportion]"]
+    n62["Scale the simplified top<br/>1 × 5 = 5<br/>[in: Find the missing value in a proportion]"]
+    n63["Same bottom, so compare the tops<br/>5 ＞ 4.5"]
+    n64["Recall the least common multiple<br/>LCM(12, 20) = 60<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n65{"all"}
+    n66{"all"}
+    n67[["Rewrite the first fraction over 60<br/>Solve 3/12 = x/60 → 15"]]
+    n68[["Rewrite the second fraction over 60<br/>Solve 4.5/20 = x/60 → 13.5"]]
+    n69["Same bottom, so compare the tops<br/>15 ＞ 13.5"]
+    n70["Multiply the two numbers<br/>12 × 20 = 240<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n71{"all"}
+    n72{"all"}
+    n73[["Rewrite the first fraction over 240<br/>Solve 3/12 = x/240 → 60"]]
+    n74[["Rewrite the second fraction over 240<br/>Solve 4.5/20 = x/240 → 54"]]
+    n75["Same bottom, so compare the tops<br/>60 ＞ 54"]
+    n76["Multiply the second top by the first bottom<br/>4.5 × 12 = 54<br/>[multiply · across]<br/>[in: Cross products]"]
+    n77["Multiply the first top by the second bottom<br/>3 × 20 = 60<br/>[in: Cross products]"]
+    n78["The bigger product sits with the bigger fraction<br/>60 ＞ 54"]
+    n79["Multiply across the diagonal<br/>3 × 20 = 60<br/>[multiply · across]<br/>[in: Find the missing value in a proportion]"]
+    n80{{"× Which next step?"}}
+    n81["Divide by the remaining number<br/>60 ÷ 12 = 5<br/>[in: Find the missing value in a proportion]"]
+    n82["Multiply the second top by the first bottom<br/>4.5 × 12 = 54<br/>[in: Cross products]"]
+    n83["The bigger product sits with the bigger fraction<br/>60 ＞ 54"]
+    n84["List multiples of 12 until 20 divides one<br/>12 × 5 = 60<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n85["Scale the bottom up to 10, 100, or 1000<br/>20 × 5 = 100<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n86["Scale the top by the same factor<br/>4.5 × 5 = 22.5<br/>[in: Write a fraction as a decimal]"]
+    n87["Read off the decimal<br/>22.5 ÷ 100 = 0.225<br/>[in: Write a fraction as a decimal]"]
+    n88[["Write the first fraction as a decimal<br/>Write 3/12 as a decimal → 0.25"]]
+    n89["Compare the decimals<br/>0.25 ＞ 0.225"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 --> n2
+  n1 --> n5
+  n5 -->|"✓ Each box's price per ounce"| n2
+  n6 --> n7
+  n5 -.->|"✗ Find the pair that forms the ratio: Just the prices"| n6
+  n1 --> n8
+  n8 -->|"✓ The lower price per ounce"| n2
+  n9 --> n10
+  n8 -.->|"✗ Which way wins: The higher price per ounce"| n9
+  n11 --> n13
+  n13 -->|"Compare growth or Scale one offer to the other's size"| n14
+  n14 --> n15
+  n15 -->|"Scale one offer to the other's size"| n16
+  n17 --> n12
+  n16 --> n17
+  n15 -->|"Compare growth"| n18
+  n19 --> n12
+  n18 --> n19
+  n13 -->|"Compare growth"| n20
+  n21 --> n22
+  n22 --> n12
+  n20 --> n21
+  n13 -->|"Scale one offer to the other's size or Units per dollar"| n23
+  n23 --> n24
+  n24 -->|"Units per dollar"| n25
+  n26 --> n12
+  n25 --> n26
+  n24 -->|"Scale one offer to the other's size"| n27
+  n27 --> n17
+  n13 -->|"Units per dollar"| n28
+  n29 --> n30
+  n30 --> n12
+  n28 --> n29
+  n13 -->|"Price per unit or Scale one offer to the other's size"| n31
+  n31 --> n32
+  n32 -->|"Price per unit"| n33
+  n34 --> n12
+  n33 --> n34
+  n32 -->|"Price per unit"| n35
+  n36 --> n37
+  n37 --> n38
+  n38 --> n12
+  n35 --> n36
+  n32 -->|"Scale one offer to the other's size"| n39
+  n39 --> n17
+  n13 -->|"Price per unit"| n40
+  n41 --> n42
+  n42 --> n12
+  n40 --> n41
+  n13 -->|"Common quantity"| n43
+  n44 --> n45
+  n46 --> n48
+  n48 --> n47
+  n46 --> n49
+  n49 --> n47
+  n45 --> n46
+  n47 --> n50
+  n50 --> n12
+  n43 --> n44
+  n13 -->|"Scale one offer to the other's size"| n51
+  n52 --> n53
+  n53 --> n54
+  n54 --> n55
+  n55 --> n12
+  n51 --> n52
+  n13 -->|"Scale one offer to the other's size"| n56
+  n57 --> n59
+  n59 --> n58
+  n57 --> n60
+  n60 --> n58
+  n58 --> n61
+  n61 --> n62
+  n62 --> n63
+  n63 --> n12
+  n56 --> n57
+  n13 -->|"Common quantity"| n64
+  n65 --> n67
+  n67 --> n66
+  n65 --> n68
+  n68 --> n66
+  n66 --> n69
+  n69 --> n12
+  n64 --> n65
+  n13 -->|"Common quantity"| n70
+  n71 --> n73
+  n73 --> n72
+  n71 --> n74
+  n74 --> n72
+  n72 --> n75
+  n75 --> n12
+  n70 --> n71
+  n13 -->|"Cross-multiply"| n76
+  n77 --> n78
+  n78 --> n12
+  n76 --> n77
+  n13 -->|"Cross-multiply or Scale one offer to the other's size"| n79
+  n79 --> n80
+  n80 -->|"Scale one offer to the other's size"| n81
+  n81 --> n17
+  n80 -->|"Cross-multiply"| n82
+  n83 --> n12
+  n82 --> n83
+  n13 -->|"Common quantity"| n84
+  n84 --> n65
+  n13 -->|"Price per unit"| n85
+  n86 --> n87
+  n87 --> n88
+  n88 --> n89
+  n89 --> n12
+  n85 --> n86
+  n2 ==>|"q1: a 12-ounce box<br/>p1: costs $3.00<br/>q2: a 20-ounce box<br/>p2: costs $4.50"| n11
+  n12 -->|"in the story's terms"| n90
+  linkStyle 8 stroke:#c4554a,color:#c4554a
+  linkStyle 12 stroke:#c4554a,color:#c4554a
+  linkStyle 114 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n46,n47,n57,n58,n65,n66,n71,n72 k_all
+  class n6,n9,n29,n41,n48,n49,n67,n68,n73,n74,n88 k_call
+  class n5,n8,n13,n15,n24,n32,n80 k_choice
+  class n12,n90 k_end
+  class n14,n20,n23,n28,n31,n40,n43,n51,n56,n64,n70,n76,n79,n84,n85 k_first
+  class n0,n11 k_start
+  class n3,n4,n16,n17,n18,n19,n21,n22,n25,n26,n27,n30,n33,n34,n35,n36,n37,n38,n39,n42,n44,n45,n50,n52,n53,n54,n55,n59,n60,n61,n62,n63,n69,n75,n77,n78,n81,n82,n83,n86,n87,n89 k_step
+  class n7,n10 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

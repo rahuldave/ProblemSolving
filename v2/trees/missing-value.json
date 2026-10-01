@@ -34,9 +34,9 @@
       "methods": [
         "unit_rate"
       ],
-      "via": {
+      "inside": {
         "unit_rate": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This starts: Unit rate."
@@ -56,9 +56,9 @@
       "methods": [
         "inverse_rate"
       ],
-      "via": {
+      "inside": {
         "inverse_rate": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This starts: Inverse rate."
@@ -78,9 +78,9 @@
       "methods": [
         "simplify_then_scale"
       ],
-      "via": {
+      "inside": {
         "simplify_then_scale": [
-          "simplify-fraction/repeated"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This starts: Simplify, then scale."
@@ -100,9 +100,9 @@
       "methods": [
         "simplify_then_scale"
       ],
-      "via": {
+      "inside": {
         "simplify_then_scale": [
-          "simplify-fraction/gcf"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This starts: Simplify, then scale."
@@ -139,9 +139,9 @@
       "methods": [
         "inverse_rate"
       ],
-      "via": {
+      "inside": {
         "inverse_rate": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This starts: Inverse rate."
@@ -162,9 +162,9 @@
         "ratio_table",
         "unit_rate"
       ],
-      "via": {
+      "inside": {
         "unit_rate": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Ratio table, Unit rate.",
@@ -181,9 +181,9 @@
             "ratio_table",
             "unit_rate"
           ],
-          "via": {
+          "inside": {
             "unit_rate": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Ratio table, Unit rate.",

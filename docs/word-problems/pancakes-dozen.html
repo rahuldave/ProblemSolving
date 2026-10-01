@@ -330,6 +330,43 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>A pancake recipe uses 2 cups of flour and 3 eggs to make 12 pancakes. How many cups of flour are needed for 2 dozen pancakes?</p>
 </blockquote>
+<p><strong>Asked:</strong> how many cups of flour (cups). <strong>Is a:</strong> <a href="../questions/missing-value.html">Find the missing value in a proportion</a>. <strong>Answer:</strong> 4 cups of flour.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Phrase</th>
+<th>Value</th>
+<th>Counts</th>
+<th>Needed?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“2 cups of flour”</td>
+<td>2 cups</td>
+<td>flour</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>“3 eggs”</td>
+<td>3 eggs</td>
+<td>eggs</td>
+<td><strong>no</strong></td>
+</tr>
+<tr class="odd">
+<td>“12 pancakes”</td>
+<td>12 pancakes</td>
+<td>pancakes</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>“2 dozen pancakes”</td>
+<td>2 dozen</td>
+<td>pancakes wanted</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -339,44 +376,43 @@ ul.task-list li input[type="checkbox"] {
 </colgroup>
 <thead>
 <tr class="header">
-<th>Phrase</th>
-<th>Value</th>
-<th>Counts</th>
-<th>Role</th>
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>“2 cups of flour”</td>
-<td>2</td>
-<td>flour</td>
-<td>used</td>
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Same recipe, more pancakes: a missing value</td>
+<td>—</td>
 </tr>
 <tr class="even">
-<td>“3 eggs”</td>
-<td>3</td>
-<td>eggs</td>
-<td>distractor</td>
+<td>Which two quantities go together?</td>
+<td>Find the pair that forms the ratio</td>
+<td>2 cups of flour with 12 pancakes</td>
+<td>3 eggs with 12 pancakes → 6</td>
 </tr>
 <tr class="odd">
-<td>“12 pancakes”</td>
-<td>12</td>
-<td>pancakes</td>
-<td>used</td>
+<td>How many pancakes is 2 dozen?</td>
+<td>Spot numbers written as words</td>
+<td>24</td>
+<td>2 → 1/3</td>
 </tr>
 <tr class="even">
-<td>“2 dozen pancakes”</td>
-<td>2 dozen → <strong>24</strong> (1 dozen = 12)</td>
-<td>pancakes wanted</td>
-<td>used</td>
+<td>Which way round does the ratio go?</td>
+<td>Keep the same order on both sides</td>
+<td>Flour over pancakes on both sides</td>
+<td>Pancakes over flour on one side → 144</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how many cups of flour (cups). <strong>Link:</strong> “to make”: 2 cups of flour per 12 pancakes.</p>
-<p><strong>Maps to</strong> <a href="../questions/missing-value.html">missing-value</a>: a = 2, b = 12, d = 24. <strong>Answer:</strong> 4 cups of flour.</p>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-pancakes-dozen.svg" alt="Pancakes by the dozen" style="width:3347px" loading="lazy" class="figure-img">
+<img src="../svg/wp-pancakes-dozen.svg" alt="Pancakes by the dozen" style="width:4712px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -387,76 +423,42 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>Find the pair that forms the ratio</td>
+<td>Scales the eggs instead of the flour.</td>
+<td>6</td>
+<td>yes</td>
+<td><code>3 × 24 = 72</code>, <code>3 ÷ 12 = 0.25</code>, <code>12 ÷ 3 = 4</code>, <code>GCF(3, 12) = 3</code></td>
+</tr>
+<tr class="even">
 <td>Spot numbers written as words</td>
 <td>Reads ‘2 dozen’ as 2 pancakes.</td>
 <td>1/3</td>
 <td>yes</td>
-</tr>
-<tr class="even">
-<td>Ignore numbers that don’t matter</td>
-<td>Scales the eggs instead of the flour.</td>
-<td>6</td>
-<td>yes</td>
+<td><code>2 × 2 = 4</code></td>
 </tr>
 <tr class="odd">
 <td>Keep the same order on both sides</td>
 <td>Flips one side: pancakes over flour.</td>
 <td>144</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>12 × 24 = 288</code></td>
-<td>Flips one side: pancakes over flour.</td>
-</tr>
-<tr class="even">
-<td><code>12 ÷ 3 = 4</code></td>
-<td>Scales the eggs instead of the flour.</td>
-</tr>
-<tr class="odd">
-<td><code>2 × 2 = 4</code></td>
-<td>Reads ‘2 dozen’ as 2 pancakes.</td>
-</tr>
-<tr class="even">
-<td><code>24 ÷ 2 = 12</code></td>
-<td>Flips one side: pancakes over flour.</td>
-</tr>
-<tr class="odd">
-<td><code>3 × 24 = 72</code></td>
-<td>Scales the eggs instead of the flour.</td>
-</tr>
-<tr class="even">
-<td><code>3 ÷ 12 = 0.25</code></td>
-<td>Scales the eggs instead of the flour.</td>
-</tr>
-<tr class="odd">
-<td><code>GCF(3, 12) = 3</code></td>
-<td>Scales the eggs instead of the flour.</td>
+<td><code>12 × 24 = 288</code>, <code>24 ÷ 2 = 12</code></td>
 </tr>
 </tbody>
 </table>

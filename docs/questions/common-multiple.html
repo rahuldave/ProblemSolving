@@ -337,46 +337,52 @@ ul.task-list li input[type="checkbox"] {
 <p><code>common-multiple</code> · skill · prompt: <em>Find a common multiple of {x} and {y}.</em></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Know the LCM</strong> <code>recall</code></td>
 <td>Recognize the least common multiple directly.</td>
+<td>Small, familiar numbers.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>List multiples</strong> <code>list_multiples</code></td>
 <td>Count up by {x} until you reach a number {y} divides.</td>
+<td>Small numbers.</td>
 <td>—</td>
 </tr>
 <tr class="odd">
 <td><strong>Multiply them</strong> <code>product</code></td>
 <td>{x} × {y} is always a common multiple.</td>
+<td>The numbers share no factors (then it’s also the least).</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Use the GCF</strong> <code>gcf_formula</code></td>
 <td>LCM = {x} ÷ GCF × {y}.</td>
+<td>Large numbers whose GCF you can find.</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="find-a-common-multiple-of-4-and-6." class="level2">
 <h2 class="anchored" data-anchor-id="find-a-common-multiple-of-4-and-6.">Find a common multiple of 4 and 6.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/common-multiple-1.svg" alt="Find a common multiple of 4 and 6." style="width:1617px" loading="lazy" class="figure-img">
+<img src="../svg/common-multiple-1.svg" alt="Find a common multiple of 4 and 6." style="width:2094px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -390,7 +396,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="find-a-common-multiple-of-4-and-7.">Find a common multiple of 4 and 7.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/common-multiple-2.svg" alt="Find a common multiple of 4 and 7." style="width:1617px" loading="lazy" class="figure-img">
+<img src="../svg/common-multiple-2.svg" alt="Find a common multiple of 4 and 7." style="width:2094px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

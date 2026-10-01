@@ -1,189 +1,317 @@
 flowchart LR
   n0(["Which is larger: 3/8 or 2/5? (Or are they equal?)"])
   n1(["Answer: second"])
-  n2["Cross-multiply"]
-  n3["Find the cross products of 3/8 and 2/5 → 15/16"]
-  n2 --> n3
-  n4["15 #lt; 16"]
+  n2{{"× Which first step?"}}
+  n3["Find how much the top grows<br/>2 ÷ 3 ≈ 0.667<br/>[divide · across]"]
+  n4["Find how much the bottom grows<br/>5 ÷ 8 = 0.625"]
+  n5["If the top grows faster, the second fraction is bigger<br/>2/3 ＞ 0.625"]
+  n6["Find the scale factor between the bottoms<br/>5 ÷ 8 = 0.625<br/>[divide · across]<br/>[in: Find the missing value in a proportion]"]
+  n7{{"× Which next step?"}}
+  n8["Scale the top by the same factor<br/>3 × 0.625 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n9["Same bottom, so compare the tops<br/>1.875 ＜ 2"]
+  n10["Find how much the top grows<br/>2 ÷ 3 ≈ 0.667"]
+  n11["If the top grows faster, the second fraction is bigger<br/>2/3 ＞ 0.625"]
+  n12["Divide the top by the bottom<br/>2 ÷ 5 = 0.4<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n13[["Write the first fraction as a decimal<br/>Write 3/8 as a decimal → 0.375"]]
+  n14["Compare the decimals<br/>0.375 ＜ 0.4"]
+  n15["Divide the top by the bottom<br/>3 ÷ 8 = 0.375<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n16{{"× Which next step?"}}
+  n17["Scale up to 5<br/>0.375 × 5 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n18["Divide the top by the bottom<br/>2 ÷ 5 = 0.4<br/>[in: Write a fraction as a decimal]"]
+  n19["Compare the decimals<br/>0.375 ＜ 0.4"]
+  n20["Scale the bottom up to 10, 100, or 1000<br/>5 × 2 = 10<br/>[in: Write a fraction as a decimal]"]
+  n21["Scale the top by the same factor<br/>2 × 2 = 4<br/>[in: Write a fraction as a decimal]"]
+  n22["Read off the decimal<br/>4 ÷ 10 = 0.4<br/>[in: Write a fraction as a decimal]"]
+  n23["Compare the decimals<br/>0.375 ＜ 0.4"]
+  n24["Divide the top by the bottom<br/>5 ÷ 2 = 2.5<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n25[["Find the first fraction's flipped rate<br/>Write 8/3 as a decimal → ≈ 2.667"]]
+  n26["The smaller flipped rate is the bigger fraction<br/>8/3 ＞ 2.5"]
+  n27["Divide the top by the bottom<br/>8 ÷ 3 ≈ 2.667<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n28{{"× Which next step?"}}
+  n29["Divide by that rate<br/>5 ÷ 8/3 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n30["Divide the top by the bottom<br/>5 ÷ 2 = 2.5<br/>[in: Write a fraction as a decimal]"]
+  n31["The smaller flipped rate is the bigger fraction<br/>8/3 ＞ 2.5"]
+  n32["Scale the bottom up to 10, 100, or 1000<br/>2 × 5 = 10<br/>[in: Write a fraction as a decimal]"]
+  n33["Scale the top by the same factor<br/>5 × 5 = 25<br/>[in: Write a fraction as a decimal]"]
+  n34["Read off the decimal<br/>25 ÷ 10 = 2.5<br/>[in: Write a fraction as a decimal]"]
+  n35["The smaller flipped rate is the bigger fraction<br/>8/3 ＞ 2.5"]
+  n36["Find the greatest common factor<br/>GCF(3, 2) = 1<br/>[factor · across]<br/>[in: Find a common multiple]"]
+  n37["Divide one number by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find a common multiple]"]
+  n38["Multiply by the other number<br/>3 × 2 = 6<br/>[in: Find a common multiple]"]
+  n39{"all"}
+  n40{"all"}
+  n41[["Find the first fraction's bottom with 6 on top<br/>Solve 8/3 = x/6 → 16"]]
+  n42[["Find the second fraction's bottom with 6 on top<br/>Solve 5/2 = x/6 → 15"]]
+  n43["Same top, so the smaller bottom wins<br/>16 ＞ 15"]
+  n44["Find the greatest common factor<br/>GCF(8, 5) = 1<br/>[factor · across]<br/>[in: Find a common multiple]"]
+  n45["Divide one number by the GCF<br/>8 ÷ 1 = 8<br/>[in: Find a common multiple]"]
+  n46["Multiply by the other number<br/>8 × 5 = 40<br/>[in: Find a common multiple]"]
+  n47{"all"}
+  n48{"all"}
+  n49[["Rewrite the first fraction over 40<br/>Solve 3/8 = x/40 → 15"]]
+  n50[["Rewrite the second fraction over 40<br/>Solve 2/5 = x/40 → 16"]]
+  n51["Same bottom, so compare the tops<br/>15 ＜ 16"]
+  n52["Find the greatest common factor<br/>GCF(2, 5) = 1<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+  n53{"all"}
+  n54{"all"}
+  n55["Divide the top by the GCF<br/>2 ÷ 1 = 2<br/>[in: Simplify a fraction]"]
+  n56["Divide the bottom by the GCF<br/>5 ÷ 1 = 5<br/>[in: Simplify a fraction]"]
+  n57[["Simplify the first fraction<br/>Simplify 3/8 → 3 and 8"]]
+  n58["Are the simplified fractions the same?<br/>3:8 ≠ 2:5"]
+  n59["Find the greatest common factor<br/>GCF(3, 8) = 1<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n60{{"× Which next step?"}}
+  n61["Divide the top by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n62{{"× Which method?"}}
+  n63["Divide the bottom by the GCF<br/>8 ÷ 1 = 8<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n64["Find the scale factor from the simplified bottom<br/>5 ÷ 8 = 0.625<br/>[in: Find the missing value in a proportion]"]
+  n65["Scale the simplified top<br/>3 × 0.625 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n66["Same bottom, so compare the tops<br/>1.875 ＜ 2"]
+  n67["Divide the bottom by the GCF<br/>8 ÷ 1 = 8<br/>[in: Simplify a fraction]"]
+  n68[["Simplify the second fraction<br/>Simplify 2/5 → 2 and 5"]]
+  n69["Are the simplified fractions the same?<br/>3:8 ≠ 2:5"]
+  n70["Divide the bottom by the GCF<br/>8 ÷ 1 = 8<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n71{{"× Which method?"}}
+  n72["Divide the top by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n73["Find the scale factor from the simplified bottom<br/>5 ÷ 8 = 0.625<br/>[in: Find the missing value in a proportion]"]
+  n74["Scale the simplified top<br/>3 × 0.625 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n75["Same bottom, so compare the tops<br/>1.875 ＜ 2"]
+  n76["Divide the top by the GCF<br/>3 ÷ 1 = 3<br/>[in: Simplify a fraction]"]
+  n77[["Simplify the second fraction<br/>Simplify 2/5 → 2 and 5"]]
+  n78["Are the simplified fractions the same?<br/>3:8 ≠ 2:5"]
+  n79["Recall the least common multiple<br/>LCM(3, 2) = 6<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+  n80{"all"}
+  n81{"all"}
+  n82[["Find the first fraction's bottom with 6 on top<br/>Solve 8/3 = x/6 → 16"]]
+  n83[["Find the second fraction's bottom with 6 on top<br/>Solve 5/2 = x/6 → 15"]]
+  n84["Same top, so the smaller bottom wins<br/>16 ＞ 15"]
+  n85["Recall the least common multiple<br/>LCM(8, 5) = 40<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+  n86{"all"}
+  n87{"all"}
+  n88[["Rewrite the first fraction over 40<br/>Solve 3/8 = x/40 → 15"]]
+  n89[["Rewrite the second fraction over 40<br/>Solve 2/5 = x/40 → 16"]]
+  n90["Same bottom, so compare the tops<br/>15 ＜ 16"]
+  n91["Multiply the second top by the first bottom<br/>2 × 8 = 16<br/>[multiply · across]<br/>[in: Cross products]"]
+  n92["Multiply the first top by the second bottom<br/>3 × 5 = 15<br/>[in: Cross products]"]
+  n93["The bigger product sits with the bigger fraction<br/>15 ＜ 16"]
+  n94["Multiply the first top by the second bottom<br/>3 × 5 = 15<br/>[multiply · across]<br/>[in: Cross products]"]
+  n95{{"× Which next step?"}}
+  n96["Multiply the second top by the first bottom<br/>2 × 8 = 16<br/>[in: Cross products]"]
+  n97["The bigger product sits with the bigger fraction<br/>15 ＜ 16"]
+  n98["Divide by the remaining number<br/>15 ÷ 8 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n99["Scale the bottom up to 10, 100, or 1000<br/>8 × 125 = 1000<br/>[multiply · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n100{{"× Which next step?"}}
+  n101["Scale the top by the same factor<br/>3 × 125 = 375<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n102{{"× Which method?"}}
+  n103["Read off the decimal<br/>375 ÷ 1000 = 0.375<br/>[in: Write a fraction as a decimal]"]
+  n104[["Write the second fraction as a decimal<br/>Write 2/5 as a decimal → 0.4"]]
+  n105["Compare the decimals<br/>0.375 ＜ 0.4"]
+  n106["Read off the decimal<br/>375 ÷ 1000 = 0.375<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n107["Scale up to 5<br/>0.375 × 5 = 1.875<br/>[in: Find the missing value in a proportion]"]
+  n108["Same bottom, so compare the tops<br/>1.875 ＜ 2"]
+  n109["List multiples of 3 until 2 divides one<br/>3 × 2 = 6<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+  n110["Scale the bottom up to 10, 100, or 1000<br/>5 × 2 = 10<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+  n111{{"× Which next step?"}}
+  n112["Scale the top by the same factor<br/>2 × 2 = 4<br/>[in: Write a fraction as a decimal]"]
+  n113["Read off the decimal<br/>4 ÷ 10 = 0.4<br/>[in: Write a fraction as a decimal]"]
+  n114[["Write the first fraction as a decimal<br/>Write 3/8 as a decimal → 0.375"]]
+  n115["Compare the decimals<br/>0.375 ＜ 0.4"]
+  n116["Scale the top by the same factor<br/>5 × 5 = 25<br/>[in: Write a fraction as a decimal]"]
+  n117["Read off the decimal<br/>25 ÷ 10 = 2.5<br/>[in: Write a fraction as a decimal]"]
+  n118[["Find the first fraction's flipped rate<br/>Write 8/3 as a decimal → ≈ 2.667"]]
+  n119["The smaller flipped rate is the bigger fraction<br/>8/3 ＞ 2.5"]
+  n120["List multiples of 8 until 5 divides one<br/>8 × 5 = 40<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+  n121["Plot each fraction as a point (top, bottom)<br/>(3, 8), (2, 5)<br/>[represent · across]"]
+  n122{"all"}
+  n123{"all"}
+  n124["Find the slope to the first point<br/>8 ÷ 3 ≈ 2.667"]
+  n125["Find the slope to the second point<br/>5 ÷ 2 = 2.5"]
+  n126["The less steep line is the bigger fraction<br/>8/3 ＞ 2.5"]
+  n127["Find how far the second fraction is below 1<br/>5 − 2 = 3<br/>[subtract · within]"]
+  n128["Find how far the first fraction is below 1<br/>8 − 3 = 5"]
+  n129[["Compare the two gaps<br/>Which is larger: 5/8 or 3/5? (Or are they equal?) → first"]]
+  n130["Find how far the first fraction is below 1<br/>8 − 3 = 5<br/>[subtract · within]"]
+  n131["Find how far the second fraction is below 1<br/>5 − 2 = 3"]
+  n132[["Compare the two gaps<br/>Which is larger: 5/8 or 3/5? (Or are they equal?) → first"]]
+  n0 --> n2
+  n2 -->|"Compare scale factors"| n3
+  n4 --> n5
+  n5 --> n1
   n3 --> n4
-  n4 --> n1
-  n5["Common denominator"]
-  n6["Find a common multiple of 8 and 5 → 40"]
-  n5 --> n6
-  n7["Solve 3/8 = x/40 → 15"]
+  n2 -->|"Rewrite one fraction over the other's denominator or Compare scale factors"| n6
   n6 --> n7
-  n8["Solve 2/5 = x/40 → 16"]
-  n7 --> n8
-  n9["15 #lt; 16"]
-  n8 --> n9
+  n7 -->|"Rewrite one fraction over the other's denominator"| n8
   n9 --> n1
-  n10["Rewrite one fraction over the other's denominator"]
-  n11["Solve 3/8 = x/5 → 1.875"]
+  n8 --> n9
+  n7 -->|"Compare scale factors"| n10
+  n11 --> n1
   n10 --> n11
-  n12["1.875 #lt; 2"]
-  n11 --> n12
-  n12 --> n1
-  n13["Common numerator"]
-  n14["Find a common multiple of 3 and 2 → 6"]
+  n2 -->|"Convert to decimals"| n12
   n13 --> n14
-  n15["Solve 8/3 = x/6 → 16"]
-  n14 --> n15
-  n16["Solve 5/2 = x/6 → 15"]
+  n14 --> n1
+  n12 --> n13
+  n2 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n15
   n15 --> n16
-  n17["16 #gt; 15"]
-  n16 --> n17
-  n17 --> n1
-  n18["Convert to decimals"]
-  n19["Write 3/8 as a decimal → 0.375"]
+  n16 -->|"Rewrite one fraction over the other's denominator"| n17
+  n17 --> n9
+  n16 -->|"Convert to decimals"| n18
+  n19 --> n1
   n18 --> n19
-  n20["Write 2/5 as a decimal → 0.4"]
-  n19 --> n20
-  n21["0.375 #lt; 0.4"]
-  n20 --> n21
-  n21 --> n1
-  n22["Compare unit rates (flipped fractions)"]
-  n23["Write 8/3 as a decimal → ≈ 2.667"]
+  n16 -->|"Convert to decimals"| n20
+  n21 --> n22
   n22 --> n23
-  n24["Write 5/2 as a decimal → 2.5"]
-  n23 --> n24
-  n25["8/3 #gt; 2.5"]
+  n23 --> n1
+  n20 --> n21
+  n2 -->|"Compare unit rates (flipped fractions)"| n24
+  n25 --> n26
+  n26 --> n1
   n24 --> n25
-  n25 --> n1
-  n26["Compare scale factors"]
-  n27["2 ÷ 3 ≈ 0.667"]
-  n26 --> n27
-  n28["5 ÷ 8 = 0.625"]
+  n2 -->|"Rewrite one fraction over the other's denominator or Compare unit rates (flipped fractions)"| n27
   n27 --> n28
-  n29["2/3 #gt; 0.625"]
-  n28 --> n29
-  n29 --> n1
-  n30["Graph the points"]
-  n31["plot (3, 8), (2, 5)"]
+  n28 -->|"Rewrite one fraction over the other's denominator"| n29
+  n29 --> n9
+  n28 -->|"Compare unit rates (flipped fractions)"| n30
+  n31 --> n1
   n30 --> n31
-  n32["8 ÷ 3 ≈ 2.667"]
-  n31 --> n32
-  n33["5 ÷ 2 = 2.5"]
-  n32 --> n33
-  n34["8/3 #gt; 2.5"]
+  n28 -->|"Compare unit rates (flipped fractions)"| n32
   n33 --> n34
-  n34 --> n1
-  n35["Simplify both"]
-  n36["Simplify 3/8 → 3/8"]
-  n35 --> n36
-  n37["Simplify 2/5 → 2/5"]
-  n36 --> n37
-  n38["3:8 ≠ 2:5"]
+  n34 --> n35
+  n35 --> n1
+  n32 --> n33
+  n2 -->|"Common numerator"| n36
   n37 --> n38
-  n38 --> n1
-  n39["Distance from 1"]
-  n40["8 − 3 = 5"]
-  n39 --> n40
-  n41["5 − 2 = 3"]
-  n40 --> n41
-  n42["Which is larger: 5/8 or 3/5? (Or are they equal?) → first"]
-  n41 --> n42
-  n42 --> n1
-  n43["2 ÷ 3 ≈ 0.667"]
-  n44{{"divide · across"}}
-  n0 --> n44
-  n44 --> n43
-  n43 --> n26
-  n45["5 ÷ 8 = 0.625"]
+  n39 --> n41
+  n41 --> n40
+  n39 --> n42
+  n42 --> n40
+  n38 --> n39
+  n40 --> n43
+  n43 --> n1
+  n36 --> n37
+  n2 -->|"Common denominator"| n44
+  n45 --> n46
+  n47 --> n49
+  n49 --> n48
+  n47 --> n50
+  n50 --> n48
+  n46 --> n47
+  n48 --> n51
+  n51 --> n1
   n44 --> n45
-  n45 -->|"missing-value/scale_factor"| n10
-  n46["3 ÷ 8 = 0.375"]
-  n47{{"divide · within"}}
-  n0 --> n47
-  n47 --> n46
-  n48["then 0.375 × 5 = 1.875"]
-  n46 --> n48
-  n48 -->|"missing-value/unit_rate"| n10
-  n49["then 2 ÷ 5 = 0.4"]
-  n46 --> n49
-  n49 -->|"to-decimal/divide"| n18
-  n50["then 5 × 2 = 10"]
-  n46 --> n50
-  n50 -->|"to-decimal/power_of_ten"| n18
-  n51["8 ÷ 3 ≈ 2.667"]
-  n47 --> n51
-  n52["then 5 ÷ 8/3 = 1.875"]
-  n51 --> n52
-  n52 -->|"missing-value/inverse_rate"| n10
-  n53["then 5 ÷ 2 = 2.5"]
-  n51 --> n53
-  n53 -->|"to-decimal/divide"| n22
-  n54["then 2 × 5 = 10"]
-  n51 --> n54
-  n54 -->|"to-decimal/power_of_ten"| n22
-  n55["GCF(3, 2) = 1"]
-  n56{{"factor · across"}}
-  n0 --> n56
-  n56 --> n55
-  n55 -->|"common-multiple/gcf_formula"| n13
-  n57["GCF(8, 5) = 1"]
-  n56 --> n57
-  n57 -->|"common-multiple/gcf_formula"| n5
-  n58["GCF(3, 8) = 1"]
-  n59{{"factor · within"}}
-  n0 --> n59
-  n59 --> n58
-  n60["then 3 ÷ 1 = 3"]
-  n58 --> n60
-  n60 -->|"simplify-fraction/gcf"| n10
-  n60 -->|"simplify-fraction/gcf"| n35
-  n61["3 × 5 = 15"]
-  n62{{"multiply · across"}}
-  n0 --> n62
-  n62 --> n61
-  n63["then 2 × 8 = 16"]
-  n61 --> n63
-  n63 -->|"cross-products/diagonals"| n2
-  n64["then 15 ÷ 8 = 1.875"]
-  n61 --> n64
-  n64 -->|"missing-value/cross_multiply"| n10
-  n65["LCM(3, 2) = 6"]
-  n62 --> n65
-  n65 -->|"common-multiple/recall"| n13
-  n66["LCM(8, 5) = 40"]
-  n62 --> n66
-  n66 -->|"common-multiple/recall"| n5
-  n67["3 × 2 = 6"]
-  n62 --> n67
-  n68{{"multiply · within"}}
-  n0 --> n68
-  n68 --> n67
-  n67 -->|"common-multiple/list_multiples / common-multiple/product"| n13
-  n69["8 × 5 = 40"]
-  n62 --> n69
+  n2 -->|"Simplify both"| n52
+  n53 --> n55
+  n55 --> n54
+  n53 --> n56
+  n56 --> n54
+  n54 --> n57
+  n57 --> n58
+  n58 --> n1
+  n52 --> n53
+  n2 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n59
+  n59 --> n60
+  n60 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n61
+  n61 --> n62
+  n63 --> n64
+  n64 --> n65
+  n65 --> n66
+  n66 --> n1
+  n62 -->|"Rewrite one fraction over the other's denominator"| n63
+  n67 --> n68
   n68 --> n69
-  n69 -->|"common-multiple/list_multiples / common-multiple/product"| n5
-  n70["8 × 125 = 1000"]
-  n68 --> n70
-  n71["then 3 × 125 = 375"]
+  n69 --> n1
+  n62 -->|"Simplify both"| n67
+  n60 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n70
   n70 --> n71
-  n71 -->|"to-decimal/power_of_ten"| n18
-  n71 -->|"to-decimal/power_of_ten"| n10
-  n72["plot (3, 8), (2, 5)"]
-  n73{{"represent · across"}}
-  n0 --> n73
-  n73 --> n72
-  n72 --> n30
-  n74["8 − 3 = 5"]
-  n75{{"subtract · within"}}
-  n0 --> n75
-  n75 --> n74
-  n74 --> n39
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n44,n47,n56,n59,n62,n68,n73,n75 cls
-  class n43,n45,n46,n51,n55,n57,n58,n61,n65,n66,n67,n69,n70,n72,n74 first
-  class n48,n49,n50,n52,n53,n54,n60,n63,n64,n71 second
-  class n2,n5,n10,n13,n18,n22,n26,n30,n35,n39 method
-  class n3,n6,n7,n8,n11,n14,n15,n16,n19,n20,n23,n24,n36,n37,n42 skill
-  class n4,n9,n12,n17,n21,n25,n27,n28,n29,n31,n32,n33,n34,n38,n40,n41 step
-  class n0,n1 ans
+  n72 --> n73
+  n73 --> n74
+  n74 --> n75
+  n75 --> n1
+  n71 -->|"Rewrite one fraction over the other's denominator"| n72
+  n76 --> n77
+  n77 --> n78
+  n78 --> n1
+  n71 -->|"Simplify both"| n76
+  n2 -->|"Common numerator"| n79
+  n80 --> n82
+  n82 --> n81
+  n80 --> n83
+  n83 --> n81
+  n81 --> n84
+  n84 --> n1
+  n79 --> n80
+  n2 -->|"Common denominator"| n85
+  n86 --> n88
+  n88 --> n87
+  n86 --> n89
+  n89 --> n87
+  n87 --> n90
+  n90 --> n1
+  n85 --> n86
+  n2 -->|"Cross-multiply"| n91
+  n92 --> n93
+  n93 --> n1
+  n91 --> n92
+  n2 -->|"Cross-multiply or Rewrite one fraction over the other's denominator"| n94
+  n94 --> n95
+  n95 -->|"Cross-multiply"| n96
+  n97 --> n1
+  n96 --> n97
+  n95 -->|"Rewrite one fraction over the other's denominator"| n98
+  n98 --> n9
+  n2 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n99
+  n99 --> n100
+  n100 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n101
+  n101 --> n102
+  n103 --> n104
+  n104 --> n105
+  n105 --> n1
+  n102 -->|"Convert to decimals"| n103
+  n106 --> n107
+  n107 --> n108
+  n108 --> n1
+  n102 -->|"Rewrite one fraction over the other's denominator"| n106
+  n2 -->|"Common numerator"| n109
+  n109 --> n80
+  n2 -->|"Convert to decimals or Compare unit rates (flipped fractions)"| n110
+  n110 --> n111
+  n111 -->|"Convert to decimals"| n112
+  n113 --> n114
+  n114 --> n115
+  n115 --> n1
+  n112 --> n113
+  n111 -->|"Compare unit rates (flipped fractions)"| n116
+  n117 --> n118
+  n118 --> n119
+  n119 --> n1
+  n116 --> n117
+  n2 -->|"Common denominator"| n120
+  n120 --> n86
+  n2 -->|"Graph the points"| n121
+  n122 --> n124
+  n124 --> n123
+  n122 --> n125
+  n125 --> n123
+  n123 --> n126
+  n126 --> n1
+  n121 --> n122
+  n2 -->|"Distance from 1"| n127
+  n128 --> n129
+  n129 --> n1
+  n127 --> n128
+  n2 -->|"Distance from 1"| n130
+  n131 --> n132
+  n132 --> n1
+  n130 --> n131
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n39,n40,n47,n48,n53,n54,n80,n81,n86,n87,n122,n123 k_all
+  class n13,n25,n41,n42,n49,n50,n57,n68,n77,n82,n83,n88,n89,n104,n114,n118,n129,n132 k_call
+  class n2,n7,n16,n28,n60,n62,n71,n95,n100,n102,n111 k_choice
+  class n1 k_end
+  class n3,n6,n12,n15,n24,n27,n36,n44,n52,n59,n79,n85,n91,n94,n99,n109,n110,n120,n121,n127,n130 k_first
+  class n0 k_start
+  class n4,n5,n8,n9,n10,n11,n14,n17,n18,n19,n20,n21,n22,n23,n26,n29,n30,n31,n32,n33,n34,n35,n37,n38,n43,n45,n46,n51,n55,n56,n58,n61,n63,n64,n65,n66,n67,n69,n70,n72,n73,n74,n75,n76,n78,n84,n90,n92,n93,n96,n97,n98,n101,n103,n105,n106,n107,n108,n112,n113,n115,n116,n117,n119,n124,n125,n126,n128,n131 k_step

@@ -330,47 +330,95 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Joe is having a party. He has 6 cups of water and 4 spoons of sugar, which make 6 glasses of lemonade. He needs 18 more glasses of lemonade. How many more spoons of sugar does he need?</p>
 </blockquote>
+<p><strong>Asked:</strong> how many more spoons of sugar (spoons). <strong>Is a:</strong> <a href="../questions/missing-value.html">Find the missing value in a proportion</a>. <strong>Answer:</strong> 12 more spoons of sugar.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“6 cups of water”</td>
-<td>6</td>
+<td>6 cups</td>
 <td>water</td>
-<td>distractor</td>
+<td><strong>no</strong></td>
 </tr>
 <tr class="even">
 <td>“4 spoons of sugar”</td>
-<td>4</td>
+<td>4 spoons</td>
 <td>sugar</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“6 glasses of lemonade”</td>
-<td>6</td>
+<td>6 glasses</td>
 <td>lemonade</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“18 more glasses”</td>
-<td>18</td>
+<td>18 glasses</td>
 <td>extra lemonade</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how many more spoons of sugar (spoons). <strong>Link:</strong> “which make”: 4 spoons of sugar go with 6 glasses; the water is a distractor for a question about sugar.</p>
-<p><strong>Maps to</strong> <a href="../questions/missing-value.html">missing-value</a>: a = 4, b = 6, d = 18. <strong>Answer:</strong> 12 more spoons of sugar.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Same recipe, more glasses: a missing value</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Which two quantities go together?</td>
+<td>Find the pair that forms the ratio</td>
+<td>4 spoons of sugar with 6 glasses</td>
+<td>4 spoons of sugar with 6 cups of water → 12</td>
+</tr>
+<tr class="odd">
+<td>Which way round does the ratio go?</td>
+<td>Keep the same order on both sides</td>
+<td>Sugar over glasses on both sides</td>
+<td>Glasses over sugar on one side → 27</td>
+</tr>
+<tr class="even">
+<td>Is 18 the extra glasses or the total?</td>
+<td>‘More’ vs ‘in all’</td>
+<td>18 is the extra glasses</td>
+<td>18 more makes 24 in all, so use 24 → 16; 18 is the total, so subtract the sugar used → 8</td>
+</tr>
+<tr class="odd">
+<td>How does the sugar change when the glasses go up?</td>
+<td>Scale, don’t add</td>
+<td>It scales by the same factor</td>
+<td>It goes up by the same 18 → 18</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-lemonade-more-sugar.svg" alt="Lemonade: more sugar" style="width:3135px" loading="lazy" class="figure-img">
+<img src="../svg/wp-lemonade-more-sugar.svg" alt="Lemonade: more sugar" style="width:4456px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -381,84 +429,56 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
+<tr class="odd">
+<td>Find the pair that forms the ratio</td>
+<td>Pairs sugar with the water, which isn’t needed.</td>
+<td>12</td>
+<td><strong>no</strong>: same answer, so ask how they got it</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Keep the same order on both sides</td>
+<td>Flips one side: glasses over sugar = x over glasses.</td>
+<td>27</td>
+<td>yes</td>
+<td><code>6 × 18 = 108</code>, <code>18 ÷ 4 = 4.5</code></td>
+</tr>
 <tr class="odd">
 <td>‘More’ vs ‘in all’</td>
 <td>Finds the sugar for all 24 glasses instead of the 18 extra.</td>
 <td>16</td>
 <td>yes</td>
+<td><code>4 × 24 = 96</code>, <code>24 ÷ 6 = 4</code>, <code>6 × 4 = 24</code></td>
 </tr>
 <tr class="even">
 <td>‘More’ vs ‘in all’</td>
 <td>Reads 18 as the new total and subtracts the 4 spoons already used.</td>
 <td>8</td>
 <td>yes</td>
-</tr>
-<tr class="odd">
-<td>Keep the same order on both sides</td>
-<td>Flips one side: glasses over sugar = x over glasses.</td>
-<td>27</td>
-<td>yes</td>
-</tr>
-<tr class="even">
-<td>Ignore numbers that don’t matter</td>
-<td>Pairs sugar with the 6 cups of water instead of the 6 glasses.</td>
-<td>12</td>
-<td><strong>no</strong>: same answer, so ask how they got it</td>
+<td>—</td>
 </tr>
 <tr class="odd">
 <td>Scale, don’t add</td>
 <td>Adds instead of scaling: 18 more glasses, so 18 more spoons.</td>
 <td>18</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>18 ÷ 4 = 4.5</code></td>
-<td>Flips one side: glasses over sugar = x over glasses.</td>
-</tr>
-<tr class="even">
-<td><code>24 ÷ 6 = 4</code></td>
-<td>Finds the sugar for all 24 glasses instead of the 18 extra.</td>
-</tr>
-<tr class="odd">
-<td><code>4 × 24 = 96</code></td>
-<td>Finds the sugar for all 24 glasses instead of the 18 extra.</td>
-</tr>
-<tr class="even">
-<td><code>6 × 18 = 108</code></td>
-<td>Flips one side: glasses over sugar = x over glasses.</td>
-</tr>
-<tr class="odd">
-<td><code>6 × 4 = 24</code></td>
-<td>Finds the sugar for all 24 glasses instead of the 18 extra.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

@@ -330,6 +330,37 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>A train travels 150 miles in 3 hours. At the same speed, how far does it travel in 90 minutes?</p>
 </blockquote>
+<p><strong>Asked:</strong> how far (miles). <strong>Is a:</strong> <a href="../questions/missing-value.html">Find the missing value in a proportion</a>. <strong>Answer:</strong> 75 miles.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Phrase</th>
+<th>Value</th>
+<th>Counts</th>
+<th>Needed?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>“150 miles”</td>
+<td>150 miles</td>
+<td>distance</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>“3 hours”</td>
+<td>3 hours</td>
+<td>time</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td>“90 minutes”</td>
+<td>90 minutes</td>
+<td>new time</td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -339,38 +370,43 @@ ul.task-list li input[type="checkbox"] {
 </colgroup>
 <thead>
 <tr class="header">
-<th>Phrase</th>
-<th>Value</th>
-<th>Counts</th>
-<th>Role</th>
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>“150 miles”</td>
-<td>150</td>
-<td>distance</td>
-<td>used</td>
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Same speed, new time: a missing value</td>
+<td>—</td>
 </tr>
 <tr class="even">
-<td>“3 hours”</td>
-<td>3</td>
-<td>time</td>
-<td>used</td>
+<td>Which two quantities go together?</td>
+<td>Find the pair that forms the ratio</td>
+<td>150 miles in 3 hours</td>
+<td>—</td>
 </tr>
 <tr class="odd">
-<td>“90 minutes”</td>
-<td>90 minutes → <strong>1.5</strong> (60 minutes = 1 hour)</td>
-<td>new time</td>
-<td>used</td>
+<td>Are the two times in the same units?</td>
+<td>Make units match</td>
+<td>No: convert 90 minutes to hours</td>
+<td>Use 90 as it is → 4500</td>
+</tr>
+<tr class="even">
+<td>Which way round does the ratio go?</td>
+<td>Keep the same order on both sides</td>
+<td>Miles over hours on both sides</td>
+<td>Hours over miles on one side → 0.03</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how far (miles). <strong>Link:</strong> “in … at the same speed”: 150 miles per 3 hours; the time must be in hours on both sides.</p>
-<p><strong>Maps to</strong> <a href="../questions/missing-value.html">missing-value</a>: a = 150, b = 3, d = 1.5. <strong>Answer:</strong> 75 miles.</p>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-train-minutes.svg" alt="Train in minutes" style="width:3439px" loading="lazy" class="figure-img">
+<img src="../svg/wp-train-minutes.svg" alt="Train in minutes" style="width:4914px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -381,17 +417,19 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
@@ -400,43 +438,14 @@ Actual size
 <td>Uses 90 without converting minutes to hours.</td>
 <td>4500</td>
 <td>yes</td>
+<td><code>150 × 90 = 13500</code>, <code>90 ÷ 3 = 30</code>, <code>3 × 30 = 90</code></td>
 </tr>
 <tr class="even">
 <td>Keep the same order on both sides</td>
 <td>Flips one side: hours over miles.</td>
 <td>0.03</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>1.5 ÷ 150 = 0.01</code></td>
-<td>Flips one side: hours over miles.</td>
-</tr>
-<tr class="even">
-<td><code>150 × 90 = 13500</code></td>
-<td>Uses 90 without converting minutes to hours.</td>
-</tr>
-<tr class="odd">
-<td><code>3 × 1.5 = 4.5</code></td>
-<td>Flips one side: hours over miles.</td>
-</tr>
-<tr class="even">
-<td><code>3 × 30 = 90</code></td>
-<td>Uses 90 without converting minutes to hours.</td>
-</tr>
-<tr class="odd">
-<td><code>90 ÷ 3 = 30</code></td>
-<td>Uses 90 without converting minutes to hours.</td>
+<td><code>3 × 1.5 = 4.5</code>, <code>1.5 ÷ 150 = 0.01</code></td>
 </tr>
 </tbody>
 </table>

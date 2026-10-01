@@ -4,6 +4,7 @@
   "text": "There are 60 students in a class. 35% of them walk to school, and 10 ride bikes. How many students walk to school?",
   "concepts": [
     "question_type",
+    "rate_pair",
     "distractor"
   ],
   "quantities": [
@@ -12,66 +13,94 @@
       "text": "60 students",
       "value": 60,
       "unit": "students",
-      "counts": "the class",
-      "role": "used"
+      "counts": "the class"
     },
     {
       "id": "walk",
       "text": "35% of them walk",
       "value": 35,
       "unit": "percent",
-      "counts": "walkers",
-      "role": "used"
+      "counts": "walkers"
     },
     {
       "id": "bikes",
       "text": "10 ride bikes",
       "value": 10,
       "unit": "students",
-      "counts": "bike riders",
-      "role": "distractor"
+      "counts": "bike riders"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "how many students walk",
-    "counts": "walkers",
     "unit": "students"
   },
-  "relationship": {
-    "cue": "% of them",
-    "note": "'them' is the 60 students."
-  },
-  "maps_to": {
-    "question": "percent-of",
-    "with": {
-      "p": "walk",
-      "n": "students"
-    }
-  },
-  "answer": 21,
-  "answer_text": "21 students",
-  "traps": [
+  "extract": [
     {
-      "concept": "distractor",
-      "mistake": "Takes the 10 bike riders out of the class first.",
-      "maps_to": {
-        "question": "percent-of",
-        "with": {
-          "p": "walk",
-          "n": "subtract(students, bikes)"
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "35% of a group: a percent of a number",
+          "correct": true,
+          "question": "percent-of",
+          "binds": {
+            "p": "walk"
+          }
         }
-      }
+      ]
     },
     {
+      "op": "choose",
       "concept": "rate_pair",
-      "mistake": "Takes 35% of the 10 bike riders.",
-      "maps_to": {
-        "question": "percent-of",
-        "with": {
-          "p": "walk",
-          "n": "bikes"
+      "say": "35% of what?",
+      "options": [
+        {
+          "say": "Of all 60 students",
+          "correct": true,
+          "binds": {
+            "n": "students"
+          }
+        },
+        {
+          "say": "Of the 10 bike riders",
+          "trap": "Takes 35% of the 10 bike riders.",
+          "binds": {
+            "n": "bikes"
+          }
         }
-      }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "distractor",
+      "say": "What about the 10 bike riders?",
+      "options": [
+        {
+          "say": "Not needed",
+          "correct": true
+        },
+        {
+          "say": "Take them out first",
+          "trap": "Takes the 10 bike riders out of the class first.",
+          "steps": [
+            {
+              "op": "subtract",
+              "args": [
+                "students",
+                "bikes"
+              ],
+              "out": "rest",
+              "say": "Take the bike riders out"
+            }
+          ],
+          "binds": {
+            "n": "rest"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "answer": 21,
+  "answer_text": "21 students"
 }

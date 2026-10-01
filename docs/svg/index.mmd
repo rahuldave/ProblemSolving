@@ -1,32 +1,32 @@
 flowchart LR
-  add_fractions["Add two fractions"]
-  better_buy["Which is the better buy?"]
-  common_multiple["Find a common multiple"]
-  compare_fractions["Compare two fractions"]
-  cross_products["Cross products"]
-  missing_value["Find the missing value in a proportion"]
-  percent_of["Find a percent of a number"]
-  proportion_check["Are two ratios proportional?"]
-  simplify_fraction["Simplify a fraction"]
-  to_decimal["Write a fraction as a decimal"]
-  add_fractions --> common_multiple
-  add_fractions --> cross_products
-  add_fractions --> missing_value
-  add_fractions --> simplify_fraction
-  add_fractions --> to_decimal
-  better_buy -.->|is a| compare_fractions
-  compare_fractions --> common_multiple
-  compare_fractions --> cross_products
-  compare_fractions --> missing_value
-  compare_fractions --> simplify_fraction
-  compare_fractions --> to_decimal
-  missing_value --> simplify_fraction
-  missing_value --> to_decimal
-  percent_of -.->|is a| missing_value
-  proportion_check -.->|is a| compare_fractions
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,color:#222
-  classDef core fill:#fff1cc,stroke:#c99a1a,color:#222
-  classDef applied fill:#e3edfd,stroke:#5b7fd1,color:#222
-  class common_multiple,cross_products,simplify_fraction,to_decimal skill
-  class add_fractions,compare_fractions,missing_value core
-  class better_buy,percent_of,proportion_check applied
+  i0["Add two fractions"]
+  i1["Which is the better buy?"]
+  i2["Find a common multiple"]
+  i3["Compare two fractions"]
+  i4["Cross products"]
+  i5["Find the missing value in a proportion"]
+  i6["Find a percent of a number"]
+  i7["Are two ratios proportional?"]
+  i8["Simplify a fraction"]
+  i9["Write a fraction as a decimal"]
+  i0 --> i2
+  i0 --> i4
+  i0 --> i5
+  i0 --> i8
+  i0 --> i9
+  i1 -.->|"is a"| i3
+  i3 --> i2
+  i3 --> i4
+  i3 --> i5
+  i3 --> i8
+  i3 --> i9
+  i5 --> i8
+  i5 --> i9
+  i6 -.->|"is a"| i5
+  i7 -.->|"is a"| i3
+  classDef k_applied fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_core fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_skill fill:#e3f4e6,stroke:#3f9a55,color:#222
+  class i1,i6,i7 k_applied
+  class i0,i3,i5 k_core
+  class i2,i4,i8,i9 k_skill

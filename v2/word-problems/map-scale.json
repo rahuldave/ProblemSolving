@@ -3,72 +3,116 @@
   "title": "Map scale",
   "text": "On a map, 1 inch stands for 25 miles. Two towns are 3.5 inches apart on the map. How far apart are they really?",
   "concepts": [
+    "question_type",
     "rate_pair",
-    "correspondence",
-    "implicit_number"
+    "unknown",
+    "correspondence"
   ],
   "quantities": [
     {
       "id": "inch",
       "text": "1 inch",
       "value": 1,
-      "unit": "inches",
-      "counts": "map distance",
-      "role": "used"
+      "unit": "inch",
+      "counts": "map distance"
     },
     {
       "id": "scale_miles",
       "text": "25 miles",
       "value": 25,
       "unit": "miles",
-      "counts": "real distance",
-      "role": "used"
+      "counts": "real distance"
     },
     {
       "id": "map_distance",
       "text": "3.5 inches apart",
       "value": 3.5,
       "unit": "inches",
-      "counts": "map distance between the towns",
-      "role": "used"
+      "counts": "map distance between the towns"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "how far apart really",
-    "counts": "real distance",
     "unit": "miles"
   },
-  "relationship": {
-    "cue": "stands for",
-    "note": "25 real miles per 1 map inch."
-  },
-  "maps_to": {
-    "question": "missing-value",
-    "with": {
-      "a": "scale_miles",
-      "b": "inch",
-      "d": "map_distance"
-    }
-  },
-  "answer": 87.5,
-  "answer_text": "87.5 miles",
-  "traps": [
+  "extract": [
     {
-      "concept": "correspondence",
-      "mistake": "Flips one side: inches over miles.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "inch",
-          "b": "scale_miles",
-          "d": "map_distance"
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Same scale, new distance: a missing value",
+          "correct": true,
+          "question": "missing-value"
         }
-      }
+      ]
     },
     {
+      "op": "choose",
       "concept": "rate_pair",
-      "mistake": "Divides the scale by the map distance.",
-      "expr": "divide(scale_miles, map_distance)"
+      "say": "Which two quantities go together?",
+      "options": [
+        {
+          "say": "25 real miles for each 1 map inch",
+          "correct": true,
+          "binds": {
+            "a": "scale_miles",
+            "b": "inch"
+          }
+        },
+        {
+          "say": "The scale and the map distance",
+          "trap": "Divides the scale by the map distance.",
+          "steps": [
+            {
+              "op": "divide",
+              "args": [
+                "scale_miles",
+                "map_distance"
+              ],
+              "out": "guess",
+              "say": "Divide the scale by the map distance"
+            }
+          ],
+          "answer": "guess"
+        }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "unknown",
+      "say": "What gets scaled up?",
+      "options": [
+        {
+          "say": "The 3.5 inches between the towns",
+          "correct": true,
+          "binds": {
+            "d": "map_distance"
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "correspondence",
+      "say": "Which way round does the ratio go?",
+      "options": [
+        {
+          "say": "Miles over inches on both sides",
+          "correct": true
+        },
+        {
+          "say": "Inches over miles on one side",
+          "trap": "Flips one side: inches over miles.",
+          "binds": {
+            "a": "inch",
+            "b": "scale_miles"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "answer": 87.5,
+  "answer_text": "87.5 miles"
 }

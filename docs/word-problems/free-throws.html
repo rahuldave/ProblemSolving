@@ -330,47 +330,83 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Maya made 3 of her 4 free throws. Leo made 5 of his 7. Who has the better shooting rate?</p>
 </blockquote>
+<p><strong>Asked:</strong> who has the better shooting rate (name). <strong>Is a:</strong> <a href="../questions/compare-fractions.html">Compare two fractions</a>. <strong>Answer:</strong> Maya (3/4 = 0.75 vs 5/7 ≈ 0.714).</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“made 3”</td>
-<td>3</td>
+<td>3 shots</td>
 <td>Maya’s made shots</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“of her 4”</td>
-<td>4</td>
+<td>4 shots</td>
 <td>Maya’s attempts</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“made 5”</td>
-<td>5</td>
+<td>5 shots</td>
 <td>Leo’s made shots</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“of his 7”</td>
-<td>7</td>
+<td>7 shots</td>
 <td>Leo’s attempts</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> who has the better shooting rate (name). <strong>Link:</strong> “made … of”: Made out of attempted; the bigger fraction wins.</p>
-<p><strong>Maps to</strong> <a href="../questions/compare-fractions.html">compare-fractions</a>: a = 3, b = 4, c = 5, d = 7. <strong>Answer:</strong> Maya (3/4 = 0.75 vs 5/7 ≈ 0.714).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Whose rate is higher: compare two fractions</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>What is each player’s rate?</td>
+<td>Find the pair that forms the ratio</td>
+<td>Shots made out of shots taken</td>
+<td>Just the shots made → Leo</td>
+</tr>
+<tr class="odd">
+<td>Which way wins?</td>
+<td>Which way wins</td>
+<td>The bigger fraction made</td>
+<td>The bigger fraction missed → Leo</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-free-throws.svg" alt="Free throws" style="width:3677px" loading="lazy" class="figure-img">
+<img src="../svg/wp-free-throws.svg" alt="Free throws" style="width:6132px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -381,17 +417,19 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
@@ -400,63 +438,14 @@ Actual size
 <td>Compares shots made only (5 &gt; 3).</td>
 <td>Leo</td>
 <td>yes</td>
+<td>—</td>
 </tr>
 <tr class="even">
 <td>Which way wins</td>
 <td>Compares misses per shot and picks the bigger.</td>
 <td>Leo</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>1 × 2 = 2</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="even">
-<td><code>1 × 7 = 7</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="odd">
-<td><code>1 ÷ 4 = 0.25</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="even">
-<td><code>2 ÷ 1 = 2</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="odd">
-<td><code>4 ÷ 1 = 4</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="even">
-<td><code>4 − 1 = 3</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="odd">
-<td><code>GCF(1, 4) = 1</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="even">
-<td><code>LCM(1, 2) = 2</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
-</tr>
-<tr class="odd">
-<td><code>plot (1, 4), (2, 7)</code></td>
-<td>Compares misses per shot and picks the bigger.</td>
+<td><code>1 × 7 = 7</code>, <code>LCM(1, 2) = 2</code>, <code>1 ÷ 4 = 0.25</code>, <code>4 ÷ 1 = 4</code></td>
 </tr>
 </tbody>
 </table>

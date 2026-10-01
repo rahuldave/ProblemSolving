@@ -1,37 +1,34 @@
 flowchart LR
   n0(["Simplify 6/8."])
   n1(["Answer: 3/4"])
-  n2["Divide by the GCF"]
-  n3["GCF(6, 8) = 2"]
-  n2 --> n3
-  n4["6 ÷ 2 = 3"]
+  n2{{"× Which first step?"}}
+  n3["Divide the top by a shared factor<br/>6 ÷ 2 = 3<br/>[factor · within]"]
+  n4["Divide the bottom by the same factor<br/>8 ÷ 2 = 4"]
+  n5["Find the greatest common factor<br/>GCF(6, 8) = 2<br/>[factor · within]"]
+  n6{"all"}
+  n7{"all"}
+  n8["Divide the top by the GCF<br/>6 ÷ 2 = 3"]
+  n9["Divide the bottom by the GCF<br/>8 ÷ 2 = 4"]
+  n0 --> n2
+  n2 -->|"Divide out common factors repeatedly"| n3
+  n4 --> n1
   n3 --> n4
-  n5["8 ÷ 2 = 4"]
-  n4 --> n5
-  n5 --> n1
-  n6["Divide out common factors repeatedly"]
-  n7["6 ÷ 2 = 3"]
-  n6 --> n7
-  n8["8 ÷ 2 = 4"]
-  n7 --> n8
-  n8 --> n1
-  n9["6 ÷ 2 = 3"]
-  n10{{"factor · within"}}
-  n0 --> n10
-  n10 --> n9
-  n9 --> n6
-  n11["GCF(6, 8) = 2"]
-  n10 --> n11
-  n11 --> n2
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n10 cls
-  class n9,n11 first
-  class n2,n6 method
-  class n3,n4,n5,n7,n8 step
-  class n0,n1 ans
+  n2 -->|"Divide by the GCF"| n5
+  n6 --> n8
+  n8 --> n7
+  n6 --> n9
+  n9 --> n7
+  n7 --> n1
+  n5 --> n6
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n6,n7 k_all
+  class n2 k_choice
+  class n1 k_end
+  class n3,n5 k_first
+  class n0 k_start
+  class n4,n8,n9 k_step

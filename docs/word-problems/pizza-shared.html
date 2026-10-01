@@ -330,35 +330,77 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Sam ate 5/6 of a pizza and Kim ate 3/4 of a pizza. How much pizza did they eat in all?</p>
 </blockquote>
+<p><strong>Asked:</strong> how much pizza in all (pizzas). <strong>Is a:</strong> <a href="../questions/add-fractions.html">Add two fractions</a>. <strong>Answer:</strong> 1 7/12 pizzas.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“5/6 of a pizza”</td>
-<td>5/6</td>
-<td>Sam’s share</td>
-<td>used</td>
+<td>5 sixths</td>
+<td>Sam’s share (top)</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td>“5/6 of a pizza”</td>
+<td>6</td>
+<td>Sam’s share (bottom)</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td>“3/4 of a pizza”</td>
+<td>3 quarters</td>
+<td>Kim’s share (top)</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“3/4 of a pizza”</td>
-<td>3/4</td>
-<td>Kim’s share</td>
-<td>used</td>
+<td>4</td>
+<td>Kim’s share (bottom)</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how much in all (pizzas). <strong>Link:</strong> “in all”: Add the two fractions.</p>
-<p><strong>Maps to</strong> <a href="../questions/add-fractions.html">add-fractions</a>: a = 5, b = 6, c = 3, d = 4. <strong>Answer:</strong> 1 7/12 pizzas.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>‘In all’: add the two fractions</td>
+<td>Add the tops and add the bottoms → 0.8</td>
+</tr>
+<tr class="even">
+<td>How do you say 19/12 of a pizza?</td>
+<td>Answer in the story’s terms</td>
+<td>1 7/12 pizzas</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-pizza-shared.svg" alt="Sharing pizza" style="width:3828px" loading="lazy" class="figure-img">
+<img src="../svg/wp-pizza-shared.svg" alt="Sharing pizza" style="width:5961px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -369,17 +411,19 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
@@ -388,6 +432,7 @@ Actual size
 <td>Adds tops and bottoms: (5 + 3)/(6 + 4).</td>
 <td>0.8</td>
 <td>yes</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

@@ -1,11 +1,18 @@
 {
-  "description": "Extraction concepts: what a student must pull out of a word problem before any of the computation methods apply. Each word problem in word-problems/ is annotated with these, maps to a question in questions/, and lists traps — wrong extractions written as alternative mappings so the build can compute the wrong answer each one produces.",
-
+  "description": "Extraction concepts: the decisions a student makes to turn a word problem into a question with numbers. Each word problem in word-problems/ writes its extraction as `choose` steps (one per decision, done in any order), each with one correct option and its traps. An option's effects say what it does to the question: which question, which numbers go where, any computing first, any follow-up step. A trap is the correct reading with that one option swapped, so the build computes the wrong answer it leads to.",
   "concepts": {
     "question_type": {
       "name": "Recognize the question type",
       "does": "Decide which question the story is: missing value, compare, better buy, proportion check, percent of, add fractions.",
-      "cues": ["at the same rate / speed", "how many … for …", "which is the better buy / deal", "who is better / sweeter / faster", "same taste / shade", "% of, % off, tip, tax", "in all, altogether (with fractions)"],
+      "cues": [
+        "at the same rate / speed",
+        "how many … for …",
+        "which is the better buy / deal",
+        "who is better / sweeter / faster",
+        "same taste / shade",
+        "% of, % off, tip, tax",
+        "in all, altogether (with fractions)"
+      ],
       "mistake": "Solving a different question than the one asked (sale price instead of savings)."
     },
     "quantity": {
@@ -16,19 +23,39 @@
     "implicit_number": {
       "name": "Spot numbers written as words",
       "does": "Turn words into numbers.",
-      "cues": ["a dozen = 12", "a pair = 2", "half = 1/2", "twice = 2 ×", "a quarter = 1/4", "a / an / each = 1"],
+      "cues": [
+        "a dozen = 12",
+        "a pair = 2",
+        "half = 1/2",
+        "twice = 2 ×",
+        "a quarter = 1/4",
+        "a / an / each = 1"
+      ],
       "mistake": "Reading '2 dozen' as 2."
     },
     "unit_conversion": {
       "name": "Make units match",
       "does": "Convert so both sides of a ratio use the same units.",
-      "cues": ["minutes ↔ hours", "cents ↔ dollars", "inches ↔ feet"],
+      "cues": [
+        "minutes ↔ hours",
+        "cents ↔ dollars",
+        "inches ↔ feet"
+      ],
       "mistake": "Mixing hours on one side with minutes on the other."
     },
     "rate_pair": {
       "name": "Find the pair that forms the ratio",
       "does": "Identify which two quantities belong together.",
-      "cues": ["per", "for every", "each", "to make", "out of", "for", "stands for", "in (150 miles in 3 hours)"],
+      "cues": [
+        "per",
+        "for every",
+        "each",
+        "to make",
+        "out of",
+        "for",
+        "stands for",
+        "in (150 miles in 3 hours)"
+      ],
       "mistake": "Pairing the wrong two numbers."
     },
     "correspondence": {
@@ -49,7 +76,16 @@
     "delta_vs_total": {
       "name": "'More' vs 'in all'",
       "does": "Decide whether a number is an increase or a new total, and whether the answer should be.",
-      "cues": ["more", "additional", "another", "in all", "altogether", "total", "already", "left"],
+      "cues": [
+        "more",
+        "additional",
+        "another",
+        "in all",
+        "altogether",
+        "total",
+        "already",
+        "left"
+      ],
       "mistake": "Answering the total when the extra amount was asked for, or the reverse."
     },
     "multiplicative": {
@@ -60,7 +96,13 @@
     "direction": {
       "name": "Which way wins",
       "does": "In a comparison, decide whether the bigger or smaller ratio is better, and which ratio (sugar per glass, or glasses per spoon) the story is about.",
-      "cues": ["cheaper", "sweeter", "better rate", "faster", "stronger"],
+      "cues": [
+        "cheaper",
+        "sweeter",
+        "better rate",
+        "faster",
+        "stronger"
+      ],
       "mistake": "Picking the bigger number when the smaller one wins, or comparing the flipped ratio."
     },
     "follow_up": {
@@ -74,18 +116,23 @@
       "mistake": "Answering 'first' or a bare number."
     }
   },
-
   "word_problem_fields": {
     "id": "matches the file name",
     "title": "short name",
     "text": "the story",
-    "concepts": "extraction concepts this problem exercises",
-    "quantities": "[{id, text (phrase from the story), value (as written; fractions like '5/6' allowed), derive? ({expr, note}: an arithmetic step that converts the written value, e.g. multiply(target, 12) for '2 dozen'; names in expr mean the values as written), unit, counts, role: used | distractor, concepts?}]",
-    "unknown": "{text, counts, unit}",
-    "relationship": "{cue, note}: the phrase that ties the rate pair together",
-    "maps_to": "{question, with: {input: expression}, answer_map?}. Expressions use quantity ids and the tree expression syntax (add(x, y), num(q), den(q), …).",
-    "then": "optional {expr, note}: follow-up computed from `result` (the question's answer) and quantity ids",
-    "answer": "expected final answer; answer_text says it in context",
-    "traps": "[{concept, mistake, maps_to? | answer?, then?}]: a wrong extraction; the build computes its answer and reports whether that answer gives the mistake away"
+    "concepts": "the extraction concepts its decisions exercise",
+    "quantities": "[{id, text (the phrase in the story), value, unit, counts}]",
+    "asks": "{text, unit}: what the question asks for",
+    "extract": "[choose steps]: the decisions, done in any order. Each: {op: 'choose', concept, say, options}",
+    "options": "{say, correct: true | trap: 'the mistake', question?, binds?, steps?, then?, answer_map?, answer?}",
+    "effects": {
+      "question": "which question the story is",
+      "binds": "question input → quantity id, a number, or a name computed in `steps`",
+      "steps": "primitive steps computed before the question (convert 90 minutes: divide(minutes, 60))",
+      "then": "primitive steps after the question; `result` is the question's answer and the last step's output is the final answer. A trap can set [] to drop the follow-up.",
+      "answer_map": "translates the question's answer into the story (first → 'Maya')",
+      "answer": "a name whose value is the final answer, skipping the question (a trap that adds instead of scaling)"
+    },
+    "answer": "expected final answer; answer_text says it in the story's terms"
   }
 }

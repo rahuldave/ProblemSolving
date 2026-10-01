@@ -1,6 +1,6 @@
 # Question graphs (v2)
 
-How the questions reuse each other. Green = skill, yellow = core, blue = applied. Solid arrows: a method calls that question as a step. Dotted arrows: the applied question *is* the core question in context. (compare-fractions also calls itself: *distance from 1* ends by comparing the two gaps.)
+How the questions reuse each other. Green = skill, yellow = core, blue = applied. Solid arrows: a method uses that question as a step. Dotted arrows: the applied question *is* the core question in context. (compare-fractions also calls itself: *distance from 1* ends by comparing the two gaps.)
 
 [![How the questions reuse each other](../svg/index.svg)](../svg/index.svg)
 

@@ -1,145 +1,125 @@
 flowchart LR
-  w0(["Pancakes by the dozen"])
-  w1["2 cups of flour"]
-  w0 --> w1
-  w2["3 eggs (not needed)"]
-  w0 --> w2
-  w3["12 pancakes"]
-  w0 --> w3
-  w4["2 dozen pancakes"]
-  w0 --> w4
-  w5["2 × 12 = 24 (1 dozen = 12)"]
-  w4 --> w5
-  c0(["Solve 2/12 = x/24."])
-  c1(["Answer: 4"])
-  c2["Cross-multiply and divide"]
-  c3["2 × 24 = 48"]
-  c2 --> c3
-  c4["48 ÷ 12 = 4"]
-  c3 --> c4
-  c4 --> c1
-  c5["Scale factor"]
-  c6["24 ÷ 12 = 2"]
-  c5 --> c6
-  c7["2 × 2 = 4"]
-  c6 --> c7
-  c7 --> c1
-  c8["Unit rate"]
-  c9["Write 2/12 as a decimal → ≈ 0.167"]
-  c8 --> c9
-  c10["1/6 × 24 = 4"]
-  c9 --> c10
-  c10 --> c1
-  c11["Inverse rate"]
-  c12["Write 12/2 as a decimal → 6"]
-  c11 --> c12
-  c13["24 ÷ 6 = 4"]
-  c12 --> c13
-  c13 --> c1
-  c14["Ratio table"]
-  c15["12 × 2 = 24"]
-  c14 --> c15
-  c16["2 × 2 = 4"]
-  c15 --> c16
-  c16 --> c1
-  c17["Simplify, then scale"]
-  c18["Simplify 2/12 → 1/6"]
-  c17 --> c18
-  c19["24 ÷ 6 = 4"]
-  c18 --> c19
-  c20["1 × 4 = 4"]
-  c19 --> c20
-  c20 --> c1
-  c21["24 ÷ 12 = 2"]
-  c22{{"divide · across"}}
-  c0 --> c22
-  c22 --> c21
-  c21 --> c5
-  c23["12 ÷ 2 = 6"]
-  c24{{"divide · within"}}
-  c0 --> c24
-  c24 --> c23
-  c23 -->|"to-decimal/divide"| c11
-  c25["2 ÷ 12 ≈ 0.167"]
-  c24 --> c25
-  c25 -->|"to-decimal/divide"| c8
-  c26["2 ÷ 2 = 1"]
-  c27{{"factor · within"}}
-  c0 --> c27
-  c27 --> c26
-  c26 -->|"simplify-fraction/repeated"| c17
-  c28["GCF(2, 12) = 2"]
-  c27 --> c28
-  c28 -->|"simplify-fraction/gcf"| c17
-  c29["2 × 24 = 48"]
-  c30{{"multiply · across"}}
-  c0 --> c30
-  c30 --> c29
-  c29 --> c2
-  c31["12 × 2 = 24"]
-  c32{{"multiply · within"}}
-  c0 --> c32
-  c32 --> c31
-  c31 --> c14
-  c33["2 × 5 = 10"]
-  c32 --> c33
-  c33 -->|"to-decimal/power_of_ten"| c11
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c22,c24,c27,c30,c32 cls
-  class c21,c23,c25,c26,c28,c29,c31,c33 first
-  class c2,c5,c8,c11,c14,c17 method
-  class c9,c12,c18 skill
-  class c3,c4,c6,c7,c10,c13,c15,c16,c19,c20 step
-  class c0,c1 ans
-  w1 -->|"a"| c0
-  w3 -->|"b"| c0
-  w5 -->|"d"| c0
-  w6(["4 cups of flour"])
-  c1 --> w6
-  w7["Reads '2 dozen' as 2 pancakes. → 1/3"]
-  w0 -.->|"Spot numbers written as words"| w7
-  w8["2 × 2 = 4"]
-  w7 -.-> w8
-  w9["Scales the eggs instead of the flour. → 6"]
-  w0 -.->|"Ignore numbers that don't matter"| w9
-  w10["3 × 24 = 72"]
-  w9 -.-> w10
-  w11["3 ÷ 12 = 0.25"]
-  w9 -.-> w11
-  w12["12 ÷ 3 = 4"]
-  w9 -.-> w12
-  w13["GCF(3, 12) = 3"]
-  w9 -.-> w13
-  w14["Flips one side: pancakes over flour. → 144"]
-  w0 -.->|"Keep the same order on both sides"| w14
-  w15["12 × 24 = 288"]
-  w14 -.-> w15
-  w16["24 ÷ 2 = 12"]
-  w14 -.-> w16
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w3,w4 wused
-  class w2 wdist
-  class w5 wop
-  class w6 wfinal
-  class w7,w9,w14 wtrap
-  class w8,w10,w11,w12,w13,w15,w16 wtfirst
+  n0(["Story<br/>Pancakes by the dozen"])
+  n5[["Find the missing value in a proportion<br/>Solve 3/12 = x/24 → 6"]]
+  n6(["6 ✗<br/>gives itself away: 3 × 24 = 72, 3 ÷ 12 = 0.25"])
+  n9[["Find the missing value in a proportion<br/>Solve 2/12 = x/2 → 1/3"]]
+  n10(["1/3 ✗<br/>gives itself away: 2 × 2 = 4"])
+  n12[["Find the missing value in a proportion<br/>Solve 12/2 = x/24 → 144"]]
+  n13(["144 ✗<br/>gives itself away: 12 × 24 = 288, 24 ÷ 2 = 12"])
+  n42(["Answer<br/>4 cups of flour"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Same recipe, more pancakes: a missing value"]
+    n4{{"× Which two quantities go together?"}}
+    n7{{"× How many pancakes is 2 dozen?"}}
+    n8["A dozen is 12<br/>2 × 12 = 24"]
+    n11{{"× Which way round does the ratio go?"}}
+  end
+  subgraph nf1["Find the missing value in a proportion (as on its own page)"]
+    direction LR
+    n14(["Solve 2/12 = x/24."])
+    n15(["Answer: 4"])
+    n16{{"× Which first step?"}}
+    n17["Find the scale factor between the bottoms<br/>24 ÷ 12 = 2<br/>[divide · across]"]
+    n18["Scale the top by the same factor<br/>2 × 2 = 4"]
+    n19["Divide the top by the bottom<br/>12 ÷ 2 = 6<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n20["Divide by that rate<br/>24 ÷ 6 = 4"]
+    n21["Divide the top by the bottom<br/>2 ÷ 12 ≈ 0.167<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n22["Scale up to 24<br/>1/6 × 24 = 4"]
+    n23["Divide the top by a shared factor<br/>2 ÷ 2 = 1<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n24["Divide the bottom by the same factor<br/>12 ÷ 2 = 6<br/>[in: Simplify a fraction]"]
+    n25["Find the scale factor from the simplified bottom<br/>24 ÷ 6 = 4"]
+    n26["Scale the simplified top<br/>1 × 4 = 4"]
+    n27["Find the greatest common factor<br/>GCF(2, 12) = 2<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n28{"all"}
+    n29{"all"}
+    n30["Divide the top by the GCF<br/>2 ÷ 2 = 1<br/>[in: Simplify a fraction]"]
+    n31["Divide the bottom by the GCF<br/>12 ÷ 2 = 6<br/>[in: Simplify a fraction]"]
+    n32["Find the scale factor from the simplified bottom<br/>24 ÷ 6 = 4"]
+    n33["Scale the simplified top<br/>1 × 4 = 4"]
+    n34["Multiply across the diagonal<br/>2 × 24 = 48<br/>[multiply · across]"]
+    n35["Divide by the remaining number<br/>48 ÷ 12 = 4"]
+    n36["Build the bottom up by 2, 3, 4, … until it reaches 24<br/>12 × 2 = 24<br/>[multiply · within]"]
+    n37["Scale the top by the same factor<br/>2 × 2 = 4"]
+    n38["Scale the bottom up to 10, 100, or 1000<br/>2 × 5 = 10<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n39["Scale the top by the same factor<br/>12 × 5 = 60<br/>[in: Write a fraction as a decimal]"]
+    n40["Read off the decimal<br/>60 ÷ 10 = 6<br/>[in: Write a fraction as a decimal]"]
+    n41["Divide by that rate<br/>24 ÷ 6 = 4"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 -->|"✓ 2 cups of flour with 12 pancakes"| n2
+  n5 --> n6
+  n4 -.->|"✗ Find the pair that forms the ratio: 3 eggs with 12 pancakes"| n5
+  n1 --> n7
+  n7 -->|"✓ 24"| n8
+  n8 --> n2
+  n9 --> n10
+  n7 -.->|"✗ Spot numbers written as words: 2"| n9
+  n1 --> n11
+  n11 -->|"✓ Flour over pancakes on both sides"| n2
+  n12 --> n13
+  n11 -.->|"✗ Keep the same order on both sides: Pancakes over flour on one side"| n12
+  n14 --> n16
+  n16 -->|"Scale factor"| n17
+  n18 --> n15
+  n17 --> n18
+  n16 -->|"Inverse rate"| n19
+  n20 --> n15
+  n19 --> n20
+  n16 -->|"Unit rate"| n21
+  n22 --> n15
+  n21 --> n22
+  n16 -->|"Simplify, then scale"| n23
+  n24 --> n25
+  n25 --> n26
+  n26 --> n15
+  n23 --> n24
+  n16 -->|"Simplify, then scale"| n27
+  n28 --> n30
+  n30 --> n29
+  n28 --> n31
+  n31 --> n29
+  n29 --> n32
+  n32 --> n33
+  n33 --> n15
+  n27 --> n28
+  n16 -->|"Cross-multiply and divide"| n34
+  n35 --> n15
+  n34 --> n35
+  n16 -->|"Ratio table"| n36
+  n37 --> n15
+  n36 --> n37
+  n16 -->|"Inverse rate"| n38
+  n39 --> n40
+  n40 --> n41
+  n41 --> n15
+  n38 --> n39
+  n2 ==>|"a: 2 cups of flour<br/>b: 12 pancakes<br/>d: 24 (a dozen is 12)"| n14
+  n15 --> n42
+  linkStyle 6 stroke:#c4554a,color:#c4554a
+  linkStyle 11 stroke:#c4554a,color:#c4554a
+  linkStyle 15 stroke:#c4554a,color:#c4554a
+  linkStyle 51 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n28,n29 k_all
+  class n5,n9,n12 k_call
+  class n4,n7,n11,n16 k_choice
+  class n15,n42 k_end
+  class n17,n19,n21,n23,n27,n34,n36,n38 k_first
+  class n0,n14 k_start
+  class n3,n8,n18,n20,n22,n24,n25,n26,n30,n31,n32,n33,n35,n37,n39,n40,n41 k_step
+  class n6,n10,n13 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

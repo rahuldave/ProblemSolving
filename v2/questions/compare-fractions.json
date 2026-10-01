@@ -5,7 +5,6 @@
   "prompt": "Which is larger: {a}/{b} or {c}/{d}? (Or are they equal?)",
   "inputs": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
   "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
-  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
   "outputs": ["answer"],
   "default_method": "cross_multiply",
   "examples": [
@@ -18,8 +17,8 @@
       "idea": "{a}/{b} > {c}/{d} exactly when {a}×{d} > {c}×{b}.",
       "best_when": "A quick check with small numbers.",
       "steps": [
-        { "op": "use", "question": "cross-products", "with": { "a": "a", "b": "b", "c": "c", "d": "d" }, "out": { "p1": "p1", "p2": "p2" } },
-        { "op": "compare", "args": ["p1", "p2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "The bigger product is on the side of the bigger fraction." }
+        { "op": "use", "question": "cross-products", "with": { "a": "a", "b": "b", "c": "c", "d": "d" }, "out": { "p1": "p1", "p2": "p2" }, "say": "Find the cross products" },
+        { "op": "compare", "args": ["p1", "p2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "say": "The bigger product sits with the bigger fraction" }
       ]
     },
     "common_denominator": {
@@ -27,19 +26,21 @@
       "idea": "Rewrite both fractions over the same denominator, then compare numerators.",
       "best_when": "The denominators are small or related.",
       "steps": [
-        { "op": "use", "question": "common-multiple", "with": { "x": "b", "y": "d" }, "out": { "answer": "L" }, "text": "Common denominator: {L}" },
-        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "L" }, "out": { "answer": "n1" }, "text": "{a}/{b} = {n1}/{L}" },
-        { "op": "use", "question": "missing-value", "with": { "a": "c", "b": "d", "d": "L" }, "out": { "answer": "n2" }, "text": "{c}/{d} = {n2}/{L}" },
-        { "op": "compare", "args": ["n1", "n2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Same denominator, so compare numerators." }
+        { "op": "use", "question": "common-multiple", "with": { "x": "b", "y": "d" }, "out": { "answer": "L" }, "say": "Find a common denominator" },
+        { "op": "all", "say": "Rewrite both fractions over it", "branches": [
+          [ { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "L" }, "out": { "answer": "n1" }, "say": "Rewrite the first fraction over {L}" } ],
+          [ { "op": "use", "question": "missing-value", "with": { "a": "c", "b": "d", "d": "L" }, "out": { "answer": "n2" }, "say": "Rewrite the second fraction over {L}" } ]
+        ] },
+        { "op": "compare", "args": ["n1", "n2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "say": "Same bottom, so compare the tops" }
       ]
     },
     "match_denominator": {
       "name": "Rewrite one fraction over the other's denominator",
-      "idea": "Turn {a}/{b} into something over {d}, then compare numerators with {c}.",
+      "idea": "Turn {a}/{b} into something over {d}, then compare its top with {c}.",
       "best_when": "{d} is a multiple of {b}.",
       "steps": [
-        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "d" }, "out": { "answer": "n1" }, "text": "{a}/{b} = {n1}/{d}" },
-        { "op": "compare", "args": ["n1", "c"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Compare {n1} with {c}." }
+        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "d" }, "out": { "answer": "n1" }, "say": "Rewrite the first fraction over {d}" },
+        { "op": "compare", "args": ["n1", "c"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "say": "Same bottom, so compare the tops" }
       ]
     },
     "common_numerator": {
@@ -47,10 +48,12 @@
       "idea": "With equal numerators, the smaller denominator gives the bigger fraction.",
       "best_when": "The numerators are smaller or simpler than the denominators.",
       "steps": [
-        { "op": "use", "question": "common-multiple", "with": { "x": "a", "y": "c" }, "out": { "answer": "N" }, "text": "Common numerator: {N}" },
-        { "op": "use", "question": "missing-value", "with": { "a": "b", "b": "a", "d": "N" }, "out": { "answer": "e1" }, "text": "{a}/{b} = {N}/{e1}" },
-        { "op": "use", "question": "missing-value", "with": { "a": "d", "b": "c", "d": "N" }, "out": { "answer": "e2" }, "text": "{c}/{d} = {N}/{e2}" },
-        { "op": "compare", "args": ["e1", "e2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "Same numerator, so the smaller denominator wins." }
+        { "op": "use", "question": "common-multiple", "with": { "x": "a", "y": "c" }, "out": { "answer": "N" }, "say": "Find a common numerator" },
+        { "op": "all", "say": "Rewrite both fractions with it on top", "branches": [
+          [ { "op": "use", "question": "missing-value", "with": { "a": "b", "b": "a", "d": "N" }, "out": { "answer": "e1" }, "say": "Find the first fraction's bottom with {N} on top" } ],
+          [ { "op": "use", "question": "missing-value", "with": { "a": "d", "b": "c", "d": "N" }, "out": { "answer": "e2" }, "say": "Find the second fraction's bottom with {N} on top" } ]
+        ] },
+        { "op": "compare", "args": ["e1", "e2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "say": "Same top, so the smaller bottom wins" }
       ]
     },
     "decimal": {
@@ -58,9 +61,11 @@
       "idea": "Write each fraction as a decimal and compare.",
       "best_when": "A calculator is allowed.",
       "steps": [
-        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "q1" } },
-        { "op": "use", "question": "to-decimal", "with": { "x": "c", "y": "d" }, "out": { "answer": "q2" } },
-        { "op": "compare", "args": ["q1", "q2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" } }
+        { "op": "all", "say": "Write both as decimals", "branches": [
+          [ { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "q1" }, "say": "Write the first fraction as a decimal" } ],
+          [ { "op": "use", "question": "to-decimal", "with": { "x": "c", "y": "d" }, "out": { "answer": "q2" }, "say": "Write the second fraction as a decimal" } ]
+        ] },
+        { "op": "compare", "args": ["q1", "q2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "say": "Compare the decimals" }
       ]
     },
     "unit_rate": {
@@ -68,9 +73,11 @@
       "idea": "How much bottom per 1 of top? The bigger rate belongs to the smaller fraction.",
       "best_when": "The context is a rate (miles per hour, items per dollar).",
       "steps": [
-        { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r1" } },
-        { "op": "use", "question": "to-decimal", "with": { "x": "d", "y": "c" }, "out": { "answer": "r2" } },
-        { "op": "compare", "args": ["r1", "r2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" } }
+        { "op": "all", "say": "Find both flipped rates", "branches": [
+          [ { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r1" }, "say": "Find the first fraction's flipped rate" } ],
+          [ { "op": "use", "question": "to-decimal", "with": { "x": "d", "y": "c" }, "out": { "answer": "r2" }, "say": "Find the second fraction's flipped rate" } ]
+        ] },
+        { "op": "compare", "args": ["r1", "r2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "say": "The smaller flipped rate is the bigger fraction" }
       ]
     },
     "scale_factor": {
@@ -78,9 +85,11 @@
       "idea": "How much do the tops grow ({c} ÷ {a}) compared with the bottoms ({d} ÷ {b})?",
       "best_when": "One fraction looks like a scaled-up version of the other.",
       "steps": [
-        { "op": "divide", "args": ["c", "a"], "out": "k1", "text": "{c} ÷ {a} = {k1}" },
-        { "op": "divide", "args": ["d", "b"], "out": "k2", "text": "{d} ÷ {b} = {k2}" },
-        { "op": "compare", "args": ["k1", "k2"], "out": "answer", "meaning": { ">": "second", "<": "first", "=": "equal" }, "text": "If the tops grow faster, the second fraction is bigger." }
+        { "op": "all", "say": "Find how much the tops and the bottoms grow", "branches": [
+          [ { "op": "divide", "args": ["c", "a"], "out": "k1", "say": "Find how much the top grows" } ],
+          [ { "op": "divide", "args": ["d", "b"], "out": "k2", "say": "Find how much the bottom grows" } ]
+        ] },
+        { "op": "compare", "args": ["k1", "k2"], "out": "answer", "meaning": { ">": "second", "<": "first", "=": "equal" }, "say": "If the top grows faster, the second fraction is bigger" }
       ]
     },
     "ratio_table": {
@@ -88,9 +97,9 @@
       "idea": "Scale {a}:{b} by 2, 3, 4, … until the top reaches {c}, then compare bottoms.",
       "best_when": "{c} is a small whole-number multiple of {a}.",
       "steps": [
-        { "op": "multiply", "args": ["a", "k"], "out": "ak", "search": { "var": "k", "until": ["ak", "c"] }, "text": "{a} × {k} = {ak}" },
-        { "op": "multiply", "args": ["b", "k"], "out": "bk", "text": "{b} × {k} = {bk}" },
-        { "op": "compare", "args": ["bk", "d"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "Same top; the smaller bottom is the bigger fraction." }
+        { "op": "multiply", "args": ["a", "k"], "out": "ak", "search": { "var": "k", "until": ["ak", "c"] }, "say": "Build the first top up until it reaches {c}" },
+        { "op": "multiply", "args": ["b", "k"], "out": "bk", "say": "Scale the first bottom by the same factor" },
+        { "op": "compare", "args": ["bk", "d"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "say": "Same top, so the smaller bottom wins" }
       ]
     },
     "graph": {
@@ -98,10 +107,12 @@
       "idea": "Plot ({a}, {b}) and ({c}, {d}); the steeper line from the origin belongs to the smaller fraction.",
       "best_when": "Building intuition.",
       "steps": [
-        { "op": "plot", "args": [["a", "b"], ["c", "d"]], "text": "Plot ({a}, {b}) and ({c}, {d})." },
-        { "op": "divide", "args": ["b", "a"], "out": "s1", "text": "Slope {b} ÷ {a} = {s1}" },
-        { "op": "divide", "args": ["d", "c"], "out": "s2", "text": "Slope {d} ÷ {c} = {s2}" },
-        { "op": "compare", "args": ["s1", "s2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" } }
+        { "op": "plot", "args": [["a", "b"], ["c", "d"]], "say": "Plot each fraction as a point (top, bottom)" },
+        { "op": "all", "say": "Find both slopes", "branches": [
+          [ { "op": "divide", "args": ["b", "a"], "out": "s1", "say": "Find the slope to the first point" } ],
+          [ { "op": "divide", "args": ["d", "c"], "out": "s2", "say": "Find the slope to the second point" } ]
+        ] },
+        { "op": "compare", "args": ["s1", "s2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "say": "The less steep line is the bigger fraction" }
       ]
     },
     "simplify": {
@@ -110,9 +121,11 @@
       "best_when": "Checking equality (proportions).",
       "decides": "equality_only",
       "steps": [
-        { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" } },
-        { "op": "use", "question": "simplify-fraction", "with": { "x": "c", "y": "d" }, "out": { "x1": "c1", "y1": "d1" } },
-        { "op": "compare", "args": [["a1", "b1"], ["c1", "d1"]], "out": "answer", "meaning": { "=": "equal", "≠": "not equal" } }
+        { "op": "all", "say": "Simplify both fractions", "branches": [
+          [ { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" }, "say": "Simplify the first fraction" } ],
+          [ { "op": "use", "question": "simplify-fraction", "with": { "x": "c", "y": "d" }, "out": { "x1": "c1", "y1": "d1" }, "say": "Simplify the second fraction" } ]
+        ] },
+        { "op": "compare", "args": [["a1", "b1"], ["c1", "d1"]], "out": "answer", "meaning": { "=": "equal", "≠": "not equal" }, "say": "Are the simplified fractions the same?" }
       ]
     },
     "distance_from_one": {
@@ -121,9 +134,11 @@
       "best_when": "Both fractions are just below 1 (7/8 vs 9/10).",
       "watch_out": "Comparing the gaps is a smaller compare-fractions question.",
       "steps": [
-        { "op": "subtract", "args": ["b", "a"], "out": "r1", "requires_nonnegative": true, "text": "{a}/{b} is {r1}/{b} away from 1." },
-        { "op": "subtract", "args": ["d", "c"], "out": "r2", "requires_nonnegative": true, "text": "{c}/{d} is {r2}/{d} away from 1." },
-        { "op": "use", "question": "compare-fractions", "with": { "a": "r1", "b": "b", "c": "r2", "d": "d" }, "out": { "answer": "gap" }, "text": "Compare the gaps {r1}/{b} and {r2}/{d}." },
+        { "op": "all", "say": "Find both gaps to 1", "branches": [
+          [ { "op": "subtract", "args": ["b", "a"], "out": "r1", "requires_nonnegative": true, "say": "Find how far the first fraction is below 1" } ],
+          [ { "op": "subtract", "args": ["d", "c"], "out": "r2", "requires_nonnegative": true, "say": "Find how far the second fraction is below 1" } ]
+        ] },
+        { "op": "use", "question": "compare-fractions", "with": { "a": "r1", "b": "b", "c": "r2", "d": "d" }, "out": { "answer": "gap" }, "say": "Compare the two gaps" },
         { "op": "map", "args": ["gap"], "out": "answer", "table": { "first": "second", "second": "first", "equal": "equal", "not equal": "not equal" }, "hidden": true }
       ]
     }

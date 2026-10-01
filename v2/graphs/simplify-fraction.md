@@ -2,12 +2,12 @@
 
 `simplify-fraction` · skill · prompt: *Simplify {x}/{y}.*
 
-| Method | Idea | Steps use |
-|---|---|---|
-| **Divide by the GCF** `gcf` | Find the greatest common factor once and divide both terms by it. | — |
-| **Divide out common factors repeatedly** `repeated` | Keep dividing both terms by any shared factor (2, 3, 5, …) until none is left. | — |
+| Method | Idea | Best when | Calls |
+|---|---|---|---|
+| **Divide by the GCF** `gcf` | Find the greatest common factor once and divide both terms by it. | You can spot the GCF. | — |
+| **Divide out common factors repeatedly** `repeated` | Keep dividing both terms by any shared factor (2, 3, 5, …) until none is left. | The numbers are large and the GCF isn't obvious. | — |
 
-Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, **purple** = second step (only where methods share a first step); **yellow** = method; **green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.
+Each graph starts at the question and branches at **× Which first step?** into every first step a student might write. Methods that share a first step meet there and split at **× Which next step?**. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.
 
 ## Simplify 6/8.
 

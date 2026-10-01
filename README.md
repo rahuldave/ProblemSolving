@@ -11,14 +11,14 @@ method from their first step and gives method-specific help.
 | Path | What it is |
 |---|---|
 | `v2/questions/*.json` | The data: skills, core questions, and applied questions (one file each) |
-| `v2/vocabulary.json` | Schema: step types, skill calls (`use`), reductions, classification levels |
-| `v2/extraction.json` | Extraction concepts for word problems: quantities, distractors, rate pairs, order, 'more' vs 'in all', … |
-| `v2/word-problems/*.json` | Word problems annotated with extractions, the question each maps to, and traps (wrong extractions) |
+| `v2/vocabulary.json` | Schema: the step language (`say`, `use`, `all`, `choose`), reductions, classification levels, and the graph grammar |
+| `v2/extraction.json` | Extraction concepts for word problems, and how a decision's options pick the question and its numbers |
+| `v2/word-problems/*.json` | Word problems: quantities plus extraction decisions, each with one correct option and its traps |
 | `v2/trees/word-problems.json` | Generated: each word problem's answer, each trap's wrong answer, and first steps that give a trap away |
 | `v2/build.py` | Expands skills and reductions, checks every method on every example, generates the outputs below |
 | `v2/trees/*.json` | Generated first-step trees for an app to match student steps against |
 | `v2/graphs/*.md` | Generated pages, one per question, plus the word problems |
-| `v2/svg/` | Generated graph images (`.svg`) with their mermaid sources (`.mmd`) |
+| `v2/svg/` | Generated graph images (`.svg`, each with its legend at the bottom) and their mermaid sources (`.mmd`) |
 | `docs/` | Generated website (Quarto), served by GitHub Pages |
 | `REPORT.md` | Generated single report combining everything |
 | `v1/` | The first, hand-written version (one JSON file), kept for comparison |

@@ -335,59 +335,61 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p><code>percent-of</code> · applied · prompt: <em>What is {p}% of {n}?</em></p>
-<p>Reduces to <a href="../questions/missing-value.html">missing-value</a> with <code>{"a": "p", "b": 100, "d": "n"}</code>. p% of n means p/100 = x/n.</p>
+<p>This is <a href="../questions/missing-value.html">missing-value</a> in context, with <code>{"a": "p", "b": 100, "d": "n"}</code>. p% of n means p/100 = x/n.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Convert to a decimal and multiply</strong> <code>decimal</code> (= missing-value · unit_rate)</td>
 <td>{p}% = {p} ÷ 100; multiply that by {n}.</td>
-<td>—</td>
+<td>{a}/{b} is a friendly decimal.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="even">
 <td><strong>Find 1% first</strong> <code>one_percent</code> (= missing-value · scale_factor)</td>
 <td>1% of {n} is {n} ÷ 100; multiply by {p}.</td>
+<td>{d} is a whole-number multiple of {b}.</td>
 <td>—</td>
 </tr>
 <tr class="odd">
 <td><strong>Multiply, then divide by 100</strong> <code>multiply_first</code> (= missing-value · cross_multiply)</td>
 <td>{p} × {n} ÷ 100.</td>
+<td>Always works; most useful when there’s no whole-number scale factor.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Use a simplified fraction</strong> <code>fraction</code> (= missing-value · simplify_then_scale)</td>
 <td>{p}/100 simplifies (15/100 = 3/20); take that fraction of {n}.</td>
-<td>—</td>
+<td>{a}/{b} isn’t in lowest terms.</td>
+<td><a href="../questions/simplify-fraction.html">simplify-fraction</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Ratio table</strong> <code>ratio_table</code> (= missing-value · ratio_table)</td>
 <td>Scale {p}:100 until the 100 becomes {n}.</td>
+<td>{d} is a small whole-number multiple of {b}.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Build from 10% and 5%</strong> <code>benchmark_10_5</code></td>
 <td>10% is easy (÷ 10) and 5% is half of that; add up the pieces.</td>
+<td>The percent is a multiple of 5.</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="what-is-15-of-80" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-15-of-80">What is 15% of 80?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/percent-of-1.svg" alt="What is 15% of 80?" style="width:2805px" loading="lazy" class="figure-img">
+<img src="../svg/percent-of-1.svg" alt="What is 15% of 80?" style="width:2908px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -402,7 +404,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="what-is-35-of-60">What is 35% of 60?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/percent-of-2.svg" alt="What is 35% of 60?" style="width:2805px" loading="lazy" class="figure-img">
+<img src="../svg/percent-of-2.svg" alt="What is 35% of 60?" style="width:2908px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

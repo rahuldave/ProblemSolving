@@ -335,84 +335,91 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p><code>proportion-check</code> · applied · prompt: <em>Are {a}:{b} and {c}:{d} proportional?</em></p>
-<p>Reduces to <a href="../questions/compare-fractions.html">compare-fractions</a> with <code>{"a": "a", "b": "b", "c": "c", "d": "d"}</code>.</p>
+<p>This is <a href="../questions/compare-fractions.html">compare-fractions</a> in context, with <code>{"a": "a", "b": "b", "c": "c", "d": "d"}</code>.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Cross-multiply</strong> <code>cross_multiply</code> (= compare-fractions · cross_multiply)</td>
 <td>{a}/{b} &gt; {c}/{d} exactly when {a}×{d} &gt; {c}×{b}.</td>
-<td>—</td>
+<td>A quick check with small numbers.</td>
+<td><a href="../questions/cross-products.html">cross-products</a></td>
 </tr>
 <tr class="even">
 <td><strong>Common denominator</strong> <code>common_denominator</code> (= compare-fractions · common_denominator)</td>
 <td>Rewrite both fractions over the same denominator, then compare numerators.</td>
-<td>—</td>
+<td>The denominators are small or related.</td>
+<td><a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/missing-value.html">missing-value</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Rewrite one fraction over the other’s denominator</strong> <code>match_denominator</code> (= compare-fractions · match_denominator)</td>
-<td>Turn {a}/{b} into something over {d}, then compare numerators with {c}.</td>
-<td>—</td>
+<td>Turn {a}/{b} into something over {d}, then compare its top with {c}.</td>
+<td>{d} is a multiple of {b}.</td>
+<td><a href="../questions/missing-value.html">missing-value</a></td>
 </tr>
 <tr class="even">
 <td><strong>Common numerator</strong> <code>common_numerator</code> (= compare-fractions · common_numerator)</td>
 <td>With equal numerators, the smaller denominator gives the bigger fraction.</td>
-<td>—</td>
+<td>The numerators are smaller or simpler than the denominators.</td>
+<td><a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/missing-value.html">missing-value</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Convert to decimals</strong> <code>decimal</code> (= compare-fractions · decimal)</td>
 <td>Write each fraction as a decimal and compare.</td>
-<td>—</td>
+<td>A calculator is allowed.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="even">
 <td><strong>Compare unit rates (flipped fractions)</strong> <code>unit_rate</code> (= compare-fractions · unit_rate)</td>
 <td>How much bottom per 1 of top? The bigger rate belongs to the smaller fraction.</td>
-<td>—</td>
+<td>The context is a rate (miles per hour, items per dollar).</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Compare scale factors</strong> <code>scale_factor</code> (= compare-fractions · scale_factor)</td>
 <td>How much do the tops grow ({c} ÷ {a}) compared with the bottoms ({d} ÷ {b})?</td>
+<td>One fraction looks like a scaled-up version of the other.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Ratio table</strong> <code>ratio_table</code> (= compare-fractions · ratio_table)</td>
 <td>Scale {a}:{b} by 2, 3, 4, … until the top reaches {c}, then compare bottoms.</td>
+<td>{c} is a small whole-number multiple of {a}.</td>
 <td>—</td>
 </tr>
 <tr class="odd">
 <td><strong>Graph the points</strong> <code>graph</code> (= compare-fractions · graph)</td>
 <td>Plot ({a}, {b}) and ({c}, {d}); the steeper line from the origin belongs to the smaller fraction.</td>
+<td>Building intuition.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Simplify both</strong> <code>simplify</code> (= compare-fractions · simplify)</td>
 <td>Reduce both fractions to lowest terms; equal fractions reduce to the same thing.</td>
-<td>—</td>
+<td>Checking equality (proportions).</td>
+<td><a href="../questions/simplify-fraction.html">simplify-fraction</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Distance from 1</strong> <code>distance_from_one</code> (= compare-fractions · distance_from_one)</td>
 <td>Find how far each fraction is from 1; the one closer to 1 is bigger.</td>
-<td>—</td>
+<td>Both fractions are just below 1 (7/8 vs 9/10).</td>
+<td><a href="../questions/compare-fractions.html">compare-fractions</a></td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="are-68-and-7296-proportional" class="level2">
 <h2 class="anchored" data-anchor-id="are-68-and-7296-proportional">Are 6:8 and 72:96 proportional?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/proportion-check-1.svg" alt="Are 6:8 and 72:96 proportional?" style="width:2941px" loading="lazy" class="figure-img">
+<img src="../svg/proportion-check-1.svg" alt="Are 6:8 and 72:96 proportional?" style="width:7009px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -426,7 +433,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="are-46-and-1014-proportional">Are 4:6 and 10:14 proportional?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/proportion-check-2.svg" alt="Are 4:6 and 10:14 proportional?" style="width:2758px" loading="lazy" class="figure-img">
+<img src="../svg/proportion-check-2.svg" alt="Are 4:6 and 10:14 proportional?" style="width:4372px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

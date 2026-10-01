@@ -1,49 +1,46 @@
 flowchart LR
   n0(["Simplify 72/96."])
   n1(["Answer: 3/4"])
-  n2["Divide by the GCF"]
-  n3["GCF(72, 96) = 24"]
-  n2 --> n3
-  n4["72 ÷ 24 = 3"]
-  n3 --> n4
-  n5["96 ÷ 24 = 4"]
+  n2{{"× Which first step?"}}
+  n3["Divide the top by a shared factor<br/>72 ÷ 2 = 36<br/>[factor · within]"]
+  n4["Divide the bottom by the same factor<br/>96 ÷ 2 = 48"]
+  n5["Divide the top by a shared factor<br/>36 ÷ 2 = 18"]
+  n6["Divide the bottom by the same factor<br/>48 ÷ 2 = 24"]
+  n7["Divide the top by a shared factor<br/>18 ÷ 2 = 9"]
+  n8["Divide the bottom by the same factor<br/>24 ÷ 2 = 12"]
+  n9["Divide the top by a shared factor<br/>9 ÷ 3 = 3"]
+  n10["Divide the bottom by the same factor<br/>12 ÷ 3 = 4"]
+  n11["Find the greatest common factor<br/>GCF(72, 96) = 24<br/>[factor · within]"]
+  n12{"all"}
+  n13{"all"}
+  n14["Divide the top by the GCF<br/>72 ÷ 24 = 3"]
+  n15["Divide the bottom by the GCF<br/>96 ÷ 24 = 4"]
+  n0 --> n2
+  n2 -->|"Divide out common factors repeatedly"| n3
   n4 --> n5
-  n5 --> n1
-  n6["Divide out common factors repeatedly"]
-  n7["72 ÷ 2 = 36"]
+  n5 --> n6
   n6 --> n7
-  n8["96 ÷ 2 = 48"]
   n7 --> n8
-  n9["36 ÷ 2 = 18"]
   n8 --> n9
-  n10["48 ÷ 2 = 24"]
   n9 --> n10
-  n11["18 ÷ 2 = 9"]
-  n10 --> n11
-  n12["24 ÷ 2 = 12"]
+  n10 --> n1
+  n3 --> n4
+  n2 -->|"Divide by the GCF"| n11
+  n12 --> n14
+  n14 --> n13
+  n12 --> n15
+  n15 --> n13
+  n13 --> n1
   n11 --> n12
-  n13["9 ÷ 3 = 3"]
-  n12 --> n13
-  n14["12 ÷ 3 = 4"]
-  n13 --> n14
-  n14 --> n1
-  n15["72 ÷ 2 = 36"]
-  n16{{"factor · within"}}
-  n0 --> n16
-  n16 --> n15
-  n15 --> n6
-  n17["GCF(72, 96) = 24"]
-  n16 --> n17
-  n17 --> n2
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n16 cls
-  class n15,n17 first
-  class n2,n6 method
-  class n3,n4,n5,n7,n8,n9,n10,n11,n12,n13,n14 step
-  class n0,n1 ans
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n12,n13 k_all
+  class n2 k_choice
+  class n1 k_end
+  class n3,n11 k_first
+  class n0 k_start
+  class n4,n5,n6,n7,n8,n9,n10,n14,n15 k_step

@@ -307,8 +307,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#how-the-data-is-organized" id="toc-how-the-data-is-organized" class="nav-link active" data-scroll-target="#how-the-data-is-organized">How the data is organized</a></li>
-  <li><a href="#what-expanding-the-skills-revealed" id="toc-what-expanding-the-skills-revealed" class="nav-link" data-scroll-target="#what-expanding-the-skills-revealed">What expanding the skills revealed</a></li>
   <li><a href="#reading-the-graphs" id="toc-reading-the-graphs" class="nav-link" data-scroll-target="#reading-the-graphs">Reading the graphs</a></li>
+  <li><a href="#what-expanding-the-skills-revealed" id="toc-what-expanding-the-skills-revealed" class="nav-link" data-scroll-target="#what-expanding-the-skills-revealed">What expanding the skills revealed</a></li>
   <li><a href="#how-the-questions-reuse-each-other" id="toc-how-the-questions-reuse-each-other" class="nav-link" data-scroll-target="#how-the-questions-reuse-each-other">How the questions reuse each other</a></li>
   </ul>
 </nav>
@@ -335,33 +335,43 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Most arithmetic questions can be solved in several ways. This report catalogs the methods for a family of ratio, fraction, and percent questions and classifies each method by <strong>the first step a student takes</strong>, using the second step only when methods share a first step. The goal is an app that recognizes a student’s method from what they write first and responds with help for <em>that</em> method.</p>
+<p>Most arithmetic questions can be solved in several ways. This report catalogs the methods for a family of ratio, fraction, and percent questions, and the word problems built on them. Each method is classified by <strong>the first step a student takes</strong>, with the second step used only when methods share a first step. The goal is an app that guides a student step by step: from each step the student writes, a classifier works out which route through the graph they are on, and the app responds with help for <em>that</em> route.</p>
 <section id="how-the-data-is-organized" class="level2">
 <h2 class="anchored" data-anchor-id="how-the-data-is-organized">How the data is organized</h2>
+<p>Everything is written in one step language (see <a href="https://github.com/rahuldave/ProblemSolving/blob/main/v2/vocabulary.json"><code>v2/vocabulary.json</code></a>). A <strong>step</strong> is one thing a student does, and every step has a sentence. Steps run in sequence. <strong><code>all</code></strong> marks steps that can be done in any order. <strong><code>choose</code></strong> marks a decision with one correct option and its traps. <strong><code>use</code></strong> calls another question as a single step.</p>
 <ul>
-<li><strong>Skills</strong> are small questions that other methods call as steps: simplify a fraction, write it as a decimal, find a common multiple, cross products. Each has its own methods (a common multiple can be recalled, found by listing multiples, by multiplying, or from the GCF).</li>
-<li><strong>Core questions</strong> (compare fractions, missing value, add fractions) have methods built from primitive steps and skill calls.</li>
+<li><strong>Skills</strong> are small questions that other methods call: simplify a fraction, write it as a decimal, find a common multiple, cross products. Each has its own methods (a common multiple can be recalled, found by listing multiples, by multiplying, or from the GCF).</li>
+<li><strong>Core questions</strong> (compare fractions, missing value, add fractions) have methods built from steps and skill calls.</li>
 <li><strong>Applied questions</strong> are core questions in context: a proportion check <em>is</em> comparing fractions for equality, a better buy <em>is</em> comparing price ÷ quantity, and a percent of a number <em>is</em> a missing value with denominator 100.</li>
+<li><strong>Word problems</strong> start with <strong>extraction</strong>: a set of decisions (which numbers go together, which way round, “more” or “in all”, which numbers aren’t needed), done in any order. Each decision has a correct option and traps, and the decisions together pick the question and its numbers.</li>
 </ul>
-<p>The first-step trees are not written by hand: <a href="https://github.com/rahuldave/ProblemSolving/blob/main/v2/build.py"><code>v2/build.py</code></a> expands every skill call into every combination of skill methods, runs each variant on the examples to check the answer, and groups variants by their first step, then by their second where needed. The hand-written version this replaced is in <code>v1/</code> for comparison.</p>
-</section>
-<section id="what-expanding-the-skills-revealed" class="level2">
-<h2 class="anchored" data-anchor-id="what-expanding-the-skills-revealed">What expanding the skills revealed</h2>
-<p>Shared first steps that the hand-written v1 tree missed, because they only appear once skills are expanded:</p>
-<ul>
-<li>In <em>compare fractions</em>, <code>3 × 7</code> starts both <strong>cross-multiply</strong> and <strong>rewrite one fraction over the other’s denominator</strong> (through missing value’s cross-multiply). The next step decides: <code>5 × 4</code> vs <code>21 ÷ 4</code>.</li>
-<li>In <em>proportion check</em>, <code>6 ÷ 8</code> starts both <strong>decimal</strong> and <strong>rewrite over the other’s denominator</strong>, and <code>GCF(6, 8)</code> starts both <strong>simplify</strong> and the same rewrite.</li>
-<li><code>3 × 5 = 15</code> can come from <strong>listing multiples</strong> or from <strong>multiplying</strong>; the graphs show it as one node linked from both classes.</li>
-</ul>
-<p>Known limit: the generated trees store a student-chosen multiplier as a wildcard, so a typed classifier sees <code>4 × 25</code> as matching three methods. The per-example graphs tell those apart by value.</p>
+<p><a href="https://github.com/rahuldave/ProblemSolving/blob/main/v2/build.py"><code>v2/build.py</code></a> expands every skill call into every combination of skill methods and every <code>all</code> block into every order, runs each variant on the examples to check the answer, and groups variants by their first step (then their second) to make the classifier’s trees. The hand-written first version is in <code>v1/</code> for comparison.</p>
 </section>
 <section id="reading-the-graphs" class="level2">
 <h2 class="anchored" data-anchor-id="reading-the-graphs">Reading the graphs</h2>
-<p>Each example graph reads left to right: question → <strong>hexagons</strong> grouping first steps by operation · scope → <strong>blue</strong> first step → <strong>purple</strong> second step (only where methods share a first step) → <strong>yellow</strong> method → the method’s steps, where a <strong>green dashed</strong> box is a call to another question (it has its own page) → answer. Edge labels name the skill method that produced the step.</p>
+<p>Every diagram uses the same grammar, and every diagram carries a legend at the bottom.</p>
+<ul>
+<li><strong>Rectangles are steps</strong>: the sentence, then the worked expression, then tags. A first step is tagged with its operation · scope; a step inside a called question is tagged <em>in: that question</em>.</li>
+<li><strong>× hexagons are choices</strong>: the student picks one way forward. This is where the classifier works. Arrows leaving a choice are always labeled: with the method they lead to, or with the extraction answer (✓). Red dashed arrows are traps (✗).</li>
+<li><strong>“all” diamonds</strong> split into branches that are all done, in any order, and join again.</li>
+<li><strong>Boxes with side bars are calls</strong> to another question, shown with what goes in and what comes out; each has its own page.</li>
+<li><strong>Thick green arrows carry data</strong> into a question: the extracted numbers, with what they count.</li>
+<li>A <strong>method is a route</strong>, not a box. Steps that methods share are drawn once, and the method’s name sits on the arrow where its route becomes unique.</li>
+</ul>
+</section>
+<section id="what-expanding-the-skills-revealed" class="level2">
+<h2 class="anchored" data-anchor-id="what-expanding-the-skills-revealed">What expanding the skills revealed</h2>
+<p>Shared first steps that only appear once skills and <code>all</code> blocks are expanded:</p>
+<ul>
+<li>In <em>compare fractions</em>, <code>3 × 7</code> starts both <strong>cross-multiply</strong> and <strong>rewrite one fraction over the other’s denominator</strong> (through missing value’s cross-multiply). The next step decides: <code>5 × 4</code> vs <code>21 ÷ 4</code>.</li>
+<li>In <em>proportion check</em>, <code>6 ÷ 8</code> starts both <strong>decimal</strong> and <strong>rewrite over the other’s denominator</strong>, and <code>GCF(6, 8)</code> starts both <strong>simplify</strong> and the same rewrite.</li>
+<li><code>3 × 5 = 15</code> can come from <strong>listing multiples</strong> or from <strong>multiplying</strong>; the graphs show it as one step.</li>
+</ul>
+<p>Known limit: the generated trees store a student-chosen multiplier as a wildcard, so a typed classifier sees <code>4 × 25</code> as matching three methods. The per-example graphs tell those apart by value.</p>
 </section>
 <section id="how-the-questions-reuse-each-other" class="level2">
 <h2 class="anchored" data-anchor-id="how-the-questions-reuse-each-other">How the questions reuse each other</h2>
-<p>Green = skill, yellow = core, blue = applied. Solid arrows: a method calls that question as a step. Dotted arrows: the applied question <em>is</em> the core question in context. (compare-fractions also calls itself: <em>distance from 1</em> ends by comparing the two gaps.)</p>
+<p>Green = skill, yellow = core, blue = applied. Solid arrows: a method uses that question as a step. Dotted arrows: the applied question <em>is</em> the core question in context. (compare-fractions also calls itself: <em>distance from 1</em> ends by comparing the two gaps.)</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
 <img src="svg/index.svg" alt="How the questions reuse each other" style="width:1171px" loading="lazy" class="figure-img">

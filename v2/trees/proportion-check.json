@@ -32,14 +32,48 @@
         "scope": "across"
       },
       "methods": [
-        "match_denominator"
+        "match_denominator",
+        "scale_factor"
       ],
-      "via": {
+      "inside": {
         "match_denominator": [
-          "missing-value/scale_factor"
+          "Find the missing value in a proportion"
         ]
       },
-      "feedback": "This starts: Rewrite one fraction over the other's denominator."
+      "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Compare scale factors.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "a"
+            ]
+          },
+          "methods": [
+            "scale_factor"
+          ],
+          "feedback": "This starts: Compare scale factors."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "divide(d, b)"
+            ]
+          },
+          "methods": [
+            "match_denominator"
+          ],
+          "inside": {
+            "match_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Rewrite one fraction over the other's denominator."
+        }
+      ]
     },
     {
       "match": {
@@ -57,12 +91,12 @@
         "decimal",
         "match_denominator"
       ],
-      "via": {
+      "inside": {
         "decimal": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ],
         "match_denominator": [
-          "to-decimal/divide"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Convert to decimals, Rewrite one fraction over the other's denominator.",
@@ -78,9 +112,9 @@
           "methods": [
             "decimal"
           ],
-          "via": {
+          "inside": {
             "decimal": [
-              "to-decimal/divide"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Convert to decimals."
@@ -96,9 +130,9 @@
           "methods": [
             "match_denominator"
           ],
-          "via": {
+          "inside": {
             "match_denominator": [
-              "missing-value/unit_rate"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Rewrite one fraction over the other's denominator."
@@ -114,9 +148,9 @@
           "methods": [
             "decimal"
           ],
-          "via": {
+          "inside": {
             "decimal": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Convert to decimals."
@@ -139,12 +173,12 @@
         "match_denominator",
         "unit_rate"
       ],
-      "via": {
+      "inside": {
         "match_denominator": [
-          "to-decimal/divide"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ],
         "unit_rate": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Compare unit rates (flipped fractions).",
@@ -160,9 +194,9 @@
           "methods": [
             "unit_rate"
           ],
-          "via": {
+          "inside": {
             "unit_rate": [
-              "to-decimal/divide"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Compare unit rates (flipped fractions)."
@@ -178,9 +212,9 @@
           "methods": [
             "match_denominator"
           ],
-          "via": {
+          "inside": {
             "match_denominator": [
-              "missing-value/inverse_rate"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Rewrite one fraction over the other's denominator."
@@ -196,14 +230,58 @@
           "methods": [
             "unit_rate"
           ],
-          "via": {
+          "inside": {
             "unit_rate": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Compare unit rates (flipped fractions)."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "c",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "inside": {
+        "decimal": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Convert to decimals."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "d",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "unit_rate"
+      ],
+      "inside": {
+        "unit_rate": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Compare unit rates (flipped fractions)."
     },
     {
       "match": {
@@ -220,9 +298,9 @@
       "methods": [
         "common_numerator"
       ],
-      "via": {
+      "inside": {
         "common_numerator": [
-          "common-multiple/gcf_formula"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common numerator."
@@ -242,9 +320,9 @@
       "methods": [
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/gcf_formula"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common denominator."
@@ -265,12 +343,12 @@
         "match_denominator",
         "simplify"
       ],
-      "via": {
+      "inside": {
         "match_denominator": [
-          "simplify-fraction/repeated"
+          "Find the missing value in a proportion › Simplify a fraction"
         ],
         "simplify": [
-          "simplify-fraction/repeated"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
@@ -287,18 +365,40 @@
             "match_denominator",
             "simplify"
           ],
-          "via": {
+          "inside": {
             "match_denominator": [
-              "simplify-fraction/repeated"
+              "Find the missing value in a proportion › Simplify a fraction"
             ],
             "simplify": [
-              "simplify-fraction/repeated"
+              "Simplify a fraction"
             ]
           },
           "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
           "note": "Same first two steps; ask the student what they plan to do next."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "c",
+          "common_factor(c, d)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "simplify"
+      ],
+      "inside": {
+        "simplify": [
+          "Simplify a fraction"
+        ]
+      },
+      "feedback": "This starts: Simplify both."
     },
     {
       "match": {
@@ -316,12 +416,12 @@
         "match_denominator",
         "simplify"
       ],
-      "via": {
+      "inside": {
         "match_denominator": [
-          "simplify-fraction/gcf"
+          "Find the missing value in a proportion › Simplify a fraction"
         ],
         "simplify": [
-          "simplify-fraction/gcf"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
@@ -338,18 +438,63 @@
             "match_denominator",
             "simplify"
           ],
-          "via": {
+          "inside": {
             "match_denominator": [
-              "simplify-fraction/gcf"
+              "Find the missing value in a proportion › Simplify a fraction"
             ],
             "simplify": [
-              "simplify-fraction/gcf"
+              "Simplify a fraction"
+            ]
+          },
+          "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "gcf(a, b)"
+            ]
+          },
+          "methods": [
+            "match_denominator",
+            "simplify"
+          ],
+          "inside": {
+            "match_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ],
+            "simplify": [
+              "Simplify a fraction"
             ]
           },
           "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
           "note": "Same first two steps; ask the student what they plan to do next."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "c",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "simplify"
+      ],
+      "inside": {
+        "simplify": [
+          "Simplify a fraction"
+        ]
+      },
+      "feedback": "This starts: Simplify both."
     },
     {
       "match": {
@@ -366,9 +511,9 @@
       "methods": [
         "common_numerator"
       ],
-      "via": {
+      "inside": {
         "common_numerator": [
-          "common-multiple/recall"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common numerator."
@@ -388,9 +533,9 @@
       "methods": [
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/recall"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common denominator."
@@ -410,9 +555,9 @@
       "methods": [
         "common_numerator"
       ],
-      "via": {
+      "inside": {
         "common_numerator": [
-          "common-multiple/product"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common numerator."
@@ -433,12 +578,12 @@
         "cross_multiply",
         "match_denominator"
       ],
-      "via": {
+      "inside": {
         "cross_multiply": [
-          "cross-products/diagonals"
+          "Cross products"
         ],
         "match_denominator": [
-          "missing-value/cross_multiply"
+          "Find the missing value in a proportion"
         ]
       },
       "feedback": "This step starts several methods: Cross-multiply, Rewrite one fraction over the other's denominator.",
@@ -454,9 +599,9 @@
           "methods": [
             "match_denominator"
           ],
-          "via": {
+          "inside": {
             "match_denominator": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Rewrite one fraction over the other's denominator."
@@ -472,14 +617,36 @@
           "methods": [
             "cross_multiply"
           ],
-          "via": {
+          "inside": {
             "cross_multiply": [
-              "cross-products/diagonals"
+              "Cross products"
             ]
           },
           "feedback": "This starts: Cross-multiply."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "cross_multiply"
+      ],
+      "inside": {
+        "cross_multiply": [
+          "Cross products"
+        ]
+      },
+      "feedback": "This starts: Cross-multiply."
     },
     {
       "match": {
@@ -496,9 +663,9 @@
       "methods": [
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/product"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common denominator."
@@ -521,15 +688,15 @@
         "ratio_table",
         "unit_rate"
       ],
-      "via": {
+      "inside": {
         "common_numerator": [
-          "common-multiple/list_multiples"
+          "Find a common multiple"
         ],
         "match_denominator": [
-          "to-decimal/power_of_ten"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ],
         "unit_rate": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Common numerator, Rewrite one fraction over the other's denominator, Ratio table, Compare unit rates (flipped fractions).",
@@ -545,9 +712,9 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -563,9 +730,9 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -581,9 +748,63 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "simplify-fraction/repeated"
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "c"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "common_factor(d, c)"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -599,9 +820,27 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "missing-value/scale_factor"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(a, int)",
+              "c"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -617,9 +856,27 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "simplify-fraction/gcf"
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -635,10 +892,10 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -657,15 +914,15 @@
             "ratio_table",
             "unit_rate"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "match_denominator": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "unit_rate": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Common numerator, Rewrite one fraction over the other's denominator, Ratio table, Compare unit rates (flipped fractions).",
@@ -682,9 +939,64 @@
           "methods": [
             "common_numerator"
           ],
-          "via": {
+          "inside": {
             "common_numerator": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "multiply(a, int)"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "inside": {
+            "common_numerator": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common numerator."
@@ -708,16 +1020,16 @@
         "decimal",
         "match_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/list_multiples"
+          "Find a common multiple"
         ],
         "decimal": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ],
         "match_denominator": [
-          "missing-value/ratio_table",
-          "to-decimal/power_of_ten"
+          "Find the missing value in a proportion",
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Common denominator, Convert to decimals, Rewrite one fraction over the other's denominator.",
@@ -733,9 +1045,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -751,9 +1063,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "simplify-fraction/repeated"
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -769,9 +1081,63 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "common_factor(c, d)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "c"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -787,9 +1153,27 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/scale_factor"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, int)",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -805,9 +1189,27 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "simplify-fraction/gcf"
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -825,16 +1227,16 @@
             "decimal",
             "match_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "decimal": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ],
             "match_denominator": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Common denominator, Convert to decimals, Rewrite one fraction over the other's denominator.",
@@ -851,9 +1253,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -869,15 +1271,114 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "multiply(b, int)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "c",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "unit_rate"
+      ],
+      "inside": {
+        "unit_rate": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Compare unit rates (flipped fractions)."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "d",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "inside": {
+        "decimal": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Convert to decimals."
     },
     {
       "match": {
@@ -902,6 +1403,23 @@
         "args": [
           "b",
           "a"
+        ]
+      },
+      "class": {
+        "operation": "subtract",
+        "scope": "within"
+      },
+      "methods": [
+        "distance_from_one"
+      ],
+      "feedback": "This starts: Distance from 1."
+    },
+    {
+      "match": {
+        "op": "subtract",
+        "args": [
+          "d",
+          "c"
         ]
       },
       "class": {

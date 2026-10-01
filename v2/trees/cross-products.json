@@ -18,6 +18,23 @@
         "diagonals"
       ],
       "feedback": "This starts: Multiply the diagonals."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "diagonals"
+      ],
+      "feedback": "This starts: Multiply the diagonals."
     }
   ]
 }

@@ -1,83 +1,71 @@
 flowchart LR
   n0(["What is 15% of 80?"])
   n1(["Answer: 12"])
-  n2["Convert to a decimal and multiply"]
-  n3["Write 15/100 as a decimal → 0.15"]
-  n2 --> n3
-  n4["0.15 × 80 = 12"]
-  n3 --> n4
+  n2{{"× Which first step?"}}
+  n3["Divide the top by the bottom<br/>15 ÷ 100 = 0.15<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n4["Scale up to 80<br/>0.15 × 80 = 12"]
+  n5["Find 10% by dividing by 10<br/>80 ÷ 10 = 8<br/>[divide · within]"]
+  n6["Find 5% by halving 10%<br/>8 ÷ 2 = 4"]
+  n7["Take as many 10% pieces as needed<br/>8 × 1 = 8"]
+  n8["Take as many 5% pieces as needed<br/>4 × 1 = 4"]
+  n9["Add the pieces<br/>8 + 4 = 12"]
+  n10["Find the scale factor between the bottoms<br/>80 ÷ 100 = 0.8<br/>[divide · within]"]
+  n11["Scale the top by the same factor<br/>15 × 0.8 = 12"]
+  n12["Divide the top by a shared factor<br/>15 ÷ 5 = 3<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+  n13["Divide the bottom by the same factor<br/>100 ÷ 5 = 20<br/>[in: Simplify a fraction]"]
+  n14["Find the scale factor from the simplified bottom<br/>80 ÷ 20 = 4"]
+  n15["Scale the simplified top<br/>3 × 4 = 12"]
+  n16["Find the greatest common factor<br/>GCF(15, 100) = 5<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+  n17{"all"}
+  n18{"all"}
+  n19["Divide the top by the GCF<br/>15 ÷ 5 = 3<br/>[in: Simplify a fraction]"]
+  n20["Divide the bottom by the GCF<br/>100 ÷ 5 = 20<br/>[in: Simplify a fraction]"]
+  n21["Find the scale factor from the simplified bottom<br/>80 ÷ 20 = 4"]
+  n22["Scale the simplified top<br/>3 × 4 = 12"]
+  n23["Multiply across the diagonal<br/>15 × 80 = 1200<br/>[multiply · across]"]
+  n24["Divide by the remaining number<br/>1200 ÷ 100 = 12"]
+  n25["Scale up to 80<br/>0.15 × 80 = 12<br/>[divide · within]"]
+  n0 --> n2
+  n2 -->|"Convert to a decimal and multiply"| n3
   n4 --> n1
-  n5["Find 1% first"]
-  n6["80 ÷ 100 = 0.8"]
-  n5 --> n6
-  n7["15 × 0.8 = 12"]
+  n3 --> n4
+  n2 -->|"Build from 10% and 5%"| n5
   n6 --> n7
-  n7 --> n1
-  n8["Multiply, then divide by 100"]
-  n9["15 × 80 = 1200"]
+  n7 --> n8
   n8 --> n9
-  n10["1200 ÷ 100 = 12"]
-  n9 --> n10
-  n10 --> n1
-  n11["Use a simplified fraction"]
-  n12["Simplify 15/100 → 3/20"]
-  n11 --> n12
-  n13["80 ÷ 20 = 4"]
-  n12 --> n13
-  n14["3 × 4 = 12"]
+  n9 --> n1
+  n5 --> n6
+  n2 -->|"Find 1% first"| n10
+  n11 --> n1
+  n10 --> n11
+  n2 -->|"Use a simplified fraction"| n12
   n13 --> n14
-  n14 --> n1
-  n15["Build from 10% and 5%"]
-  n16["80 ÷ 10 = 8"]
-  n15 --> n16
-  n17["8 ÷ 2 = 4"]
+  n14 --> n15
+  n15 --> n1
+  n12 --> n13
+  n2 -->|"Use a simplified fraction"| n16
+  n17 --> n19
+  n19 --> n18
+  n17 --> n20
+  n20 --> n18
+  n18 --> n21
+  n21 --> n22
+  n22 --> n1
   n16 --> n17
-  n18["8 × 1 = 8"]
-  n17 --> n18
-  n19["4 × 1 = 4"]
-  n18 --> n19
-  n20["8 + 4 = 12"]
-  n19 --> n20
-  n20 --> n1
-  n21["0.15 × 80 = 12"]
-  n22{{"after 15 ÷ 100 = 0.15 in their head"}}
-  n0 --> n22
-  n22 --> n21
-  n21 --> n2
-  n23["15 ÷ 100 = 0.15"]
-  n24{{"divide · within"}}
-  n0 --> n24
-  n24 --> n23
-  n23 -->|"to-decimal/divide / to-decimal/power_of_ten"| n2
-  n25["80 ÷ 10 = 8"]
-  n24 --> n25
-  n25 --> n15
-  n26["80 ÷ 100 = 0.8"]
-  n24 --> n26
-  n26 --> n5
-  n27["15 ÷ 5 = 3"]
-  n28{{"factor · within"}}
-  n0 --> n28
-  n28 --> n27
-  n27 -->|"simplify-fraction/repeated"| n11
-  n29["GCF(15, 100) = 5"]
-  n28 --> n29
-  n29 -->|"simplify-fraction/gcf"| n11
-  n30["15 × 80 = 1200"]
-  n31{{"multiply · across"}}
-  n0 --> n31
-  n31 --> n30
-  n30 --> n8
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n22,n24,n28,n31 cls
-  class n21,n23,n25,n26,n27,n29,n30 first
-  class n2,n5,n8,n11,n15 method
-  class n3,n12 skill
-  class n4,n6,n7,n9,n10,n13,n14,n16,n17,n18,n19,n20 step
-  class n0,n1 ans
+  n2 -->|"Multiply, then divide by 100"| n23
+  n24 --> n1
+  n23 --> n24
+  n2 -->|"Convert to a decimal and multiply (after 15 ÷ 100 = 0.15 in their head)"| n25
+  n25 --> n1
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n17,n18 k_all
+  class n2 k_choice
+  class n1 k_end
+  class n3,n5,n10,n12,n16,n23,n25 k_first
+  class n0 k_start
+  class n4,n6,n7,n8,n9,n11,n13,n14,n15,n19,n20,n21,n22,n24 k_step

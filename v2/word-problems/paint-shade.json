@@ -4,9 +4,7 @@
   "text": "Paint A mixes 6 cans of blue with 8 cans of white. Paint B mixes 72 cans of blue with 96 cans of white. Will the two paints be the same shade?",
   "concepts": [
     "question_type",
-    "rate_pair",
-    "multiplicative",
-    "answer_in_context"
+    "multiplicative"
   ],
   "quantities": [
     {
@@ -14,71 +12,99 @@
       "text": "6 cans of blue",
       "value": 6,
       "unit": "cans",
-      "counts": "blue in A",
-      "role": "used"
+      "counts": "blue in A"
     },
     {
       "id": "white_a",
       "text": "8 cans of white",
       "value": 8,
       "unit": "cans",
-      "counts": "white in A",
-      "role": "used"
+      "counts": "white in A"
     },
     {
       "id": "blue_b",
       "text": "72 cans of blue",
       "value": 72,
       "unit": "cans",
-      "counts": "blue in B",
-      "role": "used"
+      "counts": "blue in B"
     },
     {
       "id": "white_b",
       "text": "96 cans of white",
       "value": 96,
       "unit": "cans",
-      "counts": "white in B",
-      "role": "used"
+      "counts": "white in B"
     }
   ],
-  "unknown": {
-    "text": "same shade?",
-    "counts": "yes/no",
-    "unit": ""
+  "asks": {
+    "text": "will they be the same shade",
+    "unit": "yes or no"
   },
-  "relationship": {
-    "cue": "mixes … with",
-    "note": "Same shade means the same blue : white ratio."
-  },
-  "maps_to": {
-    "question": "proportion-check",
-    "with": {
-      "a": "blue_a",
-      "b": "white_a",
-      "c": "blue_b",
-      "d": "white_b"
-    },
-    "answer_map": {
-      "proportional": "yes",
-      "not proportional": "no"
-    }
-  },
-  "answer": "yes",
-  "answer_text": "Yes: both are 3 blue to 4 white",
-  "traps": [
+  "extract": [
     {
-      "concept": "multiplicative",
-      "mistake": "Compares the differences (2 more white vs 24 more white).",
-      "maps_to": {
-        "question": "proportion-check",
-        "with": {
-          "a": "subtract(white_a, blue_a)",
-          "b": 1,
-          "c": "subtract(white_b, blue_b)",
-          "d": 1
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Same shade means the same ratio: a proportion check",
+          "correct": true,
+          "question": "proportion-check",
+          "binds": {
+            "a": "blue_a",
+            "b": "white_a",
+            "c": "blue_b",
+            "d": "white_b"
+          },
+          "answer_map": {
+            "proportional": "yes",
+            "not proportional": "no"
+          }
         }
-      }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "multiplicative",
+      "say": "How do the mixes compare?",
+      "options": [
+        {
+          "say": "By ratio",
+          "correct": true
+        },
+        {
+          "say": "By difference: white minus blue",
+          "trap": "Compares the differences (2 more white vs 24 more white).",
+          "steps": [
+            {
+              "op": "subtract",
+              "args": [
+                "white_a",
+                "blue_a"
+              ],
+              "out": "gap_a",
+              "say": "Subtract blue from white in A"
+            },
+            {
+              "op": "subtract",
+              "args": [
+                "white_b",
+                "blue_b"
+              ],
+              "out": "gap_b",
+              "say": "Subtract blue from white in B"
+            }
+          ],
+          "binds": {
+            "a": "gap_a",
+            "b": 1,
+            "c": "gap_b",
+            "d": 1
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "answer": "yes",
+  "answer_text": "Yes: both are 3 blue to 4 white"
 }

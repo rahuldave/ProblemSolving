@@ -335,44 +335,43 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p><code>add-fractions</code> · core · prompt: <em>Find {a}/{b} + {c}/{d}.</em></p>
-<p>Uses: <a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/cross-products.html">cross-products</a>, <a href="../questions/missing-value.html">missing-value</a>, <a href="../questions/simplify-fraction.html">simplify-fraction</a>, <a href="../questions/to-decimal.html">to-decimal</a></p>
+<p>Its methods call: <a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/cross-products.html">cross-products</a>, <a href="../questions/missing-value.html">missing-value</a>, <a href="../questions/simplify-fraction.html">simplify-fraction</a>, <a href="../questions/to-decimal.html">to-decimal</a></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Common denominator</strong> <code>common_denominator</code></td>
 <td>Rewrite both fractions over a common denominator, add the numerators, simplify.</td>
-<td>common-multiple, missing-value, simplify-fraction</td>
+<td>Always; use the least common multiple to keep numbers small.</td>
+<td><a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/missing-value.html">missing-value</a>, <a href="../questions/simplify-fraction.html">simplify-fraction</a></td>
 </tr>
 <tr class="even">
 <td><strong>Bow-tie (cross-multiply)</strong> <code>bow_tie</code></td>
 <td>({a}×{d} + {c}×{b}) / ({b}×{d}), then simplify.</td>
-<td>cross-products, simplify-fraction</td>
+<td>Quick, with small denominators.</td>
+<td><a href="../questions/cross-products.html">cross-products</a>, <a href="../questions/simplify-fraction.html">simplify-fraction</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Convert to decimals</strong> <code>decimal</code></td>
 <td>Write each fraction as a decimal and add.</td>
-<td>to-decimal</td>
+<td>An approximate answer is enough.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="find-56-34." class="level2">
 <h2 class="anchored" data-anchor-id="find-56-34.">Find 5/6 + 3/4.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/add-fractions-1.svg" alt="Find 5/6 + 3/4." style="width:3011px" loading="lazy" class="figure-img">
+<img src="../svg/add-fractions-1.svg" alt="Find 5/6 + 3/4." style="width:4460px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -386,7 +385,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="find-23-15.">Find 2/3 + 1/5.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/add-fractions-2.svg" alt="Find 2/3 + 1/5." style="width:3011px" loading="lazy" class="figure-img">
+<img src="../svg/add-fractions-2.svg" alt="Find 2/3 + 1/5." style="width:4809px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

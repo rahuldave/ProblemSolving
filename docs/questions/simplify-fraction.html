@@ -337,36 +337,40 @@ ul.task-list li input[type="checkbox"] {
 <p><code>simplify-fraction</code> · skill · prompt: <em>Simplify {x}/{y}.</em></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Divide by the GCF</strong> <code>gcf</code></td>
 <td>Find the greatest common factor once and divide both terms by it.</td>
+<td>You can spot the GCF.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Divide out common factors repeatedly</strong> <code>repeated</code></td>
 <td>Keep dividing both terms by any shared factor (2, 3, 5, …) until none is left.</td>
+<td>The numbers are large and the GCF isn’t obvious.</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="simplify-68." class="level2">
 <h2 class="anchored" data-anchor-id="simplify-68.">Simplify 6/8.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/simplify-fraction-1.svg" alt="Simplify 6/8." style="width:1568px" loading="lazy" class="figure-img">
+<img src="../svg/simplify-fraction-1.svg" alt="Simplify 6/8." style="width:2094px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -380,7 +384,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="simplify-7296.">Simplify 72/96.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/simplify-fraction-2.svg" alt="Simplify 72/96." style="width:2625px" loading="lazy" class="figure-img">
+<img src="../svg/simplify-fraction-2.svg" alt="Simplify 72/96." style="width:3210px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

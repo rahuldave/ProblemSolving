@@ -2,15 +2,15 @@
 
 `add-fractions` · core · prompt: *Find {a}/{b} + {c}/{d}.*
 
-Uses: [common-multiple](common-multiple.md), [cross-products](cross-products.md), [missing-value](missing-value.md), [simplify-fraction](simplify-fraction.md), [to-decimal](to-decimal.md)
+Its methods call: [common-multiple](common-multiple.md), [cross-products](cross-products.md), [missing-value](missing-value.md), [simplify-fraction](simplify-fraction.md), [to-decimal](to-decimal.md)
 
-| Method | Idea | Steps use |
-|---|---|---|
-| **Common denominator** `common_denominator` | Rewrite both fractions over a common denominator, add the numerators, simplify. | common-multiple, missing-value, simplify-fraction |
-| **Bow-tie (cross-multiply)** `bow_tie` | ({a}×{d} + {c}×{b}) / ({b}×{d}), then simplify. | cross-products, simplify-fraction |
-| **Convert to decimals** `decimal` | Write each fraction as a decimal and add. | to-decimal |
+| Method | Idea | Best when | Calls |
+|---|---|---|---|
+| **Common denominator** `common_denominator` | Rewrite both fractions over a common denominator, add the numerators, simplify. | Always; use the least common multiple to keep numbers small. | [common-multiple](common-multiple.md), [missing-value](missing-value.md), [simplify-fraction](simplify-fraction.md) |
+| **Bow-tie (cross-multiply)** `bow_tie` | ({a}×{d} + {c}×{b}) / ({b}×{d}), then simplify. | Quick, with small denominators. | [cross-products](cross-products.md), [simplify-fraction](simplify-fraction.md) |
+| **Convert to decimals** `decimal` | Write each fraction as a decimal and add. | An approximate answer is enough. | [to-decimal](to-decimal.md) |
 
-Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, **purple** = second step (only where methods share a first step); **yellow** = method; **green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.
+Each graph starts at the question and branches at **× Which first step?** into every first step a student might write. Methods that share a first step meet there and split at **× Which next step?**. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.
 
 ## Find 5/6 + 3/4.
 

@@ -17,9 +17,31 @@
       "methods": [
         "decimal"
       ],
-      "via": {
+      "inside": {
         "decimal": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Convert to decimals."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "c",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "inside": {
+        "decimal": [
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This starts: Convert to decimals."
@@ -39,9 +61,9 @@
       "methods": [
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/gcf_formula"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common denominator."
@@ -61,9 +83,9 @@
       "methods": [
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/recall"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common denominator."
@@ -83,9 +105,31 @@
       "methods": [
         "bow_tie"
       ],
-      "via": {
+      "inside": {
         "bow_tie": [
-          "cross-products/diagonals"
+          "Cross products"
+        ]
+      },
+      "feedback": "This starts: Bow-tie (cross-multiply)."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "bow_tie"
+      ],
+      "inside": {
+        "bow_tie": [
+          "Cross products"
         ]
       },
       "feedback": "This starts: Bow-tie (cross-multiply)."
@@ -103,14 +147,343 @@
         "scope": "across"
       },
       "methods": [
+        "bow_tie",
         "common_denominator"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/product"
+          "Find a common multiple"
         ]
       },
-      "feedback": "This starts: Common denominator."
+      "feedback": "This step starts several methods: Bow-tie (cross-multiply), Common denominator.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "common_factor(a, b)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "a"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "common_factor(c, d)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "c"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, d)",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, d)",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "d"
+            ]
+          },
+          "methods": [
+            "bow_tie"
+          ],
+          "inside": {
+            "bow_tie": [
+              "Cross products"
+            ]
+          },
+          "feedback": "This starts: Bow-tie (cross-multiply)."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "multiply(b, d)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "c"
+            ]
+          },
+          "methods": [
+            "bow_tie"
+          ],
+          "inside": {
+            "bow_tie": [
+              "Cross products"
+            ]
+          },
+          "feedback": "This starts: Bow-tie (cross-multiply)."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "multiply(b, d)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        }
+      ]
     },
     {
       "match": {
@@ -128,12 +501,12 @@
         "common_denominator",
         "decimal"
       ],
-      "via": {
+      "inside": {
         "common_denominator": [
-          "common-multiple/list_multiples"
+          "Find a common multiple"
         ],
         "decimal": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Common denominator, Convert to decimals.",
@@ -149,9 +522,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -167,9 +540,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "simplify-fraction/repeated"
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -185,9 +558,63 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "common_factor(c, d)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "c"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -203,9 +630,27 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/scale_factor"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, int)",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -221,9 +666,27 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "simplify-fraction/gcf"
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -240,12 +703,12 @@
             "common_denominator",
             "decimal"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "decimal": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Common denominator, Convert to decimals.",
@@ -262,9 +725,9 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common denominator."
@@ -280,15 +743,92 @@
           "methods": [
             "common_denominator"
           ],
-          "via": {
+          "inside": {
             "common_denominator": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "multiply(b, int)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "inside": {
+            "common_denominator": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common denominator."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "d",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "inside": {
+        "decimal": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Convert to decimals."
     }
   ]
 }

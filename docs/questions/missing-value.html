@@ -335,59 +335,61 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p><code>missing-value</code> · core · prompt: <em>Solve {a}/{b} = x/{d}.</em></p>
-<p>Uses: <a href="../questions/simplify-fraction.html">simplify-fraction</a>, <a href="../questions/to-decimal.html">to-decimal</a></p>
+<p>Its methods call: <a href="../questions/simplify-fraction.html">simplify-fraction</a>, <a href="../questions/to-decimal.html">to-decimal</a></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Cross-multiply and divide</strong> <code>cross_multiply</code></td>
 <td>{a} × {d} = {b} × x, so x = {a} × {d} ÷ {b}.</td>
+<td>Always works; most useful when there’s no whole-number scale factor.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Scale factor</strong> <code>scale_factor</code></td>
 <td>Find what turns {b} into {d}, then do the same to {a}.</td>
+<td>{d} is a whole-number multiple of {b}.</td>
 <td>—</td>
 </tr>
 <tr class="odd">
 <td><strong>Unit rate</strong> <code>unit_rate</code></td>
 <td>Find the value per 1, then scale up to {d}.</td>
-<td>to-decimal</td>
+<td>{a}/{b} is a friendly decimal.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="even">
 <td><strong>Inverse rate</strong> <code>inverse_rate</code></td>
 <td>Find how many of the second quantity per 1 of the first, then divide.</td>
-<td>to-decimal</td>
+<td>{b}/{a} is a friendly number.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Ratio table</strong> <code>ratio_table</code></td>
 <td>Build {a}:{b} up by ×2, ×3, … until the second term reaches {d}.</td>
+<td>{d} is a small whole-number multiple of {b}.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Simplify, then scale</strong> <code>simplify_then_scale</code></td>
 <td>Reduce {a}/{b} first so a whole-number scale factor appears.</td>
-<td>simplify-fraction</td>
+<td>{a}/{b} isn’t in lowest terms.</td>
+<td><a href="../questions/simplify-fraction.html">simplify-fraction</a></td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="solve-35-x40." class="level2">
 <h2 class="anchored" data-anchor-id="solve-35-x40.">Solve 3/5 = x/40.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/missing-value-1.svg" alt="Solve 3/5 = x/40." style="width:2103px" loading="lazy" class="figure-img">
+<img src="../svg/missing-value-1.svg" alt="Solve 3/5 = x/40." style="width:2551px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -401,7 +403,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="solve-46-x15.">Solve 4/6 = x/15.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/missing-value-2.svg" alt="Solve 4/6 = x/15." style="width:2146px" loading="lazy" class="figure-img">
+<img src="../svg/missing-value-2.svg" alt="Solve 4/6 = x/15." style="width:2626px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

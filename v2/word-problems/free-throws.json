@@ -3,9 +3,9 @@
   "title": "Free throws",
   "text": "Maya made 3 of her 4 free throws. Leo made 5 of his 7. Who has the better shooting rate?",
   "concepts": [
+    "question_type",
     "rate_pair",
-    "direction",
-    "answer_in_context"
+    "direction"
   ],
   "quantities": [
     {
@@ -13,85 +13,117 @@
       "text": "made 3",
       "value": 3,
       "unit": "shots",
-      "counts": "Maya's made shots",
-      "role": "used"
+      "counts": "Maya's made shots"
     },
     {
       "id": "maya_shots",
       "text": "of her 4",
       "value": 4,
       "unit": "shots",
-      "counts": "Maya's attempts",
-      "role": "used"
+      "counts": "Maya's attempts"
     },
     {
       "id": "leo_made",
       "text": "made 5",
       "value": 5,
       "unit": "shots",
-      "counts": "Leo's made shots",
-      "role": "used"
+      "counts": "Leo's made shots"
     },
     {
       "id": "leo_shots",
       "text": "of his 7",
       "value": 7,
       "unit": "shots",
-      "counts": "Leo's attempts",
-      "role": "used"
+      "counts": "Leo's attempts"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "who has the better shooting rate",
-    "counts": "person",
     "unit": "name"
   },
-  "relationship": {
-    "cue": "made … of",
-    "note": "Made out of attempted; the bigger fraction wins."
-  },
-  "maps_to": {
-    "question": "compare-fractions",
-    "with": {
-      "a": "maya_made",
-      "b": "maya_shots",
-      "c": "leo_made",
-      "d": "leo_shots"
-    },
-    "answer_map": {
-      "first": "Maya",
-      "second": "Leo",
-      "equal": "they're tied"
-    }
-  },
-  "answer": "Maya",
-  "answer_text": "Maya (3/4 = 0.75 vs 5/7 ≈ 0.714)",
-  "traps": [
+  "extract": [
     {
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Whose rate is higher: compare two fractions",
+          "correct": true,
+          "question": "compare-fractions",
+          "binds": {
+            "a": "maya_made",
+            "b": "maya_shots",
+            "c": "leo_made",
+            "d": "leo_shots"
+          },
+          "answer_map": {
+            "first": "Maya",
+            "second": "Leo",
+            "equal": "they're tied"
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
       "concept": "rate_pair",
-      "mistake": "Compares shots made only (5 > 3).",
-      "maps_to": {
-        "question": "compare-fractions",
-        "with": {
-          "a": "maya_made",
-          "b": 1,
-          "c": "leo_made",
-          "d": 1
+      "say": "What is each player's rate?",
+      "options": [
+        {
+          "say": "Shots made out of shots taken",
+          "correct": true
+        },
+        {
+          "say": "Just the shots made",
+          "trap": "Compares shots made only (5 > 3).",
+          "binds": {
+            "b": 1,
+            "d": 1
+          }
         }
-      }
+      ]
     },
     {
+      "op": "choose",
       "concept": "direction",
-      "mistake": "Compares misses per shot and picks the bigger.",
-      "maps_to": {
-        "question": "compare-fractions",
-        "with": {
-          "a": "subtract(maya_shots, maya_made)",
-          "b": "maya_shots",
-          "c": "subtract(leo_shots, leo_made)",
-          "d": "leo_shots"
+      "say": "Which way wins?",
+      "options": [
+        {
+          "say": "The bigger fraction made",
+          "correct": true
+        },
+        {
+          "say": "The bigger fraction missed",
+          "trap": "Compares misses per shot and picks the bigger.",
+          "steps": [
+            {
+              "op": "subtract",
+              "args": [
+                "maya_shots",
+                "maya_made"
+              ],
+              "out": "maya_missed",
+              "say": "Count Maya's misses"
+            },
+            {
+              "op": "subtract",
+              "args": [
+                "leo_shots",
+                "leo_made"
+              ],
+              "out": "leo_missed",
+              "say": "Count Leo's misses"
+            }
+          ],
+          "binds": {
+            "a": "maya_missed",
+            "c": "leo_missed"
+          }
         }
-      }
+      ]
     }
-  ]
+  ],
+  "answer": "Maya",
+  "answer_text": "Maya (3/4 = 0.75 vs 5/7 ≈ 0.714)"
 }

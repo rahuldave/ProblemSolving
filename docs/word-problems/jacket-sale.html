@@ -330,35 +330,65 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>A jacket normally costs $80. This week it is 15% off. How much does the jacket cost this week?</p>
 </blockquote>
+<p><strong>Asked:</strong> how much does it cost this week (dollars). <strong>Is a:</strong> <a href="../questions/percent-of.html">Find a percent of a number</a>. <strong>Answer:</strong> $68.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“costs $80”</td>
-<td>80</td>
+<td>80 dollars</td>
 <td>original price</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“15% off”</td>
-<td>15</td>
+<td>15 percent</td>
 <td>discount</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how much does it cost this week (dollars). <strong>Link:</strong> “% off”: 15% of the original price is taken off.</p>
-<p><strong>Maps to</strong> <a href="../questions/percent-of.html">percent-of</a>: p = 15, n = 80, then subtract the savings from the original price. <strong>Answer:</strong> $68.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>15% of the price comes off: a percent of a number</td>
+<td>$15 comes off → 65</td>
+</tr>
+<tr class="even">
+<td>What does the question ask for?</td>
+<td>Name the unknown</td>
+<td>The new price</td>
+<td>The savings → 12</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-jacket-sale.svg" alt="Jacket on sale" style="width:3866px" loading="lazy" class="figure-img">
+<img src="../svg/wp-jacket-sale.svg" alt="Jacket on sale" style="width:4568px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -369,31 +399,35 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Name the unknown</td>
-<td>Answers the savings instead of the new price.</td>
-<td>12</td>
-<td>yes</td>
-</tr>
-<tr class="even">
 <td>Recognize the question type</td>
 <td>Takes off $15 instead of 15%.</td>
 <td>65</td>
 <td>yes</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Name the unknown</td>
+<td>Answers the savings instead of the new price.</td>
+<td>12</td>
+<td>yes</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

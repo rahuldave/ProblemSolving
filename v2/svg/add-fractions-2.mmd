@@ -1,70 +1,290 @@
 flowchart LR
   n0(["Find 2/3 + 1/5."])
   n1(["Answer: 13/15"])
-  n2["Common denominator"]
-  n3["Find a common multiple of 3 and 5 → 15"]
-  n2 --> n3
-  n4["Solve 2/3 = x/15 → 10"]
-  n3 --> n4
-  n5["Solve 1/5 = x/15 → 3"]
+  n2{{"× Which first step?"}}
+  n3["Divide the top by the bottom<br/>1 ÷ 5 = 0.2<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n4[["Write the first fraction as a decimal<br/>Write 2/3 as a decimal → ≈ 0.667"]]
+  n5["Add the decimals<br/>2/3 + 0.2 = 13/15"]
+  n6["Divide the top by the bottom<br/>2 ÷ 3 ≈ 0.667<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n7[["Write the second fraction as a decimal<br/>Write 1/5 as a decimal → 0.2"]]
+  n8["Add the decimals<br/>2/3 + 0.2 = 13/15"]
+  n9["Find the greatest common factor<br/>GCF(3, 5) = 1<br/>[factor · across]<br/>[in: Find a common multiple]"]
+  n10["Divide one number by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find a common multiple]"]
+  n11["Multiply by the other number<br/>3 × 5 = 15<br/>[in: Find a common multiple]"]
+  n12{"all"}
+  n13{"all"}
+  n14[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n15[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n16["Add the new tops<br/>10 + 3 = 13"]
+  n17[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n18["Recall the least common multiple<br/>LCM(3, 5) = 15<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+  n19{"all"}
+  n20{"all"}
+  n21[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n22[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n23["Add the new tops<br/>10 + 3 = 13"]
+  n24[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n25["Multiply the second top by the first bottom<br/>1 × 3 = 3<br/>[multiply · across]<br/>[in: Cross products]"]
+  n26["Multiply the first top by the second bottom<br/>2 × 5 = 10<br/>[in: Cross products]"]
+  n27["Multiply the bottoms<br/>3 × 5 = 15"]
+  n28["Add the cross products for the new top<br/>10 + 3 = 13"]
+  n29[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n30["Multiply the first top by the second bottom<br/>2 × 5 = 10<br/>[multiply · across]<br/>[in: Cross products]"]
+  n31{{"× Which next step?"}}
+  n32["Multiply the second top by the first bottom<br/>1 × 3 = 3<br/>[in: Cross products]"]
+  n33["Multiply the bottoms<br/>3 × 5 = 15"]
+  n34["Add the cross products for the new top<br/>10 + 3 = 13"]
+  n35[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n36["Scale the top by the same factor<br/>1 × 2 = 2<br/>[in: Write a fraction as a decimal]"]
+  n37["Read off the decimal<br/>2 ÷ 10 = 0.2<br/>[in: Write a fraction as a decimal]"]
+  n38[["Write the first fraction as a decimal<br/>Write 2/3 as a decimal → ≈ 0.667"]]
+  n39["Add the decimals<br/>2/3 + 0.2 = 13/15"]
+  n40["List multiples of 3 until 5 divides one<br/>3 × 5 = 15<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+  n41{{"× Which next step?"}}
+  n42["Multiply across the diagonal<br/>2 × 15 = 30<br/>[in: Find the missing value in a proportion]"]
+  n43["Divide by the remaining number<br/>30 ÷ 3 = 10<br/>[in: Find the missing value in a proportion]"]
+  n44[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n45["Add the new tops<br/>10 + 3 = 13"]
+  n46[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n47["Find the scale factor between the bottoms<br/>15 ÷ 3 = 5<br/>[in: Find the missing value in a proportion]"]
+  n48["Scale the top by the same factor<br/>2 × 5 = 10<br/>[in: Find the missing value in a proportion]"]
+  n49[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n50["Add the new tops<br/>10 + 3 = 13"]
+  n51[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n52["Divide the top by the bottom<br/>2 ÷ 3 ≈ 0.667<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n53["Scale up to 15<br/>2/3 × 15 = 10<br/>[in: Find the missing value in a proportion]"]
+  n54[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n55["Add the new tops<br/>10 + 3 = 13"]
+  n56[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n57["Divide the top by the bottom<br/>3 ÷ 2 = 1.5<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n58["Divide by that rate<br/>15 ÷ 1.5 = 10<br/>[in: Find the missing value in a proportion]"]
+  n59[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n60["Add the new tops<br/>10 + 3 = 13"]
+  n61[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n62["Scale the bottom up to 10, 100, or 1000<br/>2 × 5 = 10<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n63{{"× Which method?"}}
+  n64["Multiply the second top by the first bottom<br/>1 × 3 = 3<br/>[in: Cross products]"]
+  n65["Add the cross products for the new top<br/>10 + 3 = 13"]
+  n66[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n67["Scale the top by the same factor<br/>3 × 5 = 15<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n68["Read off the decimal<br/>15 ÷ 10 = 1.5<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n69["Divide by that rate<br/>15 ÷ 1.5 = 10<br/>[in: Find the missing value in a proportion]"]
+  n70[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n71["Add the new tops<br/>10 + 3 = 13"]
+  n72[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n73["Build the bottom up by 2, 3, 4, … until it reaches 15<br/>3 × 5 = 15<br/>[in: Find the missing value in a proportion]"]
+  n74["Scale the top by the same factor<br/>1 × 3 = 3<br/>[in: Find the missing value in a proportion]"]
+  n75[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n76["Add the new tops<br/>10 + 3 = 13"]
+  n77[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n78["Find the greatest common factor<br/>GCF(2, 3) = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n79{"all"}
+  n80{"all"}
+  n81["Divide the top by the GCF<br/>2 ÷ 1 = 2<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n82["Divide the bottom by the GCF<br/>3 ÷ 1 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n83["Find the scale factor from the simplified bottom<br/>15 ÷ 3 = 5<br/>[in: Find the missing value in a proportion]"]
+  n84["Scale the simplified top<br/>2 × 5 = 10<br/>[in: Find the missing value in a proportion]"]
+  n85[["Rewrite the second fraction over 15<br/>Solve 1/5 = x/15 → 3"]]
+  n86["Add the new tops<br/>10 + 3 = 13"]
+  n87[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n88["Multiply across the diagonal<br/>1 × 15 = 15<br/>[in: Find the missing value in a proportion]"]
+  n89["Divide by the remaining number<br/>15 ÷ 5 = 3<br/>[in: Find the missing value in a proportion]"]
+  n90[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n91["Add the new tops<br/>10 + 3 = 13"]
+  n92[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n93["Find the scale factor between the bottoms<br/>15 ÷ 5 = 3<br/>[in: Find the missing value in a proportion]"]
+  n94["Divide the top by the bottom<br/>1 ÷ 5 = 0.2<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n95["Scale up to 15<br/>0.2 × 15 = 3<br/>[in: Find the missing value in a proportion]"]
+  n96[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n97["Add the new tops<br/>10 + 3 = 13"]
+  n98[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n99["Divide the top by the bottom<br/>5 ÷ 1 = 5<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n100["Divide by that rate<br/>15 ÷ 5 = 3<br/>[in: Find the missing value in a proportion]"]
+  n101[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n102["Add the new tops<br/>10 + 3 = 13"]
+  n103[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n104["Scale the bottom up to 10, 100, or 1000<br/>1 × 10 = 10<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n105["Scale the top by the same factor<br/>5 × 10 = 50<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n106["Read off the decimal<br/>50 ÷ 10 = 5<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+  n107["Divide by that rate<br/>15 ÷ 5 = 3<br/>[in: Find the missing value in a proportion]"]
+  n108[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n109["Add the new tops<br/>10 + 3 = 13"]
+  n110[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n111["Find the greatest common factor<br/>GCF(1, 5) = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n112{"all"}
+  n113{"all"}
+  n114["Divide the top by the GCF<br/>1 ÷ 1 = 1<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n115["Divide the bottom by the GCF<br/>5 ÷ 1 = 5<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+  n116["Find the scale factor from the simplified bottom<br/>15 ÷ 5 = 3<br/>[in: Find the missing value in a proportion]"]
+  n117["Scale the simplified top<br/>1 × 3 = 3<br/>[in: Find the missing value in a proportion]"]
+  n118[["Rewrite the first fraction over 15<br/>Solve 2/3 = x/15 → 10"]]
+  n119["Add the new tops<br/>10 + 3 = 13"]
+  n120[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n121["Multiply the second top by the first bottom<br/>1 × 3 = 3<br/>[in: Cross products]"]
+  n122["Multiply the first top by the second bottom<br/>2 × 5 = 10<br/>[in: Cross products]"]
+  n123["Add the cross products for the new top<br/>10 + 3 = 13"]
+  n124[["Simplify the sum<br/>Simplify 13/15 → 13 and 15"]]
+  n0 --> n2
+  n2 -->|"Convert to decimals"| n3
   n4 --> n5
-  n6["10 + 3 = 13"]
-  n5 --> n6
-  n7["Simplify 13/15 → 13/15"]
+  n5 --> n1
+  n3 --> n4
+  n2 -->|"Convert to decimals"| n6
+  n7 --> n8
+  n8 --> n1
   n6 --> n7
-  n7 --> n1
-  n8["Bow-tie (cross-multiply)"]
-  n9["Find the cross products of 2/3 and 1/5 → 10/3"]
-  n8 --> n9
-  n10["3 × 5 = 15"]
-  n9 --> n10
-  n11["10 + 3 = 13"]
+  n2 -->|"Common denominator"| n9
   n10 --> n11
-  n12["Simplify 13/15 → 13/15"]
+  n12 --> n14
+  n14 --> n13
+  n12 --> n15
+  n15 --> n13
   n11 --> n12
-  n12 --> n1
-  n13["Convert to decimals"]
-  n14["Write 2/3 as a decimal → ≈ 0.667"]
-  n13 --> n14
-  n15["Write 1/5 as a decimal → 0.2"]
-  n14 --> n15
-  n16["2/3 + 0.2 = 13/15"]
-  n15 --> n16
-  n16 --> n1
-  n17["2 ÷ 3 ≈ 0.667"]
-  n18{{"divide · within"}}
-  n0 --> n18
-  n18 --> n17
-  n17 -->|"to-decimal/divide"| n13
-  n19["GCF(3, 5) = 1"]
-  n20{{"factor · across"}}
-  n0 --> n20
-  n20 --> n19
-  n19 -->|"common-multiple/gcf_formula"| n2
-  n21["2 × 5 = 10"]
-  n22{{"multiply · across"}}
-  n0 --> n22
-  n22 --> n21
-  n21 -->|"cross-products/diagonals"| n8
-  n23["LCM(3, 5) = 15"]
-  n22 --> n23
-  n23 -->|"common-multiple/recall"| n2
-  n24["3 × 5 = 15"]
-  n22 --> n24
-  n25{{"multiply · within"}}
-  n0 --> n25
-  n25 --> n24
-  n24 -->|"common-multiple/list_multiples / common-multiple/product"| n2
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n18,n20,n22,n25 cls
-  class n17,n19,n21,n23,n24 first
-  class n2,n8,n13 method
-  class n3,n4,n5,n7,n9,n12,n14,n15 skill
-  class n6,n10,n11,n16 step
-  class n0,n1 ans
+  n13 --> n16
+  n16 --> n17
+  n17 --> n1
+  n9 --> n10
+  n2 -->|"Common denominator"| n18
+  n19 --> n21
+  n21 --> n20
+  n19 --> n22
+  n22 --> n20
+  n20 --> n23
+  n23 --> n24
+  n24 --> n1
+  n18 --> n19
+  n2 -->|"Bow-tie (cross-multiply)"| n25
+  n26 --> n27
+  n27 --> n28
+  n28 --> n29
+  n29 --> n1
+  n25 --> n26
+  n2 -->|"Bow-tie (cross-multiply) or Convert to decimals"| n30
+  n30 --> n31
+  n31 -->|"Bow-tie (cross-multiply)"| n32
+  n33 --> n34
+  n34 --> n35
+  n35 --> n1
+  n32 --> n33
+  n31 -->|"Convert to decimals"| n36
+  n37 --> n38
+  n38 --> n39
+  n39 --> n1
+  n36 --> n37
+  n2 -->|"Bow-tie (cross-multiply) or Common denominator"| n40
+  n40 --> n41
+  n41 -->|"Common denominator"| n42
+  n43 --> n44
+  n44 --> n45
+  n45 --> n46
+  n46 --> n1
+  n42 --> n43
+  n41 -->|"Common denominator"| n47
+  n48 --> n49
+  n49 --> n50
+  n50 --> n51
+  n51 --> n1
+  n47 --> n48
+  n41 -->|"Common denominator"| n52
+  n53 --> n54
+  n54 --> n55
+  n55 --> n56
+  n56 --> n1
+  n52 --> n53
+  n41 -->|"Common denominator"| n57
+  n58 --> n59
+  n59 --> n60
+  n60 --> n61
+  n61 --> n1
+  n57 --> n58
+  n41 -->|"Bow-tie (cross-multiply) or Common denominator"| n62
+  n62 --> n63
+  n64 --> n65
+  n65 --> n66
+  n66 --> n1
+  n63 -->|"Bow-tie (cross-multiply)"| n64
+  n67 --> n68
+  n68 --> n69
+  n69 --> n70
+  n70 --> n71
+  n71 --> n72
+  n72 --> n1
+  n63 -->|"Common denominator"| n67
+  n41 -->|"Common denominator"| n73
+  n73 --> n48
+  n74 --> n75
+  n75 --> n76
+  n76 --> n77
+  n77 --> n1
+  n73 --> n74
+  n41 -->|"Common denominator"| n78
+  n79 --> n81
+  n81 --> n80
+  n79 --> n82
+  n82 --> n80
+  n80 --> n83
+  n83 --> n84
+  n84 --> n85
+  n85 --> n86
+  n86 --> n87
+  n87 --> n1
+  n78 --> n79
+  n41 -->|"Common denominator"| n88
+  n89 --> n90
+  n90 --> n91
+  n91 --> n92
+  n92 --> n1
+  n88 --> n89
+  n41 -->|"Common denominator"| n93
+  n93 --> n74
+  n41 -->|"Common denominator"| n94
+  n95 --> n96
+  n96 --> n97
+  n97 --> n98
+  n98 --> n1
+  n94 --> n95
+  n41 -->|"Common denominator"| n99
+  n100 --> n101
+  n101 --> n102
+  n102 --> n103
+  n103 --> n1
+  n99 --> n100
+  n41 -->|"Common denominator"| n104
+  n105 --> n106
+  n106 --> n107
+  n107 --> n108
+  n108 --> n109
+  n109 --> n110
+  n110 --> n1
+  n104 --> n105
+  n41 -->|"Common denominator"| n111
+  n112 --> n114
+  n114 --> n113
+  n112 --> n115
+  n115 --> n113
+  n113 --> n116
+  n116 --> n117
+  n117 --> n118
+  n118 --> n119
+  n119 --> n120
+  n120 --> n1
+  n111 --> n112
+  n41 -->|"Bow-tie (cross-multiply)"| n121
+  n122 --> n123
+  n123 --> n124
+  n124 --> n1
+  n121 --> n122
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n12,n13,n19,n20,n79,n80,n112,n113 k_all
+  class n4,n7,n14,n15,n17,n21,n22,n24,n29,n35,n38,n44,n46,n49,n51,n54,n56,n59,n61,n66,n70,n72,n75,n77,n85,n87,n90,n92,n96,n98,n101,n103,n108,n110,n118,n120,n124 k_call
+  class n2,n31,n41,n63 k_choice
+  class n1 k_end
+  class n3,n6,n9,n18,n25,n30,n40 k_first
+  class n0 k_start
+  class n5,n8,n10,n11,n16,n23,n26,n27,n28,n32,n33,n34,n36,n37,n39,n42,n43,n45,n47,n48,n50,n52,n53,n55,n57,n58,n60,n62,n64,n65,n67,n68,n69,n71,n73,n74,n76,n78,n81,n82,n83,n84,n86,n88,n89,n91,n93,n94,n95,n97,n99,n100,n102,n104,n105,n106,n107,n109,n111,n114,n115,n116,n117,n119,n121,n122,n123 k_step

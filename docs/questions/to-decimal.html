@@ -337,36 +337,40 @@ ul.task-list li input[type="checkbox"] {
 <p><code>to-decimal</code> · skill · prompt: <em>Write {x}/{y} as a decimal.</em></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Divide</strong> <code>divide</code></td>
 <td>Divide the numerator by the denominator (long division or a calculator).</td>
+<td>Always works.</td>
 <td>—</td>
 </tr>
 <tr class="even">
 <td><strong>Scale to 10, 100, 1000</strong> <code>power_of_ten</code></td>
 <td>Multiply top and bottom so the denominator becomes 10, 100, or 1000, then read off the decimal.</td>
+<td>The denominator only has factors 2 and 5 (2, 4, 5, 8, 20, 25, …).</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="write-34-as-a-decimal." class="level2">
 <h2 class="anchored" data-anchor-id="write-34-as-a-decimal.">Write 3/4 as a decimal.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/to-decimal-1.svg" alt="Write 3/4 as a decimal." style="width:1646px" loading="lazy" class="figure-img">
+<img src="../svg/to-decimal-1.svg" alt="Write 3/4 as a decimal." style="width:2094px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -380,7 +384,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="write-58-as-a-decimal.">Write 5/8 as a decimal.</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/to-decimal-2.svg" alt="Write 5/8 as a decimal." style="width:1730px" loading="lazy" class="figure-img">
+<img src="../svg/to-decimal-2.svg" alt="Write 5/8 as a decimal." style="width:2094px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

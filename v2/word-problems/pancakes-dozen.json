@@ -3,9 +3,9 @@
   "title": "Pancakes by the dozen",
   "text": "A pancake recipe uses 2 cups of flour and 3 eggs to make 12 pancakes. How many cups of flour are needed for 2 dozen pancakes?",
   "concepts": [
-    "implicit_number",
-    "distractor",
+    "question_type",
     "rate_pair",
+    "implicit_number",
     "correspondence"
   ],
   "quantities": [
@@ -14,96 +14,122 @@
       "text": "2 cups of flour",
       "value": 2,
       "unit": "cups",
-      "counts": "flour",
-      "role": "used"
+      "counts": "flour"
     },
     {
       "id": "eggs",
       "text": "3 eggs",
       "value": 3,
       "unit": "eggs",
-      "counts": "eggs",
-      "role": "distractor"
+      "counts": "eggs"
     },
     {
       "id": "pancakes",
       "text": "12 pancakes",
       "value": 12,
       "unit": "pancakes",
-      "counts": "pancakes",
-      "role": "used"
+      "counts": "pancakes"
     },
     {
-      "id": "target",
+      "id": "dozens",
       "text": "2 dozen pancakes",
       "value": 2,
       "unit": "dozen",
-      "counts": "pancakes wanted",
-      "role": "used",
-      "concepts": [
-        "implicit_number"
-      ],
-      "derive": {
-        "expr": "multiply(target, 12)",
-        "note": "1 dozen = 12"
-      }
+      "counts": "pancakes wanted"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "how many cups of flour",
-    "counts": "flour",
     "unit": "cups"
   },
-  "relationship": {
-    "cue": "to make",
-    "note": "2 cups of flour per 12 pancakes."
-  },
-  "maps_to": {
-    "question": "missing-value",
-    "with": {
-      "a": "flour",
-      "b": "pancakes",
-      "d": "target"
-    }
-  },
-  "answer": 4,
-  "answer_text": "4 cups of flour",
-  "traps": [
+  "extract": [
     {
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Same recipe, more pancakes: a missing value",
+          "correct": true,
+          "question": "missing-value"
+        }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "rate_pair",
+      "say": "Which two quantities go together?",
+      "options": [
+        {
+          "say": "2 cups of flour with 12 pancakes",
+          "correct": true,
+          "binds": {
+            "a": "flour",
+            "b": "pancakes"
+          }
+        },
+        {
+          "say": "3 eggs with 12 pancakes",
+          "trap": "Scales the eggs instead of the flour.",
+          "binds": {
+            "a": "eggs",
+            "b": "pancakes"
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
       "concept": "implicit_number",
-      "mistake": "Reads '2 dozen' as 2 pancakes.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "flour",
-          "b": "pancakes",
-          "d": "raw(target)"
+      "say": "How many pancakes is 2 dozen?",
+      "options": [
+        {
+          "say": "24",
+          "correct": true,
+          "steps": [
+            {
+              "op": "multiply",
+              "args": [
+                "dozens",
+                12
+              ],
+              "out": "target",
+              "say": "A dozen is 12"
+            }
+          ],
+          "binds": {
+            "d": "target"
+          }
+        },
+        {
+          "say": "2",
+          "trap": "Reads '2 dozen' as 2 pancakes.",
+          "binds": {
+            "d": "dozens"
+          }
         }
-      }
+      ]
     },
     {
-      "concept": "distractor",
-      "mistake": "Scales the eggs instead of the flour.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "eggs",
-          "b": "pancakes",
-          "d": "target"
-        }
-      }
-    },
-    {
+      "op": "choose",
       "concept": "correspondence",
-      "mistake": "Flips one side: pancakes over flour.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "pancakes",
-          "b": "flour",
-          "d": "target"
+      "say": "Which way round does the ratio go?",
+      "options": [
+        {
+          "say": "Flour over pancakes on both sides",
+          "correct": true
+        },
+        {
+          "say": "Pancakes over flour on one side",
+          "trap": "Flips one side: pancakes over flour.",
+          "binds": {
+            "a": "pancakes",
+            "b": "flour"
+          }
         }
-      }
+      ]
     }
-  ]
+  ],
+  "answer": 4,
+  "answer_text": "4 cups of flour"
 }

@@ -330,41 +330,89 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Joe used 4 spoons of sugar to make the first 6 glasses of lemonade. He wants 18 glasses in all. How many more spoons of sugar does he need?</p>
 </blockquote>
+<p><strong>Asked:</strong> how many more spoons of sugar (spoons). <strong>Is a:</strong> <a href="../questions/missing-value.html">Find the missing value in a proportion</a>. <strong>Answer:</strong> 8 more spoons of sugar.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“4 spoons of sugar”</td>
-<td>4</td>
+<td>4 spoons</td>
 <td>sugar already used</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“the first 6 glasses”</td>
-<td>6</td>
+<td>6 glasses</td>
 <td>lemonade made</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“18 glasses in all”</td>
-<td>18</td>
+<td>18 glasses</td>
 <td>lemonade wanted in total</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how many more spoons (spoons). <strong>Link:</strong> “to make”: 4 spoons per 6 glasses; 18 is a total, so the answer is total sugar minus sugar already used.</p>
-<p><strong>Maps to</strong> <a href="../questions/missing-value.html">missing-value</a>: a = 4, b = 6, d = 18, then subtract the sugar already used. <strong>Answer:</strong> 8 more spoons of sugar.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Same recipe, more glasses: a missing value</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Which two quantities go together?</td>
+<td>Find the pair that forms the ratio</td>
+<td>4 spoons of sugar with 6 glasses</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>Is 18 the extra glasses or the total?</td>
+<td>‘More’ vs ‘in all’</td>
+<td>18 is the total</td>
+<td>18 is the extra glasses → 12</td>
+</tr>
+<tr class="even">
+<td>Is the sugar for all 18 glasses the answer?</td>
+<td>Finish the story</td>
+<td>No: subtract the 4 spoons already used</td>
+<td>Yes → 12</td>
+</tr>
+<tr class="odd">
+<td>How does the sugar change when the glasses go up?</td>
+<td>Scale, don’t add</td>
+<td>It scales by the same factor</td>
+<td>It goes up by the same number of extra glasses → 12</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-lemonade-in-all.svg" alt="Lemonade: how many in all" style="width:3373px" loading="lazy" class="figure-img">
+<img src="../svg/wp-lemonade-in-all.svg" alt="Lemonade: how many in all" style="width:4588px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -375,37 +423,42 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Finish the story</td>
-<td>Stops at the sugar for all 18 glasses.</td>
-<td>12</td>
-<td>yes</td>
-</tr>
-<tr class="even">
 <td>‘More’ vs ‘in all’</td>
 <td>Reads 18 as 18 more glasses.</td>
 <td>12</td>
 <td>yes</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Finish the story</td>
+<td>Stops at the sugar for all 18 glasses.</td>
+<td>12</td>
+<td>yes</td>
+<td>—</td>
 </tr>
 <tr class="odd">
 <td>Scale, don’t add</td>
 <td>Adds instead of scaling: 12 more glasses, so 12 more spoons.</td>
 <td>12</td>
 <td>yes</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

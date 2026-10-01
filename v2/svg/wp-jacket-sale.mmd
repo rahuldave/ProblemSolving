@@ -1,118 +1,109 @@
 flowchart LR
-  w0(["Jacket on sale"])
-  w1["costs $80"]
-  w0 --> w1
-  w2["15% off"]
-  w0 --> w2
-  c0(["What is 15% of 80?"])
-  c1(["Answer: 12"])
-  c2["Convert to a decimal and multiply"]
-  c3["Write 15/100 as a decimal → 0.15"]
-  c2 --> c3
-  c4["0.15 × 80 = 12"]
-  c3 --> c4
-  c4 --> c1
-  c5["Find 1% first"]
-  c6["80 ÷ 100 = 0.8"]
-  c5 --> c6
-  c7["15 × 0.8 = 12"]
-  c6 --> c7
-  c7 --> c1
-  c8["Multiply, then divide by 100"]
-  c9["15 × 80 = 1200"]
-  c8 --> c9
-  c10["1200 ÷ 100 = 12"]
-  c9 --> c10
-  c10 --> c1
-  c11["Use a simplified fraction"]
-  c12["Simplify 15/100 → 3/20"]
-  c11 --> c12
-  c13["80 ÷ 20 = 4"]
-  c12 --> c13
-  c14["3 × 4 = 12"]
-  c13 --> c14
-  c14 --> c1
-  c15["Build from 10% and 5%"]
-  c16["80 ÷ 10 = 8"]
-  c15 --> c16
-  c17["8 ÷ 2 = 4"]
-  c16 --> c17
-  c18["8 × 1 = 8"]
-  c17 --> c18
-  c19["4 × 1 = 4"]
-  c18 --> c19
-  c20["8 + 4 = 12"]
-  c19 --> c20
-  c20 --> c1
-  c21["0.15 × 80 = 12"]
-  c22{{"after 15 ÷ 100 = 0.15 in their head"}}
-  c0 --> c22
-  c22 --> c21
-  c21 --> c2
-  c23["15 ÷ 100 = 0.15"]
-  c24{{"divide · within"}}
-  c0 --> c24
-  c24 --> c23
-  c23 -->|"to-decimal/divide / to-decimal/power_of_ten"| c2
-  c25["80 ÷ 10 = 8"]
-  c24 --> c25
-  c25 --> c15
-  c26["80 ÷ 100 = 0.8"]
-  c24 --> c26
-  c26 --> c5
-  c27["15 ÷ 5 = 3"]
-  c28{{"factor · within"}}
-  c0 --> c28
-  c28 --> c27
-  c27 -->|"simplify-fraction/repeated"| c11
-  c29["GCF(15, 100) = 5"]
-  c28 --> c29
-  c29 -->|"simplify-fraction/gcf"| c11
-  c30["15 × 80 = 1200"]
-  c31{{"multiply · across"}}
-  c0 --> c31
-  c31 --> c30
-  c30 --> c8
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c22,c24,c28,c31 cls
-  class c21,c23,c25,c26,c27,c29,c30 first
-  class c2,c5,c8,c11,c15 method
-  class c3,c12 skill
-  class c4,c6,c7,c9,c10,c13,c14,c16,c17,c18,c19,c20 step
-  class c0,c1 ans
-  w2 -->|"p"| c0
-  w1 -->|"n"| c0
-  w3["80 − 12 = 68 (subtract the savings from the original price)"]
-  w1 --> w3
-  c1 --> w3
-  w4(["$68"])
-  w3 --> w4
-  w5["Answers the savings instead of the new price. → 12"]
-  w0 -.->|"Name the unknown"| w5
-  w6["Takes off $15 instead of 15%. → 65"]
-  w0 -.->|"Recognize the question type"| w6
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2 wused
-  class w3 wop
-  class w4 wfinal
-  class w5,w6 wtrap
+  n0(["Story<br/>Jacket on sale"])
+  n4["Take 15 off the price<br/>80 − 15 = 65"]
+  n5(["65 ✗"])
+  n7[["Find a percent of a number<br/>What is 15% of 80 → 12"]]
+  n8(["12 ✗"])
+  n35["Subtract the savings from the price<br/>80 − 12 = 68"]
+  n36(["Answer<br/>$68"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3{{"× What kind of question is this?"}}
+    n6{{"× What does the question ask for?"}}
+  end
+  subgraph nf1["Find a percent of a number (as on its own page)"]
+    direction LR
+    n9(["What is 15% of 80?"])
+    n10(["Answer: 12"])
+    n11{{"× Which first step?"}}
+    n12["Divide the top by the bottom<br/>15 ÷ 100 = 0.15<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n13["Scale up to 80<br/>0.15 × 80 = 12"]
+    n14["Find 10% by dividing by 10<br/>80 ÷ 10 = 8<br/>[divide · within]"]
+    n15["Find 5% by halving 10%<br/>8 ÷ 2 = 4"]
+    n16["Take as many 10% pieces as needed<br/>8 × 1 = 8"]
+    n17["Take as many 5% pieces as needed<br/>4 × 1 = 4"]
+    n18["Add the pieces<br/>8 + 4 = 12"]
+    n19["Find the scale factor between the bottoms<br/>80 ÷ 100 = 0.8<br/>[divide · within]"]
+    n20["Scale the top by the same factor<br/>15 × 0.8 = 12"]
+    n21["Divide the top by a shared factor<br/>15 ÷ 5 = 3<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n22["Divide the bottom by the same factor<br/>100 ÷ 5 = 20<br/>[in: Simplify a fraction]"]
+    n23["Find the scale factor from the simplified bottom<br/>80 ÷ 20 = 4"]
+    n24["Scale the simplified top<br/>3 × 4 = 12"]
+    n25["Find the greatest common factor<br/>GCF(15, 100) = 5<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n26{"all"}
+    n27{"all"}
+    n28["Divide the top by the GCF<br/>15 ÷ 5 = 3<br/>[in: Simplify a fraction]"]
+    n29["Divide the bottom by the GCF<br/>100 ÷ 5 = 20<br/>[in: Simplify a fraction]"]
+    n30["Find the scale factor from the simplified bottom<br/>80 ÷ 20 = 4"]
+    n31["Scale the simplified top<br/>3 × 4 = 12"]
+    n32["Multiply across the diagonal<br/>15 × 80 = 1200<br/>[multiply · across]"]
+    n33["Divide by the remaining number<br/>1200 ÷ 100 = 12"]
+    n34["Scale up to 80<br/>0.15 × 80 = 12<br/>[divide · within]"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 -->|"✓ 15% of the price comes off: a percent of a number"| n2
+  n4 --> n5
+  n3 -.->|"✗ Recognize the question type: $15 comes off"| n4
+  n1 --> n6
+  n6 -->|"✓ The new price"| n2
+  n7 --> n8
+  n6 -.->|"✗ Name the unknown: The savings"| n7
+  n9 --> n11
+  n11 -->|"Convert to a decimal and multiply"| n12
+  n13 --> n10
+  n12 --> n13
+  n11 -->|"Build from 10% and 5%"| n14
+  n15 --> n16
+  n16 --> n17
+  n17 --> n18
+  n18 --> n10
+  n14 --> n15
+  n11 -->|"Find 1% first"| n19
+  n20 --> n10
+  n19 --> n20
+  n11 -->|"Use a simplified fraction"| n21
+  n22 --> n23
+  n23 --> n24
+  n24 --> n10
+  n21 --> n22
+  n11 -->|"Use a simplified fraction"| n25
+  n26 --> n28
+  n28 --> n27
+  n26 --> n29
+  n29 --> n27
+  n27 --> n30
+  n30 --> n31
+  n31 --> n10
+  n25 --> n26
+  n11 -->|"Multiply, then divide by 100"| n32
+  n33 --> n10
+  n32 --> n33
+  n11 -->|"Convert to a decimal and multiply (after 15 ÷ 100 = 0.15 in their head)"| n34
+  n34 --> n10
+  n2 ==>|"p: 15% off<br/>n: costs $80"| n9
+  n10 --> n35
+  n35 --> n36
+  linkStyle 4 stroke:#c4554a,color:#c4554a
+  linkStyle 8 stroke:#c4554a,color:#c4554a
+  linkStyle 41 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n26,n27 k_all
+  class n7 k_call
+  class n3,n6,n11 k_choice
+  class n10,n36 k_end
+  class n12,n14,n19,n21,n25,n32,n34 k_first
+  class n0,n9 k_start
+  class n4,n13,n15,n16,n17,n18,n20,n22,n23,n24,n28,n29,n30,n31,n33,n35 k_step
+  class n5,n8 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

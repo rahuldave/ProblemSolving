@@ -329,41 +329,77 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>There are 60 students in a class. 35% of them walk to school, and 10 ride bikes. How many students walk to school?</p>
 </blockquote>
+<p><strong>Asked:</strong> how many students walk (students). <strong>Is a:</strong> <a href="../questions/percent-of.html">Find a percent of a number</a>. <strong>Answer:</strong> 21 students.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“60 students”</td>
-<td>60</td>
+<td>60 students</td>
 <td>the class</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“35% of them walk”</td>
-<td>35</td>
+<td>35 percent</td>
 <td>walkers</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“10 ride bikes”</td>
-<td>10</td>
+<td>10 students</td>
 <td>bike riders</td>
-<td>distractor</td>
+<td><strong>no</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> how many students walk (students). <strong>Link:</strong> “% of them”: ‘them’ is the 60 students.</p>
-<p><strong>Maps to</strong> <a href="../questions/percent-of.html">percent-of</a>: p = 35, n = 60. <strong>Answer:</strong> 21 students.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>35% of a group: a percent of a number</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>35% of what?</td>
+<td>Find the pair that forms the ratio</td>
+<td>Of all 60 students</td>
+<td>Of the 10 bike riders → 3.5</td>
+</tr>
+<tr class="odd">
+<td>What about the 10 bike riders?</td>
+<td>Ignore numbers that don’t matter</td>
+<td>Not needed</td>
+<td>Take them out first → 17.5</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-walk-to-school.svg" alt="Walking to school" style="width:3679px" loading="lazy" class="figure-img">
+<img src="../svg/wp-walk-to-school.svg" alt="Walking to school" style="width:4545px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -374,66 +410,35 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Ignore numbers that don’t matter</td>
-<td>Takes the 10 bike riders out of the class first.</td>
-<td>17.5</td>
-<td>yes</td>
-</tr>
-<tr class="even">
 <td>Find the pair that forms the ratio</td>
 <td>Takes 35% of the 10 bike riders.</td>
 <td>3.5</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>10 ÷ 10 = 1</code></td>
-<td>Takes 35% of the 10 bike riders.</td>
+<td><code>10 ÷ 100 = 0.1</code>, <code>35 × 10 = 350</code>, <code>10 ÷ 10 = 1</code></td>
 </tr>
 <tr class="even">
-<td><code>10 ÷ 100 = 0.1</code></td>
-<td>Takes 35% of the 10 bike riders.</td>
-</tr>
-<tr class="odd">
-<td><code>35 × 10 = 350</code></td>
-<td>Takes 35% of the 10 bike riders.</td>
-</tr>
-<tr class="even">
-<td><code>35 × 50 = 1750</code></td>
+<td>Ignore numbers that don’t matter</td>
 <td>Takes the 10 bike riders out of the class first.</td>
-</tr>
-<tr class="odd">
-<td><code>50 ÷ 10 = 5</code></td>
-<td>Takes the 10 bike riders out of the class first.</td>
-</tr>
-<tr class="even">
-<td><code>50 ÷ 100 = 0.5</code></td>
-<td>Takes the 10 bike riders out of the class first.</td>
+<td>17.5</td>
+<td>yes</td>
+<td><code>50 ÷ 100 = 0.5</code>, <code>35 × 50 = 1750</code>, <code>50 ÷ 10 = 5</code></td>
 </tr>
 </tbody>
 </table>

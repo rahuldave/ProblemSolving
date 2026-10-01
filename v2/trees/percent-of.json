@@ -51,9 +51,9 @@
       "methods": [
         "decimal"
       ],
-      "via": {
+      "inside": {
         "decimal": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This starts: Convert to a decimal and multiply."
@@ -73,9 +73,9 @@
       "methods": [
         "fraction"
       ],
-      "via": {
+      "inside": {
         "fraction": [
-          "simplify-fraction/repeated"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This starts: Use a simplified fraction."
@@ -95,9 +95,9 @@
       "methods": [
         "fraction"
       ],
-      "via": {
+      "inside": {
         "fraction": [
-          "simplify-fraction/gcf"
+          "Simplify a fraction"
         ]
       },
       "feedback": "This starts: Use a simplified fraction."
@@ -135,9 +135,9 @@
         "decimal",
         "ratio_table"
       ],
-      "via": {
+      "inside": {
         "decimal": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Convert to a decimal and multiply, Ratio table.",
@@ -154,9 +154,9 @@
             "decimal",
             "ratio_table"
           ],
-          "via": {
+          "inside": {
             "decimal": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Convert to a decimal and multiply, Ratio table.",

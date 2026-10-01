@@ -5,7 +5,6 @@
   "prompt": "Find a common multiple of {x} and {y}.",
   "inputs": { "x": "first number", "y": "second number" },
   "quantities": { "first": ["x"], "second": ["y"] },
-  "symmetries": [ { "x": "y", "y": "x" } ],
   "outputs": ["answer"],
   "default_method": "recall",
   "examples": [
@@ -18,7 +17,7 @@
       "idea": "Recognize the least common multiple directly.",
       "best_when": "Small, familiar numbers.",
       "steps": [
-        { "op": "lcm", "args": ["x", "y"], "out": "answer", "text": "LCM({x}, {y}) = {answer}" }
+        { "op": "lcm", "args": ["x", "y"], "out": "answer", "say": "Recall the least common multiple" }
       ]
     },
     "list_multiples": {
@@ -26,7 +25,7 @@
       "idea": "Count up by {x} until you reach a number {y} divides.",
       "best_when": "Small numbers.",
       "steps": [
-        { "op": "multiply", "args": ["x", "k"], "out": "answer", "search": { "var": "k", "until_divisible_by": ["answer", "y"] }, "text": "{x}, {x}×2, {x}×3, … until {y} divides it: {answer}" }
+        { "op": "multiply", "args": ["x", "k"], "out": "answer", "search": { "var": "k", "until_divisible_by": ["answer", "y"] }, "say": "List multiples of {x} until {y} divides one" }
       ]
     },
     "product": {
@@ -36,7 +35,7 @@
       "watch_out": "When they share a factor, this isn't the least common multiple, so later numbers are bigger and need simplifying.",
       "answer_relation": "multiple",
       "steps": [
-        { "op": "multiply", "args": ["x", "y"], "out": "answer", "text": "{x} × {y} = {answer}" }
+        { "op": "multiply", "args": ["x", "y"], "out": "answer", "say": "Multiply the two numbers" }
       ]
     },
     "gcf_formula": {
@@ -44,9 +43,9 @@
       "idea": "LCM = {x} ÷ GCF × {y}.",
       "best_when": "Large numbers whose GCF you can find.",
       "steps": [
-        { "op": "gcf", "args": ["x", "y"], "out": "g", "text": "GCF({x}, {y}) = {g}" },
-        { "op": "divide", "args": ["x", "g"], "out": "xg", "text": "{x} ÷ {g} = {xg}" },
-        { "op": "multiply", "args": ["xg", "y"], "out": "answer", "text": "{xg} × {y} = {answer}" }
+        { "op": "gcf", "args": ["x", "y"], "out": "g", "say": "Find the greatest common factor" },
+        { "op": "divide", "args": ["x", "g"], "out": "xg", "say": "Divide one number by the GCF" },
+        { "op": "multiply", "args": ["xg", "y"], "out": "answer", "say": "Multiply by the other number" }
       ]
     }
   }

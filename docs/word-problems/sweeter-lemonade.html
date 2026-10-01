@@ -330,47 +330,89 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>Joe mixes 4 spoons of sugar into 6 glasses of lemonade. Ann mixes 10 spoons of sugar into 14 glasses. Whose lemonade is sweeter?</p>
 </blockquote>
+<p><strong>Asked:</strong> whose lemonade is sweeter (name). <strong>Is a:</strong> <a href="../questions/compare-fractions.html">Compare two fractions</a>. <strong>Answer:</strong> Ann’s (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667).</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“4 spoons of sugar”</td>
-<td>4</td>
+<td>4 spoons</td>
 <td>Joe’s sugar</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“6 glasses”</td>
-<td>6</td>
+<td>6 glasses</td>
 <td>Joe’s lemonade</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“10 spoons of sugar”</td>
-<td>10</td>
+<td>10 spoons</td>
 <td>Ann’s sugar</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“14 glasses”</td>
-<td>14</td>
+<td>14 glasses</td>
 <td>Ann’s lemonade</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> whose is sweeter (name). <strong>Link:</strong> “mixes … into”: Sweetness is sugar per glass; the bigger fraction is sweeter.</p>
-<p><strong>Maps to</strong> <a href="../questions/compare-fractions.html">compare-fractions</a>: a = 4, b = 6, c = 10, d = 14. <strong>Answer:</strong> Ann’s (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Whose mix is stronger: compare two fractions</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>What measures sweetness?</td>
+<td>Which way wins</td>
+<td>Sugar per glass: more is sweeter</td>
+<td>Glasses per spoon: more is sweeter → Joe</td>
+</tr>
+<tr class="odd">
+<td>What do you compare?</td>
+<td>Find the pair that forms the ratio</td>
+<td>Each mix’s sugar per glass</td>
+<td>Just the spoons of sugar → Ann</td>
+</tr>
+<tr class="even">
+<td>How do the mixes differ?</td>
+<td>Scale, don’t add</td>
+<td>By ratio</td>
+<td>By difference: glasses minus spoons → Joe</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-sweeter-lemonade.svg" alt="Whose lemonade is sweeter?" style="width:3726px" loading="lazy" class="figure-img">
+<img src="../svg/wp-sweeter-lemonade.svg" alt="Whose lemonade is sweeter?" style="width:6262px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -381,17 +423,19 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
@@ -400,41 +444,21 @@ Actual size
 <td>Compares glasses per spoon and calls the bigger one sweeter.</td>
 <td>Joe</td>
 <td>yes</td>
+<td><code>(6, 4), (14, 10)</code></td>
 </tr>
 <tr class="even">
 <td>Find the pair that forms the ratio</td>
 <td>Compares spoons of sugar only (10 &gt; 4).</td>
 <td>Ann</td>
 <td><strong>no</strong>: same answer, so ask how they got it</td>
+<td>—</td>
 </tr>
 <tr class="odd">
 <td>Scale, don’t add</td>
 <td>Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter.</td>
 <td>Joe</td>
 <td>yes</td>
-</tr>
-</tbody>
-</table>
-<p>First steps that give a trap away (each method’s main route under the wrong reading; no correct route starts this way). Traps that just compare raw counts are caught by the answer instead.</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Student’s first step</th>
-<th>Suggests</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>6 × 10 = 60</code></td>
-<td>Compares glasses per spoon and calls the bigger one sweeter.</td>
-</tr>
-<tr class="even">
-<td><code>plot (6, 4), (14, 10)</code></td>
-<td>Compares glasses per spoon and calls the bigger one sweeter.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

@@ -335,59 +335,61 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p><code>better-buy</code> · applied · prompt: <em>Offer 1: {q1} units for ${p1}. Offer 2: {q2} units for ${p2}. Which is the better buy?</em></p>
-<p>Reduces to <a href="../questions/compare-fractions.html">compare-fractions</a> with <code>{"a": "p1", "b": "q1", "c": "p2", "d": "q2"}</code>. Compare the prices per unit p1/q1 and p2/q2; the smaller one is the better buy, so ‘first’ (bigger) maps to ‘second’.</p>
+<p>This is <a href="../questions/compare-fractions.html">compare-fractions</a> in context, with <code>{"a": "p1", "b": "q1", "c": "p2", "d": "q2"}</code>. Compare the prices per unit p1/q1 and p2/q2; the smaller one is the better buy, so ‘first’ (bigger) maps to ‘second’.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th>Idea</th>
-<th>Steps use</th>
+<th>Best when</th>
+<th>Calls</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td><strong>Price per unit</strong> <code>price_per_unit</code> (= compare-fractions · decimal)</td>
 <td>Find the cost of 1 unit in each offer; lower is better.</td>
-<td>—</td>
+<td>A calculator is allowed.</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="even">
 <td><strong>Units per dollar</strong> <code>units_per_dollar</code> (= compare-fractions · unit_rate)</td>
 <td>Find how much $1 buys; more is better.</td>
-<td>—</td>
+<td>The context is a rate (miles per hour, items per dollar).</td>
+<td><a href="../questions/to-decimal.html">to-decimal</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Common quantity</strong> <code>common_quantity</code> (= compare-fractions · common_denominator)</td>
 <td>Price both offers at the same quantity.</td>
-<td>—</td>
+<td>The denominators are small or related.</td>
+<td><a href="../questions/common-multiple.html">common-multiple</a>, <a href="../questions/missing-value.html">missing-value</a></td>
 </tr>
 <tr class="even">
 <td><strong>Scale one offer to the other’s size</strong> <code>scale_up</code> (= compare-fractions · match_denominator)</td>
 <td>What would offer 1 cost for {q2} units?</td>
-<td>—</td>
+<td>{d} is a multiple of {b}.</td>
+<td><a href="../questions/missing-value.html">missing-value</a></td>
 </tr>
 <tr class="odd">
 <td><strong>Cross-multiply</strong> <code>cross_multiply</code> (= compare-fractions · cross_multiply)</td>
 <td>{a}/{b} &gt; {c}/{d} exactly when {a}×{d} &gt; {c}×{b}.</td>
-<td>—</td>
+<td>A quick check with small numbers.</td>
+<td><a href="../questions/cross-products.html">cross-products</a></td>
 </tr>
 <tr class="even">
 <td><strong>Compare growth</strong> <code>compare_growth</code> (= compare-fractions · scale_factor)</td>
 <td>Price grows by {p2} ÷ {p1}, quantity by {q2} ÷ {q1}; quantity growing faster means offer 2 is better.</td>
+<td>One fraction looks like a scaled-up version of the other.</td>
 <td>—</td>
 </tr>
 </tbody>
 </table>
-<p>Reading the graphs: <strong>hexagons</strong> group first steps by operation · scope; <strong>blue</strong> = first step, <strong>purple</strong> = second step (only where methods share a first step); <strong>yellow</strong> = method; <strong>green dashed</strong> = a call to another question (see its own page); edge labels show which skill method produced the step.</p>
+<p>Each graph starts at the question and branches at <strong>× Which first step?</strong> into every first step a student might write. Methods that share a first step meet there and split at <strong>× Which next step?</strong>. Each route then follows its method to the answer. The legend at the bottom of each graph explains the shapes.</p>
 <section id="offer-1-12-units-for-3.-offer-2-20-units-for-4.5.-which-is-the-better-buy" class="level2">
 <h2 class="anchored" data-anchor-id="offer-1-12-units-for-3.-offer-2-20-units-for-4.5.-which-is-the-better-buy">Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/better-buy-1.svg" alt="Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?" style="width:2650px" loading="lazy" class="figure-img">
+<img src="../svg/better-buy-1.svg" alt="Offer 1: 12 units for $3. Offer 2: 20 units for $4.5. Which is the better buy?" style="width:3629px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -401,7 +403,7 @@ Actual size
 <h2 class="anchored" data-anchor-id="offer-1-6-units-for-4.2.-offer-2-10-units-for-7.5.-which-is-the-better-buy">Offer 1: 6 units for $4.2. Offer 2: 10 units for $7.5. Which is the better buy?</h2>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/better-buy-2.svg" alt="Offer 1: 6 units for $4.2. Offer 2: 10 units for $7.5. Which is the better buy?" style="width:2624px" loading="lazy" class="figure-img">
+<img src="../svg/better-buy-2.svg" alt="Offer 1: 6 units for $4.2. Offer 2: 10 units for $7.5. Which is the better buy?" style="width:3268px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">

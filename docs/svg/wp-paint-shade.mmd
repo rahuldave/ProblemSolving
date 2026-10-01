@@ -1,288 +1,831 @@
 flowchart LR
-  w0(["Same shade of paint?"])
-  w1["6 cans of blue"]
-  w0 --> w1
-  w2["8 cans of white"]
-  w0 --> w2
-  w3["72 cans of blue"]
-  w0 --> w3
-  w4["96 cans of white"]
-  w0 --> w4
-  c0(["Are 6:8 and 72:96 proportional?"])
-  c1(["Answer: yes"])
-  c2["Cross-multiply"]
-  c3["Find the cross products of 6/8 and 72/96 → 576/576"]
-  c2 --> c3
-  c4["576 = 576"]
-  c3 --> c4
-  c4 --> c1
-  c5["Common denominator"]
-  c6["Find a common multiple of 8 and 96 → 96"]
-  c5 --> c6
-  c7["Solve 6/8 = x/96 → 72"]
-  c6 --> c7
-  c8["Solve 72/96 = x/96 → 72"]
-  c7 --> c8
-  c9["72 = 72"]
-  c8 --> c9
-  c9 --> c1
-  c10["Rewrite one fraction over the other's denominator"]
-  c11["Solve 6/8 = x/96 → 72"]
-  c10 --> c11
-  c12["72 = 72"]
-  c11 --> c12
-  c12 --> c1
-  c13["Common numerator"]
-  c14["Find a common multiple of 6 and 72 → 72"]
-  c13 --> c14
-  c15["Solve 8/6 = x/72 → 96"]
-  c14 --> c15
-  c16["Solve 96/72 = x/72 → 96"]
-  c15 --> c16
-  c17["96 = 96"]
-  c16 --> c17
-  c17 --> c1
-  c18["Convert to decimals"]
-  c19["Write 6/8 as a decimal → 0.75"]
-  c18 --> c19
-  c20["Write 72/96 as a decimal → 0.75"]
-  c19 --> c20
-  c21["0.75 = 0.75"]
-  c20 --> c21
-  c21 --> c1
-  c22["Compare unit rates (flipped fractions)"]
-  c23["Write 8/6 as a decimal → ≈ 1.333"]
-  c22 --> c23
-  c24["Write 96/72 as a decimal → ≈ 1.333"]
-  c23 --> c24
-  c25["4/3 = 4/3"]
-  c24 --> c25
-  c25 --> c1
-  c26["Compare scale factors"]
-  c27["72 ÷ 6 = 12"]
-  c26 --> c27
-  c28["96 ÷ 8 = 12"]
-  c27 --> c28
-  c29["12 = 12"]
-  c28 --> c29
-  c29 --> c1
-  c30["Ratio table"]
-  c31["6 × 12 = 72"]
-  c30 --> c31
-  c32["8 × 12 = 96"]
-  c31 --> c32
-  c33["96 = 96"]
-  c32 --> c33
-  c33 --> c1
-  c34["Graph the points"]
-  c35["plot (6, 8), (72, 96)"]
-  c34 --> c35
-  c36["8 ÷ 6 ≈ 1.333"]
-  c35 --> c36
-  c37["96 ÷ 72 ≈ 1.333"]
-  c36 --> c37
-  c38["4/3 = 4/3"]
-  c37 --> c38
-  c38 --> c1
-  c39["Simplify both"]
-  c40["Simplify 6/8 → 3/4"]
-  c39 --> c40
-  c41["Simplify 72/96 → 3/4"]
-  c40 --> c41
-  c42["3:4 = 3:4"]
-  c41 --> c42
-  c42 --> c1
-  c43["Distance from 1"]
-  c44["8 − 6 = 2"]
-  c43 --> c44
-  c45["96 − 72 = 24"]
-  c44 --> c45
-  c46["Which is larger: 2/8 or 24/96? (Or are they equal?) → equal"]
-  c45 --> c46
-  c46 --> c1
-  c47["72 ÷ 6 = 12"]
-  c48{{"divide · across"}}
-  c0 --> c48
-  c48 --> c47
-  c47 --> c26
-  c49["96 ÷ 8 = 12"]
-  c48 --> c49
-  c49 -->|"missing-value/scale_factor"| c10
-  c50["6 ÷ 8 = 0.75"]
-  c51{{"divide · within"}}
-  c0 --> c51
-  c51 --> c50
-  c52["then 0.75 × 96 = 72"]
-  c50 --> c52
-  c52 -->|"missing-value/unit_rate"| c10
-  c53["then 72 ÷ 96 = 0.75"]
-  c50 --> c53
-  c53 -->|"to-decimal/divide"| c18
-  c54["8 ÷ 6 ≈ 1.333"]
-  c51 --> c54
-  c55["then 96 ÷ 4/3 = 72"]
-  c54 --> c55
-  c55 -->|"missing-value/inverse_rate"| c10
-  c56["then 96 ÷ 72 ≈ 1.333"]
-  c54 --> c56
-  c56 -->|"to-decimal/divide"| c22
-  c57["GCF(6, 72) = 6"]
-  c58{{"factor · across"}}
-  c0 --> c58
-  c58 --> c57
-  c57 -->|"common-multiple/gcf_formula"| c13
-  c59["GCF(8, 96) = 8"]
-  c58 --> c59
-  c59 -->|"common-multiple/gcf_formula"| c5
-  c60["6 ÷ 2 = 3"]
-  c61{{"factor · within"}}
-  c0 --> c61
-  c61 --> c60
-  c62["then 8 ÷ 2 = 4"]
-  c60 --> c62
-  c62 -->|"simplify-fraction/repeated"| c10
-  c62 -->|"simplify-fraction/repeated"| c39
-  c63["GCF(6, 8) = 2"]
-  c61 --> c63
-  c64["then 6 ÷ 2 = 3"]
-  c63 --> c64
-  c64 -->|"simplify-fraction/gcf"| c10
-  c64 -->|"simplify-fraction/gcf"| c39
-  c65["6 × 72 = 432"]
-  c66{{"multiply · across"}}
-  c0 --> c66
-  c66 --> c65
-  c65 -->|"common-multiple/product"| c13
-  c67["6 × 96 = 576"]
-  c66 --> c67
-  c68["then 72 × 8 = 576"]
-  c67 --> c68
-  c68 -->|"cross-products/diagonals"| c2
-  c69["then 576 ÷ 8 = 72"]
-  c67 --> c69
-  c69 -->|"missing-value/cross_multiply"| c10
-  c70["8 × 96 = 768"]
-  c66 --> c70
-  c70 -->|"common-multiple/product"| c5
-  c71["LCM(6, 72) = 72"]
-  c66 --> c71
-  c71 -->|"common-multiple/recall"| c13
-  c72["LCM(8, 96) = 96"]
-  c66 --> c72
-  c72 -->|"common-multiple/recall"| c5
-  c73["6 × 12 = 72"]
-  c74{{"multiply · within"}}
-  c0 --> c74
-  c74 --> c73
-  c75["then 8 × 72 = 576"]
-  c73 --> c75
-  c75 -->|"missing-value/cross_multiply"| c13
-  c76["then 72 ÷ 6 = 12"]
-  c73 --> c76
-  c76 -->|"missing-value/scale_factor"| c13
-  c77["then 8 ÷ 6 ≈ 1.333"]
-  c73 --> c77
-  c77 -->|"to-decimal/divide"| c13
-  c78["then 6 ÷ 8 = 0.75"]
-  c73 --> c78
-  c78 -->|"to-decimal/divide"| c13
-  c79["then 8 × 125 = 1000"]
-  c73 --> c79
-  c79 -->|"to-decimal/power_of_ten"| c13
-  c80["then 6 × 12 = 72"]
-  c73 --> c80
-  c80 -->|"missing-value/ratio_table"| c13
-  c81["then GCF(8, 6) = 2"]
-  c73 --> c81
-  c81 -->|"simplify-fraction/gcf"| c13
-  c82["then 8 ÷ 2 = 4"]
-  c73 --> c82
-  c82 -->|"simplify-fraction/repeated"| c13
-  c83["then 8 × 12 = 96"]
-  c73 --> c83
-  c83 --> c30
-  c84["8 × 12 = 96"]
-  c74 --> c84
-  c85["then 6 × 96 = 576"]
-  c84 --> c85
-  c85 -->|"missing-value/cross_multiply"| c5
-  c86["then 96 ÷ 8 = 12"]
-  c84 --> c86
-  c86 -->|"missing-value/scale_factor"| c5
-  c87["then 6 ÷ 8 = 0.75"]
-  c84 --> c87
-  c87 -->|"to-decimal/divide"| c5
-  c88["then 8 × 125 = 1000"]
-  c84 --> c88
-  c88 -->|"to-decimal/power_of_ten"| c5
-  c89["then 8 ÷ 6 ≈ 1.333"]
-  c84 --> c89
-  c89 -->|"to-decimal/divide"| c5
-  c90["then 8 × 12 = 96"]
-  c84 --> c90
-  c90 -->|"missing-value/ratio_table"| c5
-  c91["then GCF(6, 8) = 2"]
-  c84 --> c91
-  c91 -->|"simplify-fraction/gcf"| c5
-  c92["then 6 ÷ 2 = 3"]
-  c84 --> c92
-  c92 -->|"simplify-fraction/repeated"| c5
-  c93["then 6 × 12 = 72"]
-  c84 --> c93
-  c93 -->|"missing-value/ratio_table"| c10
-  c94["8 × 125 = 1000"]
-  c74 --> c94
-  c95["then 6 × 125 = 750"]
-  c94 --> c95
-  c95 -->|"to-decimal/power_of_ten"| c18
-  c95 -->|"to-decimal/power_of_ten"| c10
-  c96["plot (6, 8), (72, 96)"]
-  c97{{"represent · across"}}
-  c0 --> c97
-  c97 --> c96
-  c96 --> c34
-  c98["8 − 6 = 2"]
-  c99{{"subtract · within"}}
-  c0 --> c99
-  c99 --> c98
-  c98 --> c43
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c48,c51,c58,c61,c66,c74,c97,c99 cls
-  class c47,c49,c50,c54,c57,c59,c60,c63,c65,c67,c70,c71,c72,c73,c84,c94,c96,c98 first
-  class c52,c53,c55,c56,c62,c64,c68,c69,c75,c76,c77,c78,c79,c80,c81,c82,c83,c85,c86,c87,c88,c89,c90,c91,c92,c93,c95 second
-  class c2,c5,c10,c13,c18,c22,c26,c30,c34,c39,c43 method
-  class c3,c6,c7,c8,c11,c14,c15,c16,c19,c20,c23,c24,c40,c41,c46 skill
-  class c4,c9,c12,c17,c21,c25,c27,c28,c29,c31,c32,c33,c35,c36,c37,c38,c42,c44,c45 step
-  class c0,c1 ans
-  w1 -->|"a"| c0
-  w2 -->|"b"| c0
-  w3 -->|"c"| c0
-  w4 -->|"d"| c0
-  w5(["Yes: both are 3 blue to 4 white"])
-  c1 --> w5
-  w6["Compares the differences (2 more white vs 24 more white). → no"]
-  w0 -.->|"Scale, don't add"| w6
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2,w3,w4 wused
-  class w5 wfinal
-  class w6 wtrap
+  n0(["Story<br/>Same shade of paint?"])
+  n5["Subtract blue from white in A<br/>8 − 6 = 2"]
+  n6["Subtract blue from white in B<br/>96 − 72 = 24"]
+  n7[["Are two ratios proportional?<br/>Are 2:1 and 24:1 proportional → no"]]
+  n8(["no ✗"])
+  n356(["Answer<br/>Yes: both are 3 blue to 4 white"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Same shade means the same ratio: a proportion check"]
+    n4{{"× How do the mixes compare?"}}
+  end
+  subgraph nf1["Are two ratios proportional? (as on its own page)"]
+    direction LR
+    n9(["Are 6:8 and 72:96 proportional?"])
+    n10(["Answer: proportional"])
+    n11{{"× Which first step?"}}
+    n12["Find how much the top grows<br/>72 ÷ 6 = 12<br/>[divide · across]"]
+    n13["Find how much the bottom grows<br/>96 ÷ 8 = 12"]
+    n14["If the top grows faster, the second fraction is bigger<br/>12 = 12"]
+    n15["Find the scale factor between the bottoms<br/>96 ÷ 8 = 12<br/>[divide · across]<br/>[in: Find the missing value in a proportion]"]
+    n16{{"× Which next step?"}}
+    n17["Scale the top by the same factor<br/>6 × 12 = 72<br/>[in: Find the missing value in a proportion]"]
+    n18["Same bottom, so compare the tops<br/>72 = 72"]
+    n19["Find how much the top grows<br/>72 ÷ 6 = 12"]
+    n20["If the top grows faster, the second fraction is bigger<br/>12 = 12"]
+    n21["Divide the top by the bottom<br/>6 ÷ 8 = 0.75<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n22{{"× Which next step?"}}
+    n23["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n24["Divide the top by the bottom<br/>72 ÷ 96 = 0.75<br/>[in: Write a fraction as a decimal]"]
+    n25["Compare the decimals<br/>0.75 = 0.75"]
+    n26["Divide the top by the bottom<br/>72 ÷ 96 = 0.75<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n27[["Write the first fraction as a decimal<br/>Write 6/8 as a decimal → 0.75"]]
+    n28["Compare the decimals<br/>0.75 = 0.75"]
+    n29["Divide the top by the bottom<br/>8 ÷ 6 ≈ 1.333<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n30{{"× Which next step?"}}
+    n31["Divide by that rate<br/>96 ÷ 4/3 = 72<br/>[in: Find the missing value in a proportion]"]
+    n32["Divide the top by the bottom<br/>96 ÷ 72 ≈ 1.333<br/>[in: Write a fraction as a decimal]"]
+    n33["The smaller flipped rate is the bigger fraction<br/>4/3 = 4/3"]
+    n34["Divide the top by the bottom<br/>96 ÷ 72 ≈ 1.333<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n35[["Find the first fraction's flipped rate<br/>Write 8/6 as a decimal → ≈ 1.333"]]
+    n36["The smaller flipped rate is the bigger fraction<br/>4/3 = 4/3"]
+    n37["Find the greatest common factor<br/>GCF(6, 72) = 6<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n38["Divide one number by the GCF<br/>6 ÷ 6 = 1<br/>[in: Find a common multiple]"]
+    n39["Multiply by the other number<br/>1 × 72 = 72<br/>[in: Find a common multiple]"]
+    n40{"all"}
+    n41{"all"}
+    n42[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n43[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n44["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n45["Find the greatest common factor<br/>GCF(8, 96) = 8<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n46["Divide one number by the GCF<br/>8 ÷ 8 = 1<br/>[in: Find a common multiple]"]
+    n47["Multiply by the other number<br/>1 × 96 = 96<br/>[in: Find a common multiple]"]
+    n48{"all"}
+    n49{"all"}
+    n50[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n51[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n52["Same bottom, so compare the tops<br/>72 = 72"]
+    n53["Divide the top by a shared factor<br/>6 ÷ 2 = 3<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n54{{"× Which next step?"}}
+    n55["Divide the bottom by the same factor<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n56{{"× Which method?"}}
+    n57["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n58["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n59["Same bottom, so compare the tops<br/>72 = 72"]
+    n60[["Simplify the second fraction<br/>Simplify 72/96 → 3 and 4"]]
+    n61["Are the simplified fractions the same?<br/>3:4 = 3:4"]
+    n62["Divide the top by a shared factor<br/>72 ÷ 2 = 36<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n63["Divide the bottom by the same factor<br/>96 ÷ 2 = 48<br/>[in: Simplify a fraction]"]
+    n64["Divide the top by a shared factor<br/>36 ÷ 2 = 18<br/>[in: Simplify a fraction]"]
+    n65["Divide the bottom by the same factor<br/>48 ÷ 2 = 24<br/>[in: Simplify a fraction]"]
+    n66["Divide the top by a shared factor<br/>18 ÷ 2 = 9<br/>[in: Simplify a fraction]"]
+    n67["Divide the bottom by the same factor<br/>24 ÷ 2 = 12<br/>[in: Simplify a fraction]"]
+    n68["Divide the top by a shared factor<br/>9 ÷ 3 = 3<br/>[in: Simplify a fraction]"]
+    n69["Divide the bottom by the same factor<br/>12 ÷ 3 = 4<br/>[in: Simplify a fraction]"]
+    n70[["Simplify the first fraction<br/>Simplify 6/8 → 3 and 4"]]
+    n71["Are the simplified fractions the same?<br/>3:4 = 3:4"]
+    n72["Find the greatest common factor<br/>GCF(6, 8) = 2<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n73{{"× Which next step?"}}
+    n74["Divide the top by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n75{{"× Which method?"}}
+    n76["Divide the bottom by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n77["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n78["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n79["Same bottom, so compare the tops<br/>72 = 72"]
+    n80["Divide the bottom by the GCF<br/>8 ÷ 2 = 4<br/>[in: Simplify a fraction]"]
+    n81[["Simplify the second fraction<br/>Simplify 72/96 → 3 and 4"]]
+    n82["Are the simplified fractions the same?<br/>3:4 = 3:4"]
+    n83["Divide the bottom by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n84{{"× Which method?"}}
+    n85["Divide the top by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n86["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n87["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n88["Same bottom, so compare the tops<br/>72 = 72"]
+    n89["Divide the top by the GCF<br/>6 ÷ 2 = 3<br/>[in: Simplify a fraction]"]
+    n90[["Simplify the second fraction<br/>Simplify 72/96 → 3 and 4"]]
+    n91["Are the simplified fractions the same?<br/>3:4 = 3:4"]
+    n92["Find the greatest common factor<br/>GCF(72, 96) = 24<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n93{"all"}
+    n94{"all"}
+    n95["Divide the top by the GCF<br/>72 ÷ 24 = 3<br/>[in: Simplify a fraction]"]
+    n96["Divide the bottom by the GCF<br/>96 ÷ 24 = 4<br/>[in: Simplify a fraction]"]
+    n97[["Simplify the first fraction<br/>Simplify 6/8 → 3 and 4"]]
+    n98["Are the simplified fractions the same?<br/>3:4 = 3:4"]
+    n99["Recall the least common multiple<br/>LCM(6, 72) = 72<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n100{"all"}
+    n101{"all"}
+    n102[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n103[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n104["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n105["Recall the least common multiple<br/>LCM(8, 96) = 96<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n106{"all"}
+    n107{"all"}
+    n108[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n109[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n110["Same bottom, so compare the tops<br/>72 = 72"]
+    n111["Multiply the two numbers<br/>6 × 72 = 432<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n112{"all"}
+    n113{"all"}
+    n114[["Find the first fraction's bottom with 432 on top<br/>Solve 8/6 = x/432 → 576"]]
+    n115[["Find the second fraction's bottom with 432 on top<br/>Solve 96/72 = x/432 → 576"]]
+    n116["Same top, so the smaller bottom wins<br/>576 = 576"]
+    n117["Multiply the first top by the second bottom<br/>6 × 96 = 576<br/>[multiply · across]<br/>[in: Cross products]"]
+    n118{{"× Which next step?"}}
+    n119["Multiply the second top by the first bottom<br/>72 × 8 = 576<br/>[in: Cross products]"]
+    n120["The bigger product sits with the bigger fraction<br/>576 = 576"]
+    n121["Divide by the remaining number<br/>576 ÷ 8 = 72<br/>[in: Find the missing value in a proportion]"]
+    n122["Multiply the second top by the first bottom<br/>72 × 8 = 576<br/>[multiply · across]<br/>[in: Cross products]"]
+    n123["Multiply the first top by the second bottom<br/>6 × 96 = 576<br/>[in: Cross products]"]
+    n124["The bigger product sits with the bigger fraction<br/>576 = 576"]
+    n125["Multiply the two numbers<br/>8 × 96 = 768<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n126{"all"}
+    n127{"all"}
+    n128[["Rewrite the first fraction over 768<br/>Solve 6/8 = x/768 → 576"]]
+    n129[["Rewrite the second fraction over 768<br/>Solve 72/96 = x/768 → 576"]]
+    n130["Same bottom, so compare the tops<br/>576 = 576"]
+    n131["List multiples of 6 until 72 divides one<br/>6 × 12 = 72<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n132{{"× Which next step?"}}
+    n133["Multiply across the diagonal<br/>8 × 72 = 576<br/>[in: Find the missing value in a proportion]"]
+    n134["Divide by the remaining number<br/>576 ÷ 6 = 96<br/>[in: Find the missing value in a proportion]"]
+    n135[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n136["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n137["Divide by the remaining number<br/>576 ÷ 6 = 96<br/>[in: Find the missing value in a proportion]"]
+    n138["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n139["Find the scale factor between the bottoms<br/>72 ÷ 6 = 12<br/>[in: Find the missing value in a proportion]"]
+    n140["Scale the top by the same factor<br/>8 × 12 = 96<br/>[in: Find the missing value in a proportion]"]
+    n141[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n142["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n143["Scale the top by the same factor<br/>8 × 12 = 96<br/>[in: Find the missing value in a proportion]"]
+    n144["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n145["Divide the top by the bottom<br/>8 ÷ 6 ≈ 1.333<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n146["Scale up to 72<br/>4/3 × 72 = 96<br/>[in: Find the missing value in a proportion]"]
+    n147[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n148["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n149["Scale up to 72<br/>4/3 × 72 = 96<br/>[in: Find the missing value in a proportion]"]
+    n150["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n151["Divide the top by the bottom<br/>6 ÷ 8 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n152["Divide by that rate<br/>72 ÷ 0.75 = 96<br/>[in: Find the missing value in a proportion]"]
+    n153[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n154["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n155["Divide by that rate<br/>72 ÷ 0.75 = 96<br/>[in: Find the missing value in a proportion]"]
+    n156["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n157["Scale the bottom up to 10, 100, or 1000<br/>8 × 125 = 1000<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n158["Scale the top by the same factor<br/>6 × 125 = 750<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n159["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n160["Divide by that rate<br/>72 ÷ 0.75 = 96<br/>[in: Find the missing value in a proportion]"]
+    n161[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n162["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n163["Scale the top by the same factor<br/>6 × 125 = 750<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n164["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n165["Divide by that rate<br/>72 ÷ 0.75 = 96<br/>[in: Find the missing value in a proportion]"]
+    n166["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n167["Build the bottom up by 2, 3, 4, … until it reaches 72<br/>6 × 12 = 72<br/>[in: Find the missing value in a proportion]"]
+    n168["Find the greatest common factor<br/>GCF(8, 6) = 2<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n169{"all"}
+    n170{"all"}
+    n171["Divide the top by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n172["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n173["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n174["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n175[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n176["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n177{"all"}
+    n178{"all"}
+    n179["Divide the top by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n180["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n181["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n182["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n183["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n184["Divide the top by a shared factor<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n185["Divide the bottom by the same factor<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n186["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n187["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n188[["Find the second fraction's bottom with 72 on top<br/>Solve 96/72 = x/72 → 96"]]
+    n189["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n190["Divide the bottom by the same factor<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n191["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n192["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n193["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n194["Multiply across the diagonal<br/>96 × 72 = 6912<br/>[in: Find the missing value in a proportion]"]
+    n195["Divide by the remaining number<br/>6912 ÷ 72 = 96<br/>[in: Find the missing value in a proportion]"]
+    n196[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n197["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n198["Find the scale factor between the bottoms<br/>72 ÷ 72 = 1<br/>[in: Find the missing value in a proportion]"]
+    n199["Scale the top by the same factor<br/>96 × 1 = 96<br/>[in: Find the missing value in a proportion]"]
+    n200[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n201["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n202["Divide the top by the bottom<br/>96 ÷ 72 ≈ 1.333<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n203["Scale up to 72<br/>4/3 × 72 = 96<br/>[in: Find the missing value in a proportion]"]
+    n204[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n205["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n206["Divide the top by the bottom<br/>72 ÷ 96 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n207["Divide by that rate<br/>72 ÷ 0.75 = 96<br/>[in: Find the missing value in a proportion]"]
+    n208[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n209["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n210["Find the greatest common factor<br/>GCF(96, 72) = 24<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n211{"all"}
+    n212{"all"}
+    n213["Divide the top by the GCF<br/>96 ÷ 24 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n214["Divide the bottom by the GCF<br/>72 ÷ 24 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n215["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n216["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n217[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n218["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n219["Divide the top by a shared factor<br/>96 ÷ 2 = 48<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n220["Divide the bottom by the same factor<br/>72 ÷ 2 = 36<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n221["Divide the top by a shared factor<br/>48 ÷ 2 = 24<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n222["Divide the bottom by the same factor<br/>36 ÷ 2 = 18<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n223["Divide the top by a shared factor<br/>24 ÷ 2 = 12<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n224["Divide the bottom by the same factor<br/>18 ÷ 2 = 9<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n225["Divide the top by a shared factor<br/>12 ÷ 3 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n226["Divide the bottom by the same factor<br/>9 ÷ 3 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n227["Find the scale factor from the simplified bottom<br/>72 ÷ 3 = 24<br/>[in: Find the missing value in a proportion]"]
+    n228["Scale the simplified top<br/>4 × 24 = 96<br/>[in: Find the missing value in a proportion]"]
+    n229[["Find the first fraction's bottom with 72 on top<br/>Solve 8/6 = x/72 → 96"]]
+    n230["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n231["Scale the first bottom by the same factor<br/>8 × 12 = 96"]
+    n232["Same top, so the smaller bottom wins<br/>96 = 96"]
+    n233["List multiples of 8 until 96 divides one<br/>8 × 12 = 96<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n234{{"× Which next step?"}}
+    n235["Multiply across the diagonal<br/>6 × 96 = 576<br/>[in: Find the missing value in a proportion]"]
+    n236["Divide by the remaining number<br/>576 ÷ 8 = 72<br/>[in: Find the missing value in a proportion]"]
+    n237[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n238["Same bottom, so compare the tops<br/>72 = 72"]
+    n239["Divide by the remaining number<br/>576 ÷ 8 = 72<br/>[in: Find the missing value in a proportion]"]
+    n240["Same bottom, so compare the tops<br/>72 = 72"]
+    n241["Find the scale factor between the bottoms<br/>96 ÷ 8 = 12<br/>[in: Find the missing value in a proportion]"]
+    n242["Scale the top by the same factor<br/>6 × 12 = 72<br/>[in: Find the missing value in a proportion]"]
+    n243[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n244["Same bottom, so compare the tops<br/>72 = 72"]
+    n245["Scale the top by the same factor<br/>6 × 12 = 72<br/>[in: Find the missing value in a proportion]"]
+    n246["Same bottom, so compare the tops<br/>72 = 72"]
+    n247["Divide the top by the bottom<br/>6 ÷ 8 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n248["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n249[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n250["Same bottom, so compare the tops<br/>72 = 72"]
+    n251["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n252["Same bottom, so compare the tops<br/>72 = 72"]
+    n253["Scale the bottom up to 10, 100, or 1000<br/>8 × 125 = 1000<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n254["Scale the top by the same factor<br/>6 × 125 = 750<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n255["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n256["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n257[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n258["Same bottom, so compare the tops<br/>72 = 72"]
+    n259["Scale the top by the same factor<br/>6 × 125 = 750<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n260["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n261["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n262["Same bottom, so compare the tops<br/>72 = 72"]
+    n263["Divide the top by the bottom<br/>8 ÷ 6 ≈ 1.333<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n264["Divide by that rate<br/>96 ÷ 4/3 = 72<br/>[in: Find the missing value in a proportion]"]
+    n265[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n266["Same bottom, so compare the tops<br/>72 = 72"]
+    n267["Divide by that rate<br/>96 ÷ 4/3 = 72<br/>[in: Find the missing value in a proportion]"]
+    n268["Same bottom, so compare the tops<br/>72 = 72"]
+    n269["Build the bottom up by 2, 3, 4, … until it reaches 96<br/>8 × 12 = 96<br/>[in: Find the missing value in a proportion]"]
+    n270["Find the greatest common factor<br/>GCF(6, 8) = 2<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n271{"all"}
+    n272{"all"}
+    n273["Divide the top by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n274["Divide the bottom by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n275["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n276["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n277[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n278["Same bottom, so compare the tops<br/>72 = 72"]
+    n279{"all"}
+    n280{"all"}
+    n281["Divide the top by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n282["Divide the bottom by the GCF<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n283["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n284["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n285["Same bottom, so compare the tops<br/>72 = 72"]
+    n286["Divide the top by a shared factor<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n287["Divide the bottom by the same factor<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n288["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n289["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n290[["Rewrite the second fraction over 96<br/>Solve 72/96 = x/96 → 72"]]
+    n291["Same bottom, so compare the tops<br/>72 = 72"]
+    n292["Divide the bottom by the same factor<br/>8 ÷ 2 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n293["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n294["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n295["Same bottom, so compare the tops<br/>72 = 72"]
+    n296["Multiply across the diagonal<br/>72 × 96 = 6912<br/>[in: Find the missing value in a proportion]"]
+    n297["Divide by the remaining number<br/>6912 ÷ 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n298[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n299["Same bottom, so compare the tops<br/>72 = 72"]
+    n300["Find the scale factor between the bottoms<br/>96 ÷ 96 = 1<br/>[in: Find the missing value in a proportion]"]
+    n301["Scale the top by the same factor<br/>72 × 1 = 72<br/>[in: Find the missing value in a proportion]"]
+    n302[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n303["Same bottom, so compare the tops<br/>72 = 72"]
+    n304["Divide the top by the bottom<br/>72 ÷ 96 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n305["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n306[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n307["Same bottom, so compare the tops<br/>72 = 72"]
+    n308["Divide the top by the bottom<br/>96 ÷ 72 ≈ 1.333<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n309["Divide by that rate<br/>96 ÷ 4/3 = 72<br/>[in: Find the missing value in a proportion]"]
+    n310[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n311["Same bottom, so compare the tops<br/>72 = 72"]
+    n312["Find the greatest common factor<br/>GCF(72, 96) = 24<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n313{"all"}
+    n314{"all"}
+    n315["Divide the top by the GCF<br/>72 ÷ 24 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n316["Divide the bottom by the GCF<br/>96 ÷ 24 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n317["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n318["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n319[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n320["Same bottom, so compare the tops<br/>72 = 72"]
+    n321["Divide the top by a shared factor<br/>72 ÷ 2 = 36<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n322["Divide the bottom by the same factor<br/>96 ÷ 2 = 48<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n323["Divide the top by a shared factor<br/>36 ÷ 2 = 18<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n324["Divide the bottom by the same factor<br/>48 ÷ 2 = 24<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n325["Divide the top by a shared factor<br/>18 ÷ 2 = 9<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n326["Divide the bottom by the same factor<br/>24 ÷ 2 = 12<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n327["Divide the top by a shared factor<br/>9 ÷ 3 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n328["Divide the bottom by the same factor<br/>12 ÷ 3 = 4<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n329["Find the scale factor from the simplified bottom<br/>96 ÷ 4 = 24<br/>[in: Find the missing value in a proportion]"]
+    n330["Scale the simplified top<br/>3 × 24 = 72<br/>[in: Find the missing value in a proportion]"]
+    n331[["Rewrite the first fraction over 96<br/>Solve 6/8 = x/96 → 72"]]
+    n332["Same bottom, so compare the tops<br/>72 = 72"]
+    n333["Scale the top by the same factor<br/>6 × 12 = 72<br/>[in: Find the missing value in a proportion]"]
+    n334["Scale the bottom up to 10, 100, or 1000<br/>8 × 125 = 1000<br/>[multiply · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n335{{"× Which next step?"}}
+    n336["Scale the top by the same factor<br/>6 × 125 = 750<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n337{{"× Which method?"}}
+    n338["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Write a fraction as a decimal]"]
+    n339[["Write the second fraction as a decimal<br/>Write 72/96 as a decimal → 0.75"]]
+    n340["Compare the decimals<br/>0.75 = 0.75"]
+    n341["Read off the decimal<br/>750 ÷ 1000 = 0.75<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n342["Scale up to 96<br/>0.75 × 96 = 72<br/>[in: Find the missing value in a proportion]"]
+    n343["Same bottom, so compare the tops<br/>72 = 72"]
+    n344["Plot each fraction as a point (top, bottom)<br/>(6, 8), (72, 96)<br/>[represent · across]"]
+    n345{"all"}
+    n346{"all"}
+    n347["Find the slope to the first point<br/>8 ÷ 6 ≈ 1.333"]
+    n348["Find the slope to the second point<br/>96 ÷ 72 ≈ 1.333"]
+    n349["The less steep line is the bigger fraction<br/>4/3 = 4/3"]
+    n350["Find how far the first fraction is below 1<br/>8 − 6 = 2<br/>[subtract · within]"]
+    n351["Find how far the second fraction is below 1<br/>96 − 72 = 24"]
+    n352[["Compare the two gaps<br/>Which is larger: 2/8 or 24/96? (Or are they equal?) → equal"]]
+    n353["Find how far the second fraction is below 1<br/>96 − 72 = 24<br/>[subtract · within]"]
+    n354["Find how far the first fraction is below 1<br/>8 − 6 = 2"]
+    n355[["Compare the two gaps<br/>Which is larger: 2/8 or 24/96? (Or are they equal?) → equal"]]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 -->|"✓ By ratio"| n2
+  n5 --> n6
+  n6 --> n7
+  n7 --> n8
+  n4 -.->|"✗ Scale, don't add: By difference: white minus blue"| n5
+  n9 --> n11
+  n11 -->|"Compare scale factors"| n12
+  n13 --> n14
+  n14 --> n10
+  n12 --> n13
+  n11 -->|"Rewrite one fraction over the other's denominator or Compare scale factors"| n15
+  n15 --> n16
+  n16 -->|"Rewrite one fraction over the other's denominator"| n17
+  n18 --> n10
+  n17 --> n18
+  n16 -->|"Compare scale factors"| n19
+  n20 --> n10
+  n19 --> n20
+  n11 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n21
+  n21 --> n22
+  n22 -->|"Rewrite one fraction over the other's denominator"| n23
+  n23 --> n18
+  n22 -->|"Convert to decimals"| n24
+  n25 --> n10
+  n24 --> n25
+  n11 -->|"Convert to decimals"| n26
+  n27 --> n28
+  n28 --> n10
+  n26 --> n27
+  n11 -->|"Rewrite one fraction over the other's denominator or Compare unit rates (flipped fractions)"| n29
+  n29 --> n30
+  n30 -->|"Rewrite one fraction over the other's denominator"| n31
+  n31 --> n18
+  n30 -->|"Compare unit rates (flipped fractions)"| n32
+  n33 --> n10
+  n32 --> n33
+  n11 -->|"Compare unit rates (flipped fractions)"| n34
+  n35 --> n36
+  n36 --> n10
+  n34 --> n35
+  n11 -->|"Common numerator"| n37
+  n38 --> n39
+  n40 --> n42
+  n42 --> n41
+  n40 --> n43
+  n43 --> n41
+  n39 --> n40
+  n41 --> n44
+  n44 --> n10
+  n37 --> n38
+  n11 -->|"Common denominator"| n45
+  n46 --> n47
+  n48 --> n50
+  n50 --> n49
+  n48 --> n51
+  n51 --> n49
+  n47 --> n48
+  n49 --> n52
+  n52 --> n10
+  n45 --> n46
+  n11 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n53
+  n53 --> n54
+  n54 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n55
+  n55 --> n56
+  n57 --> n58
+  n58 --> n59
+  n59 --> n10
+  n56 -->|"Rewrite one fraction over the other's denominator"| n57
+  n60 --> n61
+  n61 --> n10
+  n56 -->|"Simplify both"| n60
+  n11 -->|"Simplify both"| n62
+  n63 --> n64
+  n64 --> n65
+  n65 --> n66
+  n66 --> n67
+  n67 --> n68
+  n68 --> n69
+  n69 --> n70
+  n70 --> n71
+  n71 --> n10
+  n62 --> n63
+  n11 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n72
+  n72 --> n73
+  n73 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n74
+  n74 --> n75
+  n76 --> n77
+  n77 --> n78
+  n78 --> n79
+  n79 --> n10
+  n75 -->|"Rewrite one fraction over the other's denominator"| n76
+  n80 --> n81
+  n81 --> n82
+  n82 --> n10
+  n75 -->|"Simplify both"| n80
+  n73 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n83
+  n83 --> n84
+  n85 --> n86
+  n86 --> n87
+  n87 --> n88
+  n88 --> n10
+  n84 -->|"Rewrite one fraction over the other's denominator"| n85
+  n89 --> n90
+  n90 --> n91
+  n91 --> n10
+  n84 -->|"Simplify both"| n89
+  n11 -->|"Simplify both"| n92
+  n93 --> n95
+  n95 --> n94
+  n93 --> n96
+  n96 --> n94
+  n94 --> n97
+  n97 --> n98
+  n98 --> n10
+  n92 --> n93
+  n11 -->|"Common numerator"| n99
+  n100 --> n102
+  n102 --> n101
+  n100 --> n103
+  n103 --> n101
+  n101 --> n104
+  n104 --> n10
+  n99 --> n100
+  n11 -->|"Common denominator"| n105
+  n106 --> n108
+  n108 --> n107
+  n106 --> n109
+  n109 --> n107
+  n107 --> n110
+  n110 --> n10
+  n105 --> n106
+  n11 -->|"Common numerator"| n111
+  n112 --> n114
+  n114 --> n113
+  n112 --> n115
+  n115 --> n113
+  n113 --> n116
+  n116 --> n10
+  n111 --> n112
+  n11 -->|"Cross-multiply or Rewrite one fraction over the other's denominator"| n117
+  n117 --> n118
+  n118 -->|"Cross-multiply"| n119
+  n120 --> n10
+  n119 --> n120
+  n118 -->|"Rewrite one fraction over the other's denominator"| n121
+  n121 --> n18
+  n11 -->|"Cross-multiply"| n122
+  n123 --> n124
+  n124 --> n10
+  n122 --> n123
+  n11 -->|"Common denominator"| n125
+  n126 --> n128
+  n128 --> n127
+  n126 --> n129
+  n129 --> n127
+  n127 --> n130
+  n130 --> n10
+  n125 --> n126
+  n11 -->|"Common numerator or Ratio table"| n131
+  n131 --> n132
+  n132 -->|"Common numerator"| n133
+  n134 --> n135
+  n135 --> n136
+  n136 --> n10
+  n133 --> n134
+  n137 --> n138
+  n138 --> n10
+  n133 --> n137
+  n132 -->|"Common numerator"| n139
+  n140 --> n141
+  n141 --> n142
+  n142 --> n10
+  n139 --> n140
+  n143 --> n144
+  n144 --> n10
+  n139 --> n143
+  n132 -->|"Common numerator"| n145
+  n146 --> n147
+  n147 --> n148
+  n148 --> n10
+  n145 --> n146
+  n149 --> n150
+  n150 --> n10
+  n145 --> n149
+  n132 -->|"Common numerator"| n151
+  n152 --> n153
+  n153 --> n154
+  n154 --> n10
+  n151 --> n152
+  n155 --> n156
+  n156 --> n10
+  n151 --> n155
+  n132 -->|"Common numerator"| n157
+  n158 --> n159
+  n159 --> n160
+  n160 --> n161
+  n161 --> n162
+  n162 --> n10
+  n157 --> n158
+  n163 --> n164
+  n164 --> n165
+  n165 --> n166
+  n166 --> n10
+  n157 --> n163
+  n132 -->|"Common numerator"| n167
+  n167 --> n140
+  n167 --> n143
+  n132 -->|"Common numerator"| n168
+  n169 --> n171
+  n171 --> n170
+  n169 --> n172
+  n172 --> n170
+  n170 --> n173
+  n173 --> n174
+  n174 --> n175
+  n175 --> n176
+  n176 --> n10
+  n168 --> n169
+  n177 --> n179
+  n179 --> n178
+  n177 --> n180
+  n180 --> n178
+  n178 --> n181
+  n181 --> n182
+  n182 --> n183
+  n183 --> n10
+  n168 --> n177
+  n132 -->|"Common numerator"| n184
+  n185 --> n186
+  n186 --> n187
+  n187 --> n188
+  n188 --> n189
+  n189 --> n10
+  n184 --> n185
+  n190 --> n191
+  n191 --> n192
+  n192 --> n193
+  n193 --> n10
+  n184 --> n190
+  n132 -->|"Common numerator"| n194
+  n195 --> n196
+  n196 --> n197
+  n197 --> n10
+  n194 --> n195
+  n132 -->|"Common numerator"| n198
+  n199 --> n200
+  n200 --> n201
+  n201 --> n10
+  n198 --> n199
+  n132 -->|"Common numerator"| n202
+  n203 --> n204
+  n204 --> n205
+  n205 --> n10
+  n202 --> n203
+  n132 -->|"Common numerator"| n206
+  n207 --> n208
+  n208 --> n209
+  n209 --> n10
+  n206 --> n207
+  n132 -->|"Common numerator"| n210
+  n211 --> n213
+  n213 --> n212
+  n211 --> n214
+  n214 --> n212
+  n212 --> n215
+  n215 --> n216
+  n216 --> n217
+  n217 --> n218
+  n218 --> n10
+  n210 --> n211
+  n132 -->|"Common numerator"| n219
+  n220 --> n221
+  n221 --> n222
+  n222 --> n223
+  n223 --> n224
+  n224 --> n225
+  n225 --> n226
+  n226 --> n227
+  n227 --> n228
+  n228 --> n229
+  n229 --> n230
+  n230 --> n10
+  n219 --> n220
+  n132 -->|"Ratio table"| n231
+  n232 --> n10
+  n231 --> n232
+  n11 -->|"Common denominator or Rewrite one fraction over the other's denominator"| n233
+  n233 --> n234
+  n234 -->|"Common denominator"| n235
+  n236 --> n237
+  n237 --> n238
+  n238 --> n10
+  n235 --> n236
+  n239 --> n240
+  n240 --> n10
+  n235 --> n239
+  n234 -->|"Common denominator"| n241
+  n242 --> n243
+  n243 --> n244
+  n244 --> n10
+  n241 --> n242
+  n245 --> n246
+  n246 --> n10
+  n241 --> n245
+  n234 -->|"Common denominator"| n247
+  n248 --> n249
+  n249 --> n250
+  n250 --> n10
+  n247 --> n248
+  n251 --> n252
+  n252 --> n10
+  n247 --> n251
+  n234 -->|"Common denominator"| n253
+  n254 --> n255
+  n255 --> n256
+  n256 --> n257
+  n257 --> n258
+  n258 --> n10
+  n253 --> n254
+  n259 --> n260
+  n260 --> n261
+  n261 --> n262
+  n262 --> n10
+  n253 --> n259
+  n234 -->|"Common denominator"| n263
+  n264 --> n265
+  n265 --> n266
+  n266 --> n10
+  n263 --> n264
+  n267 --> n268
+  n268 --> n10
+  n263 --> n267
+  n234 -->|"Common denominator"| n269
+  n269 --> n242
+  n269 --> n245
+  n234 -->|"Common denominator"| n270
+  n271 --> n273
+  n273 --> n272
+  n271 --> n274
+  n274 --> n272
+  n272 --> n275
+  n275 --> n276
+  n276 --> n277
+  n277 --> n278
+  n278 --> n10
+  n270 --> n271
+  n279 --> n281
+  n281 --> n280
+  n279 --> n282
+  n282 --> n280
+  n280 --> n283
+  n283 --> n284
+  n284 --> n285
+  n285 --> n10
+  n270 --> n279
+  n234 -->|"Common denominator"| n286
+  n287 --> n288
+  n288 --> n289
+  n289 --> n290
+  n290 --> n291
+  n291 --> n10
+  n286 --> n287
+  n292 --> n293
+  n293 --> n294
+  n294 --> n295
+  n295 --> n10
+  n286 --> n292
+  n234 -->|"Common denominator"| n296
+  n297 --> n298
+  n298 --> n299
+  n299 --> n10
+  n296 --> n297
+  n234 -->|"Common denominator"| n300
+  n301 --> n302
+  n302 --> n303
+  n303 --> n10
+  n300 --> n301
+  n234 -->|"Common denominator"| n304
+  n305 --> n306
+  n306 --> n307
+  n307 --> n10
+  n304 --> n305
+  n234 -->|"Common denominator"| n308
+  n309 --> n310
+  n310 --> n311
+  n311 --> n10
+  n308 --> n309
+  n234 -->|"Common denominator"| n312
+  n313 --> n315
+  n315 --> n314
+  n313 --> n316
+  n316 --> n314
+  n314 --> n317
+  n317 --> n318
+  n318 --> n319
+  n319 --> n320
+  n320 --> n10
+  n312 --> n313
+  n234 -->|"Common denominator"| n321
+  n322 --> n323
+  n323 --> n324
+  n324 --> n325
+  n325 --> n326
+  n326 --> n327
+  n327 --> n328
+  n328 --> n329
+  n329 --> n330
+  n330 --> n331
+  n331 --> n332
+  n332 --> n10
+  n321 --> n322
+  n234 -->|"Rewrite one fraction over the other's denominator"| n333
+  n333 --> n18
+  n11 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n334
+  n334 --> n335
+  n335 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n336
+  n336 --> n337
+  n338 --> n339
+  n339 --> n340
+  n340 --> n10
+  n337 -->|"Convert to decimals"| n338
+  n341 --> n342
+  n342 --> n343
+  n343 --> n10
+  n337 -->|"Rewrite one fraction over the other's denominator"| n341
+  n11 -->|"Graph the points"| n344
+  n345 --> n347
+  n347 --> n346
+  n345 --> n348
+  n348 --> n346
+  n346 --> n349
+  n349 --> n10
+  n344 --> n345
+  n11 -->|"Distance from 1"| n350
+  n351 --> n352
+  n352 --> n10
+  n350 --> n351
+  n11 -->|"Distance from 1"| n353
+  n354 --> n355
+  n355 --> n10
+  n353 --> n354
+  n2 ==>|"a: 6 cans of blue<br/>b: 8 cans of white<br/>c: 72 cans of blue<br/>d: 96 cans of white"| n9
+  n10 -->|"in the story's terms"| n356
+  linkStyle 8 stroke:#c4554a,color:#c4554a
+  linkStyle 445 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n40,n41,n48,n49,n93,n94,n100,n101,n106,n107,n112,n113,n126,n127,n169,n170,n177,n178,n211,n212,n271,n272,n279,n280,n313,n314,n345,n346 k_all
+  class n7,n27,n35,n42,n43,n50,n51,n60,n70,n81,n90,n97,n102,n103,n108,n109,n114,n115,n128,n129,n135,n141,n147,n153,n161,n175,n188,n196,n200,n204,n208,n217,n229,n237,n243,n249,n257,n265,n277,n290,n298,n302,n306,n310,n319,n331,n339,n352,n355 k_call
+  class n4,n11,n16,n22,n30,n54,n56,n73,n75,n84,n118,n132,n234,n335,n337 k_choice
+  class n10,n356 k_end
+  class n12,n15,n21,n26,n29,n34,n37,n45,n53,n62,n72,n92,n99,n105,n111,n117,n122,n125,n131,n233,n334,n344,n350,n353 k_first
+  class n0,n9 k_start
+  class n3,n5,n6,n13,n14,n17,n18,n19,n20,n23,n24,n25,n28,n31,n32,n33,n36,n38,n39,n44,n46,n47,n52,n55,n57,n58,n59,n61,n63,n64,n65,n66,n67,n68,n69,n71,n74,n76,n77,n78,n79,n80,n82,n83,n85,n86,n87,n88,n89,n91,n95,n96,n98,n104,n110,n116,n119,n120,n121,n123,n124,n130,n133,n134,n136,n137,n138,n139,n140,n142,n143,n144,n145,n146,n148,n149,n150,n151,n152,n154,n155,n156,n157,n158,n159,n160,n162,n163,n164,n165,n166,n167,n168,n171,n172,n173,n174,n176,n179,n180,n181,n182,n183,n184,n185,n186,n187,n189,n190,n191,n192,n193,n194,n195,n197,n198,n199,n201,n202,n203,n205,n206,n207,n209,n210,n213,n214,n215,n216,n218,n219,n220,n221,n222,n223,n224,n225,n226,n227,n228,n230,n231,n232,n235,n236,n238,n239,n240,n241,n242,n244,n245,n246,n247,n248,n250,n251,n252,n253,n254,n255,n256,n258,n259,n260,n261,n262,n263,n264,n266,n267,n268,n269,n270,n273,n274,n275,n276,n278,n281,n282,n283,n284,n285,n286,n287,n288,n289,n291,n292,n293,n294,n295,n296,n297,n299,n300,n301,n303,n304,n305,n307,n308,n309,n311,n312,n315,n316,n317,n318,n320,n321,n322,n323,n324,n325,n326,n327,n328,n329,n330,n332,n333,n336,n338,n340,n341,n342,n343,n347,n348,n349,n351,n354 k_step
+  class n8 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

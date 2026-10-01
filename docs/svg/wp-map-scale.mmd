@@ -1,118 +1,113 @@
 flowchart LR
-  w0(["Map scale"])
-  w1["1 inch"]
-  w0 --> w1
-  w2["25 miles"]
-  w0 --> w2
-  w3["3.5 inches apart"]
-  w0 --> w3
-  c0(["Solve 25/1 = x/3.5."])
-  c1(["Answer: 87.5"])
-  c2["Cross-multiply and divide"]
-  c3["25 × 3.5 = 87.5"]
-  c2 --> c3
-  c4["87.5 ÷ 1 = 87.5"]
-  c3 --> c4
-  c4 --> c1
-  c5["Scale factor"]
-  c6["3.5 ÷ 1 = 3.5"]
-  c5 --> c6
-  c7["25 × 3.5 = 87.5"]
-  c6 --> c7
-  c7 --> c1
-  c8["Unit rate"]
-  c9["Write 25/1 as a decimal → 25"]
-  c8 --> c9
-  c10["25 × 3.5 = 87.5"]
-  c9 --> c10
-  c10 --> c1
-  c11["Inverse rate"]
-  c12["Write 1/25 as a decimal → 0.04"]
-  c11 --> c12
-  c13["3.5 ÷ 0.04 = 87.5"]
-  c12 --> c13
-  c13 --> c1
-  c14["Simplify, then scale"]
-  c15["Simplify 25/1 → 25/1"]
-  c14 --> c15
-  c16["3.5 ÷ 1 = 3.5"]
-  c15 --> c16
-  c17["25 × 3.5 = 87.5"]
-  c16 --> c17
-  c17 --> c1
-  c18["3.5 ÷ 1 = 3.5"]
-  c19{{"divide · across"}}
-  c0 --> c19
-  c19 --> c18
-  c18 --> c5
-  c20["1 ÷ 25 = 0.04"]
-  c21{{"divide · within"}}
-  c0 --> c21
-  c21 --> c20
-  c20 -->|"to-decimal/divide"| c11
-  c22["25 ÷ 1 = 25"]
-  c21 --> c22
-  c22 -->|"to-decimal/divide"| c8
-  c23["GCF(25, 1) = 1"]
-  c24{{"factor · within"}}
-  c0 --> c24
-  c24 --> c23
-  c23 -->|"simplify-fraction/gcf"| c14
-  c25["25 × 3.5 = 87.5"]
-  c26{{"multiply · across"}}
-  c0 --> c26
-  c26 --> c25
-  c25 --> c2
-  c27["1 × 10 = 10"]
-  c28{{"multiply · within"}}
-  c0 --> c28
-  c28 --> c27
-  c27 -->|"to-decimal/power_of_ten"| c8
-  c29["25 × 4 = 100"]
-  c28 --> c29
-  c29 -->|"to-decimal/power_of_ten"| c11
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c19,c21,c24,c26,c28 cls
-  class c18,c20,c22,c23,c25,c27,c29 first
-  class c2,c5,c8,c11,c14 method
-  class c9,c12,c15 skill
-  class c3,c4,c6,c7,c10,c13,c16,c17 step
-  class c0,c1 ans
-  w2 -->|"a"| c0
-  w1 -->|"b"| c0
-  w3 -->|"d"| c0
-  w4(["87.5 miles"])
-  c1 --> w4
-  w5["Flips one side: inches over miles. → 0.14"]
-  w0 -.->|"Keep the same order on both sides"| w5
-  w6["1 × 3.5 = 3.5"]
-  w5 -.-> w6
-  w7["3.5 ÷ 25 = 0.14"]
-  w5 -.-> w7
-  w8["Divides the scale by the map distance. → 50/7"]
-  w0 -.->|"Find the pair that forms the ratio"| w8
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2,w3 wused
-  class w4 wfinal
-  class w5,w8 wtrap
-  class w6,w7 wtfirst
+  n0(["Story<br/>Map scale"])
+  n5["Divide the scale by the map distance<br/>25 ÷ 3.5 ≈ 7.143"]
+  n6(["50/7 ✗"])
+  n9[["Find the missing value in a proportion<br/>Solve 1/25 = x/3.5 → 0.14"]]
+  n10(["0.14 ✗<br/>gives itself away: 1 × 3.5 = 3.5, 3.5 ÷ 25 = 0.14"])
+  n37(["Answer<br/>87.5 miles"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Same scale, new distance: a missing value"]
+    n4{{"× Which two quantities go together?"}}
+    n7["What gets scaled up?<br/>The 3.5 inches between the towns"]
+    n8{{"× Which way round does the ratio go?"}}
+  end
+  subgraph nf1["Find the missing value in a proportion (as on its own page)"]
+    direction LR
+    n11(["Solve 25/1 = x/3.5."])
+    n12(["Answer: 87.5"])
+    n13{{"× Which first step?"}}
+    n14["Find the scale factor between the bottoms<br/>3.5 ÷ 1 = 3.5<br/>[divide · across]"]
+    n15["Scale the top by the same factor<br/>25 × 3.5 = 87.5"]
+    n16["Divide the top by the bottom<br/>1 ÷ 25 = 0.04<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n17["Divide by that rate<br/>3.5 ÷ 0.04 = 87.5"]
+    n18["Divide the top by the bottom<br/>25 ÷ 1 = 25<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n19["Scale up to 3.5<br/>25 × 3.5 = 87.5"]
+    n20["Find the greatest common factor<br/>GCF(25, 1) = 1<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n21{"all"}
+    n22{"all"}
+    n23["Divide the top by the GCF<br/>25 ÷ 1 = 25<br/>[in: Simplify a fraction]"]
+    n24["Divide the bottom by the GCF<br/>1 ÷ 1 = 1<br/>[in: Simplify a fraction]"]
+    n25["Find the scale factor from the simplified bottom<br/>3.5 ÷ 1 = 3.5"]
+    n26["Scale the simplified top<br/>25 × 3.5 = 87.5"]
+    n27["Multiply across the diagonal<br/>25 × 3.5 = 87.5<br/>[multiply · across]"]
+    n28["Divide by the remaining number<br/>87.5 ÷ 1 = 87.5"]
+    n29["Scale the bottom up to 10, 100, or 1000<br/>1 × 10 = 10<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n30["Scale the top by the same factor<br/>25 × 10 = 250<br/>[in: Write a fraction as a decimal]"]
+    n31["Read off the decimal<br/>250 ÷ 10 = 25<br/>[in: Write a fraction as a decimal]"]
+    n32["Scale up to 3.5<br/>25 × 3.5 = 87.5"]
+    n33["Scale the bottom up to 10, 100, or 1000<br/>25 × 4 = 100<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+    n34["Scale the top by the same factor<br/>1 × 4 = 4<br/>[in: Write a fraction as a decimal]"]
+    n35["Read off the decimal<br/>4 ÷ 100 = 0.04<br/>[in: Write a fraction as a decimal]"]
+    n36["Divide by that rate<br/>3.5 ÷ 0.04 = 87.5"]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 -->|"✓ 25 real miles for each 1 map inch"| n2
+  n5 --> n6
+  n4 -.->|"✗ Find the pair that forms the ratio: The scale and the map distance"| n5
+  n1 --> n7
+  n7 --> n2
+  n1 --> n8
+  n8 -->|"✓ Miles over inches on both sides"| n2
+  n9 --> n10
+  n8 -.->|"✗ Keep the same order on both sides: Inches over miles on one side"| n9
+  n11 --> n13
+  n13 -->|"Scale factor"| n14
+  n15 --> n12
+  n14 --> n15
+  n13 -->|"Inverse rate"| n16
+  n17 --> n12
+  n16 --> n17
+  n13 -->|"Unit rate"| n18
+  n19 --> n12
+  n18 --> n19
+  n13 -->|"Simplify, then scale"| n20
+  n21 --> n23
+  n23 --> n22
+  n21 --> n24
+  n24 --> n22
+  n22 --> n25
+  n25 --> n26
+  n26 --> n12
+  n20 --> n21
+  n13 -->|"Cross-multiply and divide"| n27
+  n28 --> n12
+  n27 --> n28
+  n13 -->|"Unit rate"| n29
+  n30 --> n31
+  n31 --> n32
+  n32 --> n12
+  n29 --> n30
+  n13 -->|"Inverse rate"| n33
+  n34 --> n35
+  n35 --> n36
+  n36 --> n12
+  n33 --> n34
+  n2 ==>|"a: 25 miles<br/>b: 1 inch<br/>d: 3.5 inches apart"| n11
+  n12 --> n37
+  linkStyle 6 stroke:#c4554a,color:#c4554a
+  linkStyle 12 stroke:#c4554a,color:#c4554a
+  linkStyle 45 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n21,n22 k_all
+  class n9 k_call
+  class n4,n8,n13 k_choice
+  class n12,n37 k_end
+  class n14,n16,n18,n20,n27,n29,n33 k_first
+  class n0,n11 k_start
+  class n3,n5,n7,n15,n17,n19,n23,n24,n25,n26,n28,n30,n31,n32,n34,n35,n36 k_step
+  class n6,n10 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

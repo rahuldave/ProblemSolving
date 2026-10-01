@@ -5,10 +5,9 @@
   "prompt": "Write {x}/{y} as a decimal.",
   "inputs": { "x": "numerator", "y": "denominator" },
   "quantities": { "fraction": ["x", "y"] },
-  "symmetries": [],
   "outputs": ["answer"],
-  "default_method": "divide",
   "output_format": "decimal",
+  "default_method": "divide",
   "examples": [
     { "id": "3/4", "values": { "x": 3, "y": 4 }, "answer": "0.75" },
     { "id": "5/8", "values": { "x": 5, "y": 8 }, "answer": "0.625" }
@@ -19,7 +18,7 @@
       "idea": "Divide the numerator by the denominator (long division or a calculator).",
       "best_when": "Always works.",
       "steps": [
-        { "op": "divide", "args": ["x", "y"], "out": "answer", "text": "{x} ÷ {y} = {answer}" }
+        { "op": "divide", "args": ["x", "y"], "out": "answer", "say": "Divide the top by the bottom" }
       ]
     },
     "power_of_ten": {
@@ -28,9 +27,9 @@
       "best_when": "The denominator only has factors 2 and 5 (2, 4, 5, 8, 20, 25, …).",
       "watch_out": "Impossible when the denominator has another prime factor (3, 7, …).",
       "steps": [
-        { "op": "multiply", "args": ["y", "k"], "out": "yk", "search": { "var": "k", "until_power_of_ten": "yk" }, "text": "{y} × {k} = {yk}" },
-        { "op": "multiply", "args": ["x", "k"], "out": "xk", "text": "{x} × {k} = {xk}" },
-        { "op": "divide", "args": ["xk", "yk"], "out": "answer", "text": "{xk}/{yk} = {answer}" }
+        { "op": "multiply", "args": ["y", "k"], "out": "yk", "search": { "var": "k", "until_power_of_ten": "yk" }, "say": "Scale the bottom up to 10, 100, or 1000" },
+        { "op": "multiply", "args": ["x", "k"], "out": "xk", "say": "Scale the top by the same factor" },
+        { "op": "divide", "args": ["xk", "yk"], "out": "answer", "say": "Read off the decimal" }
       ]
     }
   }

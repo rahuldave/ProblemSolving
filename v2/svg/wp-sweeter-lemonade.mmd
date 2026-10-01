@@ -1,237 +1,383 @@
 flowchart LR
-  w0(["Whose lemonade is sweeter?"])
-  w1["4 spoons of sugar"]
-  w0 --> w1
-  w2["6 glasses"]
-  w0 --> w2
-  w3["10 spoons of sugar"]
-  w0 --> w3
-  w4["14 glasses"]
-  w0 --> w4
-  c0(["Which is larger: 4/6 or 10/14? (Or are they equal?)"])
-  c1(["Answer: Ann"])
-  c2["Cross-multiply"]
-  c3["Find the cross products of 4/6 and 10/14 → 56/60"]
-  c2 --> c3
-  c4["56 #lt; 60"]
-  c3 --> c4
-  c4 --> c1
-  c5["Common denominator"]
-  c6["Find a common multiple of 6 and 14 → 42"]
-  c5 --> c6
-  c7["Solve 4/6 = x/42 → 28"]
-  c6 --> c7
-  c8["Solve 10/14 = x/42 → 30"]
-  c7 --> c8
-  c9["28 #lt; 30"]
-  c8 --> c9
-  c9 --> c1
-  c10["Rewrite one fraction over the other's denominator"]
-  c11["Solve 4/6 = x/14 → 28/3"]
-  c10 --> c11
-  c12["28/3 #lt; 10"]
-  c11 --> c12
-  c12 --> c1
-  c13["Common numerator"]
-  c14["Find a common multiple of 4 and 10 → 20"]
-  c13 --> c14
-  c15["Solve 6/4 = x/20 → 30"]
-  c14 --> c15
-  c16["Solve 14/10 = x/20 → 28"]
-  c15 --> c16
-  c17["30 #gt; 28"]
-  c16 --> c17
-  c17 --> c1
-  c18["Convert to decimals"]
-  c19["Write 4/6 as a decimal → ≈ 0.667"]
-  c18 --> c19
-  c20["Write 10/14 as a decimal → ≈ 0.714"]
-  c19 --> c20
-  c21["2/3 #lt; 5/7"]
-  c20 --> c21
-  c21 --> c1
-  c22["Compare unit rates (flipped fractions)"]
-  c23["Write 6/4 as a decimal → 1.5"]
-  c22 --> c23
-  c24["Write 14/10 as a decimal → 1.4"]
-  c23 --> c24
-  c25["1.5 #gt; 1.4"]
-  c24 --> c25
-  c25 --> c1
-  c26["Compare scale factors"]
-  c27["10 ÷ 4 = 2.5"]
-  c26 --> c27
-  c28["14 ÷ 6 ≈ 2.333"]
-  c27 --> c28
-  c29["2.5 #gt; 7/3"]
-  c28 --> c29
-  c29 --> c1
-  c30["Graph the points"]
-  c31["plot (4, 6), (10, 14)"]
-  c30 --> c31
-  c32["6 ÷ 4 = 1.5"]
-  c31 --> c32
-  c33["14 ÷ 10 = 1.4"]
-  c32 --> c33
-  c34["1.5 #gt; 1.4"]
-  c33 --> c34
-  c34 --> c1
-  c35["Simplify both"]
-  c36["Simplify 4/6 → 2/3"]
-  c35 --> c36
-  c37["Simplify 10/14 → 5/7"]
-  c36 --> c37
-  c38["2:3 ≠ 5:7"]
-  c37 --> c38
-  c38 --> c1
-  c39["Distance from 1"]
-  c40["6 − 4 = 2"]
-  c39 --> c40
-  c41["14 − 10 = 4"]
-  c40 --> c41
-  c42["Which is larger: 2/6 or 4/14? (Or are they equal?) → first"]
-  c41 --> c42
-  c42 --> c1
-  c43["10 ÷ 4 = 2.5"]
-  c44{{"divide · across"}}
-  c0 --> c44
-  c44 --> c43
-  c43 --> c26
-  c45["14 ÷ 6 ≈ 2.333"]
-  c44 --> c45
-  c45 -->|"missing-value/scale_factor"| c10
-  c46["4 ÷ 6 ≈ 0.667"]
-  c47{{"divide · within"}}
-  c0 --> c47
-  c47 --> c46
-  c48["then 2/3 × 14 = 28/3"]
-  c46 --> c48
-  c48 -->|"missing-value/unit_rate"| c10
-  c49["then 10 ÷ 14 ≈ 0.714"]
-  c46 --> c49
-  c49 -->|"to-decimal/divide"| c18
-  c50["6 ÷ 4 = 1.5"]
-  c47 --> c50
-  c51["then 14 ÷ 1.5 ≈ 9.333"]
-  c50 --> c51
-  c51 -->|"missing-value/inverse_rate"| c10
-  c52["then 14 ÷ 10 = 1.4"]
-  c50 --> c52
-  c52 -->|"to-decimal/divide / to-decimal/power_of_ten"| c22
-  c53["GCF(4, 10) = 2"]
-  c54{{"factor · across"}}
-  c0 --> c54
-  c54 --> c53
-  c53 -->|"common-multiple/gcf_formula"| c13
-  c55["GCF(6, 14) = 2"]
-  c54 --> c55
-  c55 -->|"common-multiple/gcf_formula"| c5
-  c56["4 ÷ 2 = 2"]
-  c57{{"factor · within"}}
-  c0 --> c57
-  c57 --> c56
-  c58["then 6 ÷ 2 = 3"]
-  c56 --> c58
-  c58 -->|"simplify-fraction/repeated"| c10
-  c58 -->|"simplify-fraction/repeated"| c35
-  c59["GCF(4, 6) = 2"]
-  c57 --> c59
-  c60["then 4 ÷ 2 = 2"]
-  c59 --> c60
-  c60 -->|"simplify-fraction/gcf"| c10
-  c60 -->|"simplify-fraction/gcf"| c35
-  c61["4 × 10 = 40"]
-  c62{{"multiply · across"}}
-  c0 --> c62
-  c62 --> c61
-  c61 -->|"common-multiple/product"| c13
-  c63["4 × 14 = 56"]
-  c62 --> c63
-  c64["then 10 × 6 = 60"]
-  c63 --> c64
-  c64 -->|"cross-products/diagonals"| c2
-  c65["then 56 ÷ 6 ≈ 9.333"]
-  c63 --> c65
-  c65 -->|"missing-value/cross_multiply"| c10
-  c66["6 × 14 = 84"]
-  c62 --> c66
-  c66 -->|"common-multiple/product"| c5
-  c67["LCM(4, 10) = 20"]
-  c62 --> c67
-  c67 -->|"common-multiple/recall"| c13
-  c68["LCM(6, 14) = 42"]
-  c62 --> c68
-  c68 -->|"common-multiple/recall"| c5
-  c69["4 × 25 = 100"]
-  c70{{"multiply · within"}}
-  c0 --> c70
-  c70 --> c69
-  c71["then 6 × 25 = 150"]
-  c69 --> c71
-  c71 -->|"to-decimal/power_of_ten"| c10
-  c71 -->|"to-decimal/power_of_ten"| c22
-  c72["4 × 5 = 20"]
-  c70 --> c72
-  c72 -->|"common-multiple/list_multiples"| c13
-  c73["6 × 7 = 42"]
-  c70 --> c73
-  c73 -->|"common-multiple/list_multiples"| c5
-  c74["plot (4, 6), (10, 14)"]
-  c75{{"represent · across"}}
-  c0 --> c75
-  c75 --> c74
-  c74 --> c30
-  c76["6 − 4 = 2"]
-  c77{{"subtract · within"}}
-  c0 --> c77
-  c77 --> c76
-  c76 --> c39
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class c44,c47,c54,c57,c62,c70,c75,c77 cls
-  class c43,c45,c46,c50,c53,c55,c56,c59,c61,c63,c66,c67,c68,c69,c72,c73,c74,c76 first
-  class c48,c49,c51,c52,c58,c60,c64,c65,c71 second
-  class c2,c5,c10,c13,c18,c22,c26,c30,c35,c39 method
-  class c3,c6,c7,c8,c11,c14,c15,c16,c19,c20,c23,c24,c36,c37,c42 skill
-  class c4,c9,c12,c17,c21,c25,c27,c28,c29,c31,c32,c33,c34,c38,c40,c41 step
-  class c0,c1 ans
-  w1 -->|"a"| c0
-  w2 -->|"b"| c0
-  w3 -->|"c"| c0
-  w4 -->|"d"| c0
-  w5(["Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)"])
-  c1 --> w5
-  w6["Compares glasses per spoon and calls the bigger one sweeter. → Joe"]
-  w0 -.->|"Which way wins"| w6
-  w7["6 × 10 = 60"]
-  w6 -.-> w7
-  w8["plot (6, 4), (14, 10)"]
-  w6 -.-> w8
-  w9["Compares spoons of sugar only (10 #gt; 4). → Ann (same answer!)"]
-  w0 -.->|"Find the pair that forms the ratio"| w9
-  w10["Compares glasses minus spoons (2 vs 4) and calls the smaller gap sweeter. → Joe"]
-  w0 -.->|"Scale, don't add"| w10
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wstory fill:#fde4e1,stroke:#c4554a,color:#222
-  classDef wused fill:#dbe9ff,stroke:#3d6fd1,color:#222
-  classDef wdist fill:#f2f2f2,stroke:#999,stroke-dasharray:4 3,color:#777
-  classDef wop fill:#ffffff,stroke:#3d6fd1,color:#222
-  classDef wfinal fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
-  classDef wtrap fill:#fff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
-  classDef wtfirst fill:#fff5f4,stroke:#c4554a,stroke-dasharray:2 2,color:#a33
-  class w0 wstory
-  class w1,w2,w3,w4 wused
-  class w5 wfinal
-  class w6,w9,w10 wtrap
-  class w7,w8 wtfirst
+  n0(["Story<br/>Whose lemonade is sweeter?"])
+  n5[["Compare two fractions<br/>Which is larger: 6/4 or 14/10? (Or are they equal?) → Joe"]]
+  n6(["Joe ✗<br/>gives itself away: (6, 4), (14, 10)"])
+  n8[["Compare two fractions<br/>Which is larger: 4/1 or 10/1? (Or are they equal?) → Ann"]]
+  n9(["Ann ✗<br/>same answer as the correct reading!"])
+  n11["Subtract Joe's spoons from his glasses<br/>6 − 4 = 2"]
+  n12["Subtract Ann's spoons from her glasses<br/>14 − 10 = 4"]
+  n13[["Compare two fractions<br/>Which is larger: 2/1 or 4/1? (Or are they equal?) → Joe"]]
+  n14(["Joe ✗"])
+  n155(["Answer<br/>Ann's (10/14 ≈ 0.714 spoons per glass vs 4/6 ≈ 0.667)"])
+  subgraph nf0["Extract: decide all of these, in any order"]
+    direction LR
+    n1{"all"}
+    n2{"all"}
+    n3["What kind of question is this?<br/>Whose mix is stronger: compare two fractions"]
+    n4{{"× What measures sweetness?"}}
+    n7{{"× What do you compare?"}}
+    n10{{"× How do the mixes differ?"}}
+  end
+  subgraph nf1["Compare two fractions (as on its own page)"]
+    direction LR
+    n15(["Which is larger: 4/6 or 10/14? (Or are they equal?)"])
+    n16(["Answer: second"])
+    n17{{"× Which first step?"}}
+    n18["Find how much the top grows<br/>10 ÷ 4 = 2.5<br/>[divide · across]"]
+    n19["Find how much the bottom grows<br/>14 ÷ 6 ≈ 2.333"]
+    n20["If the top grows faster, the second fraction is bigger<br/>2.5 ＞ 7/3"]
+    n21["Find the scale factor between the bottoms<br/>14 ÷ 6 ≈ 2.333<br/>[divide · across]<br/>[in: Find the missing value in a proportion]"]
+    n22{{"× Which next step?"}}
+    n23["Scale the top by the same factor<br/>4 × 7/3 = 28/3<br/>[in: Find the missing value in a proportion]"]
+    n24["Same bottom, so compare the tops<br/>28/3 ＜ 10"]
+    n25["Find how much the top grows<br/>10 ÷ 4 = 2.5"]
+    n26["If the top grows faster, the second fraction is bigger<br/>2.5 ＞ 7/3"]
+    n27["Divide the top by the bottom<br/>10 ÷ 14 ≈ 0.714<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n28[["Write the first fraction as a decimal<br/>Write 4/6 as a decimal → ≈ 0.667"]]
+    n29["Compare the decimals<br/>2/3 ＜ 5/7"]
+    n30["Divide the top by the bottom<br/>14 ÷ 10 = 1.4<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+    n31[["Find the first fraction's flipped rate<br/>Write 6/4 as a decimal → 1.5"]]
+    n32["The smaller flipped rate is the bigger fraction<br/>1.5 ＞ 1.4"]
+    n33["Divide the top by the bottom<br/>4 ÷ 6 ≈ 0.667<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n34{{"× Which next step?"}}
+    n35["Scale up to 14<br/>2/3 × 14 = 28/3<br/>[in: Find the missing value in a proportion]"]
+    n36["Divide the top by the bottom<br/>10 ÷ 14 ≈ 0.714<br/>[in: Write a fraction as a decimal]"]
+    n37["Compare the decimals<br/>2/3 ＜ 5/7"]
+    n38["Divide the top by the bottom<br/>6 ÷ 4 = 1.5<br/>[divide · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n39{{"× Which next step?"}}
+    n40["Divide by that rate<br/>14 ÷ 1.5 ≈ 9.333<br/>[in: Find the missing value in a proportion]"]
+    n41["Divide the top by the bottom<br/>14 ÷ 10 = 1.4<br/>[in: Write a fraction as a decimal]"]
+    n42["The smaller flipped rate is the bigger fraction<br/>1.5 ＞ 1.4"]
+    n43["Find the greatest common factor<br/>GCF(4, 10) = 2<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n44["Divide one number by the GCF<br/>4 ÷ 2 = 2<br/>[in: Find a common multiple]"]
+    n45["Multiply by the other number<br/>2 × 10 = 20<br/>[in: Find a common multiple]"]
+    n46{"all"}
+    n47{"all"}
+    n48[["Find the first fraction's bottom with 20 on top<br/>Solve 6/4 = x/20 → 30"]]
+    n49[["Find the second fraction's bottom with 20 on top<br/>Solve 14/10 = x/20 → 28"]]
+    n50["Same top, so the smaller bottom wins<br/>30 ＞ 28"]
+    n51["Find the greatest common factor<br/>GCF(6, 14) = 2<br/>[factor · across]<br/>[in: Find a common multiple]"]
+    n52["Divide one number by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find a common multiple]"]
+    n53["Multiply by the other number<br/>3 × 14 = 42<br/>[in: Find a common multiple]"]
+    n54{"all"}
+    n55{"all"}
+    n56[["Rewrite the first fraction over 42<br/>Solve 4/6 = x/42 → 28"]]
+    n57[["Rewrite the second fraction over 42<br/>Solve 10/14 = x/42 → 30"]]
+    n58["Same bottom, so compare the tops<br/>28 ＜ 30"]
+    n59["Divide the top by a shared factor<br/>10 ÷ 2 = 5<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n60["Divide the bottom by the same factor<br/>14 ÷ 2 = 7<br/>[in: Simplify a fraction]"]
+    n61[["Simplify the first fraction<br/>Simplify 4/6 → 2 and 3"]]
+    n62["Are the simplified fractions the same?<br/>2:3 ≠ 5:7"]
+    n63["Divide the top by a shared factor<br/>4 ÷ 2 = 2<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n64{{"× Which next step?"}}
+    n65["Divide the bottom by the same factor<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n66{{"× Which method?"}}
+    n67["Find the scale factor from the simplified bottom<br/>14 ÷ 3 ≈ 4.667<br/>[in: Find the missing value in a proportion]"]
+    n68["Scale the simplified top<br/>2 × 14/3 = 28/3<br/>[in: Find the missing value in a proportion]"]
+    n69["Same bottom, so compare the tops<br/>28/3 ＜ 10"]
+    n70[["Simplify the second fraction<br/>Simplify 10/14 → 5 and 7"]]
+    n71["Are the simplified fractions the same?<br/>2:3 ≠ 5:7"]
+    n72["Find the greatest common factor<br/>GCF(10, 14) = 2<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+    n73{"all"}
+    n74{"all"}
+    n75["Divide the top by the GCF<br/>10 ÷ 2 = 5<br/>[in: Simplify a fraction]"]
+    n76["Divide the bottom by the GCF<br/>14 ÷ 2 = 7<br/>[in: Simplify a fraction]"]
+    n77[["Simplify the first fraction<br/>Simplify 4/6 → 2 and 3"]]
+    n78["Are the simplified fractions the same?<br/>2:3 ≠ 5:7"]
+    n79["Find the greatest common factor<br/>GCF(4, 6) = 2<br/>[factor · within]<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n80{{"× Which next step?"}}
+    n81["Divide the top by the GCF<br/>4 ÷ 2 = 2<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n82{{"× Which method?"}}
+    n83["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n84["Find the scale factor from the simplified bottom<br/>14 ÷ 3 ≈ 4.667<br/>[in: Find the missing value in a proportion]"]
+    n85["Scale the simplified top<br/>2 × 14/3 = 28/3<br/>[in: Find the missing value in a proportion]"]
+    n86["Same bottom, so compare the tops<br/>28/3 ＜ 10"]
+    n87["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Simplify a fraction]"]
+    n88[["Simplify the second fraction<br/>Simplify 10/14 → 5 and 7"]]
+    n89["Are the simplified fractions the same?<br/>2:3 ≠ 5:7"]
+    n90["Divide the bottom by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n91{{"× Which method?"}}
+    n92["Divide the top by the GCF<br/>4 ÷ 2 = 2<br/>[in: Find the missing value in a proportion › Simplify a fraction]"]
+    n93["Find the scale factor from the simplified bottom<br/>14 ÷ 3 ≈ 4.667<br/>[in: Find the missing value in a proportion]"]
+    n94["Scale the simplified top<br/>2 × 14/3 = 28/3<br/>[in: Find the missing value in a proportion]"]
+    n95["Same bottom, so compare the tops<br/>28/3 ＜ 10"]
+    n96["Divide the top by the GCF<br/>4 ÷ 2 = 2<br/>[in: Simplify a fraction]"]
+    n97[["Simplify the second fraction<br/>Simplify 10/14 → 5 and 7"]]
+    n98["Are the simplified fractions the same?<br/>2:3 ≠ 5:7"]
+    n99["Recall the least common multiple<br/>LCM(4, 10) = 20<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n100{"all"}
+    n101{"all"}
+    n102[["Find the first fraction's bottom with 20 on top<br/>Solve 6/4 = x/20 → 30"]]
+    n103[["Find the second fraction's bottom with 20 on top<br/>Solve 14/10 = x/20 → 28"]]
+    n104["Same top, so the smaller bottom wins<br/>30 ＞ 28"]
+    n105["Recall the least common multiple<br/>LCM(6, 14) = 42<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n106{"all"}
+    n107{"all"}
+    n108[["Rewrite the first fraction over 42<br/>Solve 4/6 = x/42 → 28"]]
+    n109[["Rewrite the second fraction over 42<br/>Solve 10/14 = x/42 → 30"]]
+    n110["Same bottom, so compare the tops<br/>28 ＜ 30"]
+    n111["Multiply the two numbers<br/>4 × 10 = 40<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n112{"all"}
+    n113{"all"}
+    n114[["Find the first fraction's bottom with 40 on top<br/>Solve 6/4 = x/40 → 60"]]
+    n115[["Find the second fraction's bottom with 40 on top<br/>Solve 14/10 = x/40 → 56"]]
+    n116["Same top, so the smaller bottom wins<br/>60 ＞ 56"]
+    n117["Multiply the second top by the first bottom<br/>10 × 6 = 60<br/>[multiply · across]<br/>[in: Cross products]"]
+    n118["Multiply the first top by the second bottom<br/>4 × 14 = 56<br/>[in: Cross products]"]
+    n119["The bigger product sits with the bigger fraction<br/>56 ＜ 60"]
+    n120["Multiply the first top by the second bottom<br/>4 × 14 = 56<br/>[multiply · across]<br/>[in: Cross products]"]
+    n121{{"× Which next step?"}}
+    n122["Multiply the second top by the first bottom<br/>10 × 6 = 60<br/>[in: Cross products]"]
+    n123["The bigger product sits with the bigger fraction<br/>56 ＜ 60"]
+    n124["Divide by the remaining number<br/>56 ÷ 6 ≈ 9.333<br/>[in: Find the missing value in a proportion]"]
+    n125["Multiply the two numbers<br/>6 × 14 = 84<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+    n126{"all"}
+    n127{"all"}
+    n128[["Rewrite the first fraction over 84<br/>Solve 4/6 = x/84 → 56"]]
+    n129[["Rewrite the second fraction over 84<br/>Solve 10/14 = x/84 → 60"]]
+    n130["Same bottom, so compare the tops<br/>56 ＜ 60"]
+    n131["Scale the bottom up to 10, 100, or 1000<br/>4 × 25 = 100<br/>[multiply · within]<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n132{{"× Which next step?"}}
+    n133["Scale the top by the same factor<br/>6 × 25 = 150<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n134{{"× Which method?"}}
+    n135["Read off the decimal<br/>150 ÷ 100 = 1.5<br/>[in: Find the missing value in a proportion › Write a fraction as a decimal]"]
+    n136["Divide by that rate<br/>14 ÷ 1.5 ≈ 9.333<br/>[in: Find the missing value in a proportion]"]
+    n137["Same bottom, so compare the tops<br/>28/3 ＜ 10"]
+    n138["Read off the decimal<br/>150 ÷ 100 = 1.5<br/>[in: Write a fraction as a decimal]"]
+    n139[["Find the second fraction's flipped rate<br/>Write 14/10 as a decimal → 1.4"]]
+    n140["The smaller flipped rate is the bigger fraction<br/>1.5 ＞ 1.4"]
+    n141["List multiples of 4 until 10 divides one<br/>4 × 5 = 20<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n142["List multiples of 6 until 14 divides one<br/>6 × 7 = 42<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+    n143["Plot each fraction as a point (top, bottom)<br/>(4, 6), (10, 14)<br/>[represent · across]"]
+    n144{"all"}
+    n145{"all"}
+    n146["Find the slope to the first point<br/>6 ÷ 4 = 1.5"]
+    n147["Find the slope to the second point<br/>14 ÷ 10 = 1.4"]
+    n148["The less steep line is the bigger fraction<br/>1.5 ＞ 1.4"]
+    n149["Find how far the second fraction is below 1<br/>14 − 10 = 4<br/>[subtract · within]"]
+    n150["Find how far the first fraction is below 1<br/>6 − 4 = 2"]
+    n151[["Compare the two gaps<br/>Which is larger: 2/6 or 4/14? (Or are they equal?) → first"]]
+    n152["Find how far the first fraction is below 1<br/>6 − 4 = 2<br/>[subtract · within]"]
+    n153["Find how far the second fraction is below 1<br/>14 − 10 = 4"]
+    n154[["Compare the two gaps<br/>Which is larger: 2/6 or 4/14? (Or are they equal?) → first"]]
+  end
+  n0 --> n1
+  n1 --> n3
+  n3 --> n2
+  n1 --> n4
+  n4 -->|"✓ Sugar per glass: more is sweeter"| n2
+  n5 --> n6
+  n4 -.->|"✗ Which way wins: Glasses per spoon: more is sweeter"| n5
+  n1 --> n7
+  n7 -->|"✓ Each mix's sugar per glass"| n2
+  n8 --> n9
+  n7 -.->|"✗ Find the pair that forms the ratio: Just the spoons of sugar"| n8
+  n1 --> n10
+  n10 -->|"✓ By ratio"| n2
+  n11 --> n12
+  n12 --> n13
+  n13 --> n14
+  n10 -.->|"✗ Scale, don't add: By difference: glasses minus spoons"| n11
+  n15 --> n17
+  n17 -->|"Compare scale factors"| n18
+  n19 --> n20
+  n20 --> n16
+  n18 --> n19
+  n17 -->|"Rewrite one fraction over the other's denominator or Compare scale factors"| n21
+  n21 --> n22
+  n22 -->|"Rewrite one fraction over the other's denominator"| n23
+  n24 --> n16
+  n23 --> n24
+  n22 -->|"Compare scale factors"| n25
+  n26 --> n16
+  n25 --> n26
+  n17 -->|"Convert to decimals"| n27
+  n28 --> n29
+  n29 --> n16
+  n27 --> n28
+  n17 -->|"Compare unit rates (flipped fractions)"| n30
+  n31 --> n32
+  n32 --> n16
+  n30 --> n31
+  n17 -->|"Convert to decimals or Rewrite one fraction over the other's denominator"| n33
+  n33 --> n34
+  n34 -->|"Rewrite one fraction over the other's denominator"| n35
+  n35 --> n24
+  n34 -->|"Convert to decimals"| n36
+  n37 --> n16
+  n36 --> n37
+  n17 -->|"Rewrite one fraction over the other's denominator or Compare unit rates (flipped fractions)"| n38
+  n38 --> n39
+  n39 -->|"Rewrite one fraction over the other's denominator"| n40
+  n40 --> n24
+  n39 -->|"Compare unit rates (flipped fractions)"| n41
+  n42 --> n16
+  n41 --> n42
+  n17 -->|"Common numerator"| n43
+  n44 --> n45
+  n46 --> n48
+  n48 --> n47
+  n46 --> n49
+  n49 --> n47
+  n45 --> n46
+  n47 --> n50
+  n50 --> n16
+  n43 --> n44
+  n17 -->|"Common denominator"| n51
+  n52 --> n53
+  n54 --> n56
+  n56 --> n55
+  n54 --> n57
+  n57 --> n55
+  n53 --> n54
+  n55 --> n58
+  n58 --> n16
+  n51 --> n52
+  n17 -->|"Simplify both"| n59
+  n60 --> n61
+  n61 --> n62
+  n62 --> n16
+  n59 --> n60
+  n17 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n63
+  n63 --> n64
+  n64 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n65
+  n65 --> n66
+  n67 --> n68
+  n68 --> n69
+  n69 --> n16
+  n66 -->|"Rewrite one fraction over the other's denominator"| n67
+  n70 --> n71
+  n71 --> n16
+  n66 -->|"Simplify both"| n70
+  n17 -->|"Simplify both"| n72
+  n73 --> n75
+  n75 --> n74
+  n73 --> n76
+  n76 --> n74
+  n74 --> n77
+  n77 --> n78
+  n78 --> n16
+  n72 --> n73
+  n17 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n79
+  n79 --> n80
+  n80 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n81
+  n81 --> n82
+  n83 --> n84
+  n84 --> n85
+  n85 --> n86
+  n86 --> n16
+  n82 -->|"Rewrite one fraction over the other's denominator"| n83
+  n87 --> n88
+  n88 --> n89
+  n89 --> n16
+  n82 -->|"Simplify both"| n87
+  n80 -->|"Rewrite one fraction over the other's denominator or Simplify both"| n90
+  n90 --> n91
+  n92 --> n93
+  n93 --> n94
+  n94 --> n95
+  n95 --> n16
+  n91 -->|"Rewrite one fraction over the other's denominator"| n92
+  n96 --> n97
+  n97 --> n98
+  n98 --> n16
+  n91 -->|"Simplify both"| n96
+  n17 -->|"Common numerator"| n99
+  n100 --> n102
+  n102 --> n101
+  n100 --> n103
+  n103 --> n101
+  n101 --> n104
+  n104 --> n16
+  n99 --> n100
+  n17 -->|"Common denominator"| n105
+  n106 --> n108
+  n108 --> n107
+  n106 --> n109
+  n109 --> n107
+  n107 --> n110
+  n110 --> n16
+  n105 --> n106
+  n17 -->|"Common numerator"| n111
+  n112 --> n114
+  n114 --> n113
+  n112 --> n115
+  n115 --> n113
+  n113 --> n116
+  n116 --> n16
+  n111 --> n112
+  n17 -->|"Cross-multiply"| n117
+  n118 --> n119
+  n119 --> n16
+  n117 --> n118
+  n17 -->|"Cross-multiply or Rewrite one fraction over the other's denominator"| n120
+  n120 --> n121
+  n121 -->|"Cross-multiply"| n122
+  n123 --> n16
+  n122 --> n123
+  n121 -->|"Rewrite one fraction over the other's denominator"| n124
+  n124 --> n24
+  n17 -->|"Common denominator"| n125
+  n126 --> n128
+  n128 --> n127
+  n126 --> n129
+  n129 --> n127
+  n127 --> n130
+  n130 --> n16
+  n125 --> n126
+  n17 -->|"Rewrite one fraction over the other's denominator or Compare unit rates (flipped fractions)"| n131
+  n131 --> n132
+  n132 -->|"Rewrite one fraction over the other's denominator or Compare unit rates (flipped fractions)"| n133
+  n133 --> n134
+  n135 --> n136
+  n136 --> n137
+  n137 --> n16
+  n134 -->|"Rewrite one fraction over the other's denominator"| n135
+  n138 --> n139
+  n139 --> n140
+  n140 --> n16
+  n134 -->|"Compare unit rates (flipped fractions)"| n138
+  n17 -->|"Common numerator"| n141
+  n141 --> n100
+  n17 -->|"Common denominator"| n142
+  n142 --> n106
+  n17 -->|"Graph the points"| n143
+  n144 --> n146
+  n146 --> n145
+  n144 --> n147
+  n147 --> n145
+  n145 --> n148
+  n148 --> n16
+  n143 --> n144
+  n17 -->|"Distance from 1"| n149
+  n150 --> n151
+  n151 --> n16
+  n149 --> n150
+  n17 -->|"Distance from 1"| n152
+  n153 --> n154
+  n154 --> n16
+  n152 --> n153
+  n2 ==>|"a: 4 spoons of sugar<br/>b: 6 glasses<br/>c: 10 spoons of sugar<br/>d: 14 glasses"| n15
+  n16 -->|"in the story's terms"| n155
+  linkStyle 6 stroke:#c4554a,color:#c4554a
+  linkStyle 10 stroke:#c4554a,color:#c4554a
+  linkStyle 16 stroke:#c4554a,color:#c4554a
+  linkStyle 196 stroke:#3f9a55,stroke-width:3px
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  classDef k_wrong fill:#ffffff,stroke:#c4554a,stroke-dasharray:5 3,color:#a33
+  class n1,n2,n46,n47,n54,n55,n73,n74,n100,n101,n106,n107,n112,n113,n126,n127,n144,n145 k_all
+  class n5,n8,n13,n28,n31,n48,n49,n56,n57,n61,n70,n77,n88,n97,n102,n103,n108,n109,n114,n115,n128,n129,n139,n151,n154 k_call
+  class n4,n7,n10,n17,n22,n34,n39,n64,n66,n80,n82,n91,n121,n132,n134 k_choice
+  class n16,n155 k_end
+  class n18,n21,n27,n30,n33,n38,n43,n51,n59,n63,n72,n79,n99,n105,n111,n117,n120,n125,n131,n141,n142,n143,n149,n152 k_first
+  class n0,n15 k_start
+  class n3,n11,n12,n19,n20,n23,n24,n25,n26,n29,n32,n35,n36,n37,n40,n41,n42,n44,n45,n50,n52,n53,n58,n60,n62,n65,n67,n68,n69,n71,n75,n76,n78,n81,n83,n84,n85,n86,n87,n89,n90,n92,n93,n94,n95,n96,n98,n104,n110,n116,n118,n119,n122,n123,n124,n130,n133,n135,n136,n137,n138,n140,n146,n147,n148,n150,n153 k_step
+  class n6,n9,n14 k_wrong
+  style nf0 fill:#fafafa,stroke:#b8bcc6
+  style nf1 fill:#fafafa,stroke:#b8bcc6

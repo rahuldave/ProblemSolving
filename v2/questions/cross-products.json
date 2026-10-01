@@ -5,7 +5,6 @@
   "prompt": "Find the cross products of {a}/{b} and {c}/{d}.",
   "inputs": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
   "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
-  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
   "outputs": ["p1", "p2"],
   "default_method": "diagonals",
   "examples": [
@@ -17,8 +16,10 @@
       "name": "Multiply the diagonals",
       "idea": "Multiply each numerator by the other fraction's denominator.",
       "steps": [
-        { "op": "multiply", "args": ["a", "d"], "out": "p1", "text": "{a} × {d} = {p1}" },
-        { "op": "multiply", "args": ["c", "b"], "out": "p2", "text": "{c} × {b} = {p2}" }
+        { "op": "all", "say": "Multiply both diagonals", "branches": [
+          [ { "op": "multiply", "args": ["a", "d"], "out": "p1", "say": "Multiply the first top by the second bottom" } ],
+          [ { "op": "multiply", "args": ["c", "b"], "out": "p2", "say": "Multiply the second top by the first bottom" } ]
+        ] }
       ]
     }
   }

@@ -5,7 +5,6 @@
   "prompt": "Solve {a}/{b} = x/{d}.",
   "inputs": { "a": "known numerator", "b": "known denominator", "d": "denominator next to x" },
   "quantities": { "known_ratio": ["a", "b"], "unknown_ratio": ["d"] },
-  "symmetries": [],
   "outputs": ["answer"],
   "default_method": "cross_multiply",
   "examples": [
@@ -18,8 +17,8 @@
       "idea": "{a} × {d} = {b} × x, so x = {a} × {d} ÷ {b}.",
       "best_when": "Always works; most useful when there's no whole-number scale factor.",
       "steps": [
-        { "op": "multiply", "args": ["a", "d"], "out": "p", "text": "{a} × {d} = {p}" },
-        { "op": "divide", "args": ["p", "b"], "out": "answer", "text": "x = {p} ÷ {b} = {answer}" }
+        { "op": "multiply", "args": ["a", "d"], "out": "p", "say": "Multiply across the diagonal" },
+        { "op": "divide", "args": ["p", "b"], "out": "answer", "say": "Divide by the remaining number" }
       ]
     },
     "scale_factor": {
@@ -27,8 +26,8 @@
       "idea": "Find what turns {b} into {d}, then do the same to {a}.",
       "best_when": "{d} is a whole-number multiple of {b}.",
       "steps": [
-        { "op": "divide", "args": ["d", "b"], "out": "k", "text": "{d} ÷ {b} = {k}" },
-        { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+        { "op": "divide", "args": ["d", "b"], "out": "k", "say": "Find the scale factor between the bottoms" },
+        { "op": "multiply", "args": ["a", "k"], "out": "answer", "say": "Scale the top by the same factor" }
       ]
     },
     "unit_rate": {
@@ -36,8 +35,8 @@
       "idea": "Find the value per 1, then scale up to {d}.",
       "best_when": "{a}/{b} is a friendly decimal.",
       "steps": [
-        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "r" }, "text": "{a} ÷ {b} = {r} per 1" },
-        { "op": "multiply", "args": ["r", "d"], "out": "answer", "text": "x = {r} × {d} = {answer}" }
+        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "r" }, "say": "Find the value per 1" },
+        { "op": "multiply", "args": ["r", "d"], "out": "answer", "say": "Scale up to {d}" }
       ]
     },
     "inverse_rate": {
@@ -45,8 +44,8 @@
       "idea": "Find how many of the second quantity per 1 of the first, then divide.",
       "best_when": "{b}/{a} is a friendly number.",
       "steps": [
-        { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r" }, "text": "{b} ÷ {a} = {r}" },
-        { "op": "divide", "args": ["d", "r"], "out": "answer", "text": "x = {d} ÷ {r} = {answer}" }
+        { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r" }, "say": "Find the rate the other way round" },
+        { "op": "divide", "args": ["d", "r"], "out": "answer", "say": "Divide by that rate" }
       ]
     },
     "ratio_table": {
@@ -55,8 +54,8 @@
       "best_when": "{d} is a small whole-number multiple of {b}.",
       "watch_out": "If no whole-number multiple of {b} reaches {d}, simplify {a}/{b} first.",
       "steps": [
-        { "op": "multiply", "args": ["b", "k"], "out": "bk", "search": { "var": "k", "until": ["bk", "d"] }, "text": "{b} × {k} = {bk}" },
-        { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+        { "op": "multiply", "args": ["b", "k"], "out": "bk", "search": { "var": "k", "until": ["bk", "d"] }, "say": "Build the bottom up by 2, 3, 4, … until it reaches {d}" },
+        { "op": "multiply", "args": ["a", "k"], "out": "answer", "say": "Scale the top by the same factor" }
       ]
     },
     "simplify_then_scale": {
@@ -64,9 +63,9 @@
       "idea": "Reduce {a}/{b} first so a whole-number scale factor appears.",
       "best_when": "{a}/{b} isn't in lowest terms.",
       "steps": [
-        { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" }, "text": "{a}/{b} = {a1}/{b1}" },
-        { "op": "divide", "args": ["d", "b1"], "out": "k", "text": "{d} ÷ {b1} = {k}" },
-        { "op": "multiply", "args": ["a1", "k"], "out": "answer", "text": "x = {a1} × {k} = {answer}" }
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" }, "say": "Simplify the known ratio" },
+        { "op": "divide", "args": ["d", "b1"], "out": "k", "say": "Find the scale factor from the simplified bottom" },
+        { "op": "multiply", "args": ["a1", "k"], "out": "answer", "say": "Scale the simplified top" }
       ]
     }
   }

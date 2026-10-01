@@ -1,85 +1,67 @@
 flowchart LR
   n0(["Solve 3/5 = x/40."])
   n1(["Answer: 24"])
-  n2["Cross-multiply and divide"]
-  n3["3 × 40 = 120"]
-  n2 --> n3
-  n4["120 ÷ 5 = 24"]
-  n3 --> n4
+  n2{{"× Which first step?"}}
+  n3["Find the scale factor between the bottoms<br/>40 ÷ 5 = 8<br/>[divide · across]"]
+  n4["Scale the top by the same factor<br/>3 × 8 = 24"]
+  n5["Divide the top by the bottom<br/>3 ÷ 5 = 0.6<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n6["Scale up to 40<br/>0.6 × 40 = 24"]
+  n7["Divide the top by the bottom<br/>5 ÷ 3 ≈ 1.667<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n8["Divide by that rate<br/>40 ÷ 5/3 = 24"]
+  n9["Find the greatest common factor<br/>GCF(3, 5) = 1<br/>[factor · within]<br/>[in: Simplify a fraction]"]
+  n10{"all"}
+  n11{"all"}
+  n12["Divide the top by the GCF<br/>3 ÷ 1 = 3<br/>[in: Simplify a fraction]"]
+  n13["Divide the bottom by the GCF<br/>5 ÷ 1 = 5<br/>[in: Simplify a fraction]"]
+  n14["Find the scale factor from the simplified bottom<br/>40 ÷ 5 = 8"]
+  n15["Scale the simplified top<br/>3 × 8 = 24"]
+  n16["Multiply across the diagonal<br/>3 × 40 = 120<br/>[multiply · across]"]
+  n17["Divide by the remaining number<br/>120 ÷ 5 = 24"]
+  n18["Scale the bottom up to 10, 100, or 1000<br/>5 × 2 = 10<br/>[multiply · within]<br/>[in: Write a fraction as a decimal]"]
+  n19["Scale the top by the same factor<br/>3 × 2 = 6<br/>[in: Write a fraction as a decimal]"]
+  n20["Read off the decimal<br/>6 ÷ 10 = 0.6<br/>[in: Write a fraction as a decimal]"]
+  n21["Scale up to 40<br/>0.6 × 40 = 24"]
+  n22["Build the bottom up by 2, 3, 4, … until it reaches 40<br/>5 × 8 = 40<br/>[multiply · within]"]
+  n23["Scale the top by the same factor<br/>3 × 8 = 24"]
+  n0 --> n2
+  n2 -->|"Scale factor"| n3
   n4 --> n1
-  n5["Scale factor"]
-  n6["40 ÷ 5 = 8"]
+  n3 --> n4
+  n2 -->|"Unit rate"| n5
+  n6 --> n1
   n5 --> n6
-  n7["3 × 8 = 24"]
-  n6 --> n7
-  n7 --> n1
-  n8["Unit rate"]
-  n9["Write 3/5 as a decimal → 0.6"]
-  n8 --> n9
-  n10["0.6 × 40 = 24"]
-  n9 --> n10
-  n10 --> n1
-  n11["Inverse rate"]
-  n12["Write 5/3 as a decimal → ≈ 1.667"]
-  n11 --> n12
-  n13["40 ÷ 5/3 = 24"]
-  n12 --> n13
-  n13 --> n1
-  n14["Ratio table"]
-  n15["5 × 8 = 40"]
+  n2 -->|"Inverse rate"| n7
+  n8 --> n1
+  n7 --> n8
+  n2 -->|"Simplify, then scale"| n9
+  n10 --> n12
+  n12 --> n11
+  n10 --> n13
+  n13 --> n11
+  n11 --> n14
   n14 --> n15
-  n16["3 × 8 = 24"]
-  n15 --> n16
-  n16 --> n1
-  n17["Simplify, then scale"]
-  n18["Simplify 3/5 → 3/5"]
-  n17 --> n18
-  n19["40 ÷ 5 = 8"]
-  n18 --> n19
-  n20["3 × 8 = 24"]
+  n15 --> n1
+  n9 --> n10
+  n2 -->|"Cross-multiply and divide"| n16
+  n17 --> n1
+  n16 --> n17
+  n2 -->|"Unit rate"| n18
   n19 --> n20
-  n20 --> n1
-  n21["40 ÷ 5 = 8"]
-  n22{{"divide · across"}}
-  n0 --> n22
-  n22 --> n21
-  n21 --> n5
-  n23["3 ÷ 5 = 0.6"]
-  n24{{"divide · within"}}
-  n0 --> n24
-  n24 --> n23
-  n23 -->|"to-decimal/divide"| n8
-  n25["5 ÷ 3 ≈ 1.667"]
-  n24 --> n25
-  n25 -->|"to-decimal/divide"| n11
-  n26["GCF(3, 5) = 1"]
-  n27{{"factor · within"}}
-  n0 --> n27
-  n27 --> n26
-  n26 -->|"simplify-fraction/gcf"| n17
-  n28["3 × 40 = 120"]
-  n29{{"multiply · across"}}
-  n0 --> n29
-  n29 --> n28
-  n28 --> n2
-  n30["5 × 2 = 10"]
-  n31{{"multiply · within"}}
-  n0 --> n31
-  n31 --> n30
-  n30 -->|"to-decimal/power_of_ten"| n8
-  n32["5 × 8 = 40"]
-  n31 --> n32
-  n32 --> n14
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n22,n24,n27,n29,n31 cls
-  class n21,n23,n25,n26,n28,n30,n32 first
-  class n2,n5,n8,n11,n14,n17 method
-  class n9,n12,n18 skill
-  class n3,n4,n6,n7,n10,n13,n15,n16,n19,n20 step
-  class n0,n1 ans
+  n20 --> n21
+  n21 --> n1
+  n18 --> n19
+  n2 -->|"Ratio table"| n22
+  n23 --> n1
+  n22 --> n23
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n10,n11 k_all
+  class n2 k_choice
+  class n1 k_end
+  class n3,n5,n7,n9,n16,n18,n22 k_first
+  class n0 k_start
+  class n4,n6,n8,n12,n13,n14,n15,n17,n19,n20,n21,n23 k_step

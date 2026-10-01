@@ -3,9 +3,10 @@
   "title": "Train in minutes",
   "text": "A train travels 150 miles in 3 hours. At the same speed, how far does it travel in 90 minutes?",
   "concepts": [
-    "unit_conversion",
+    "question_type",
     "rate_pair",
-    "question_type"
+    "unit_conversion",
+    "correspondence"
   ],
   "quantities": [
     {
@@ -13,76 +14,107 @@
       "text": "150 miles",
       "value": 150,
       "unit": "miles",
-      "counts": "distance",
-      "role": "used"
+      "counts": "distance"
     },
     {
       "id": "hours",
       "text": "3 hours",
       "value": 3,
       "unit": "hours",
-      "counts": "time",
-      "role": "used"
+      "counts": "time"
     },
     {
       "id": "minutes",
       "text": "90 minutes",
       "value": 90,
       "unit": "minutes",
-      "counts": "new time",
-      "role": "used",
-      "concepts": [
-        "unit_conversion"
-      ],
-      "derive": {
-        "expr": "divide(minutes, 60)",
-        "note": "60 minutes = 1 hour"
-      }
+      "counts": "new time"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "how far",
-    "counts": "distance",
     "unit": "miles"
   },
-  "relationship": {
-    "cue": "in … at the same speed",
-    "note": "150 miles per 3 hours; the time must be in hours on both sides."
-  },
-  "maps_to": {
-    "question": "missing-value",
-    "with": {
-      "a": "miles",
-      "b": "hours",
-      "d": "minutes"
-    }
-  },
-  "answer": 75,
-  "answer_text": "75 miles",
-  "traps": [
+  "extract": [
     {
-      "concept": "unit_conversion",
-      "mistake": "Uses 90 without converting minutes to hours.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "miles",
-          "b": "hours",
-          "d": "raw(minutes)"
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "Same speed, new time: a missing value",
+          "correct": true,
+          "question": "missing-value"
         }
-      }
+      ]
     },
     {
-      "concept": "correspondence",
-      "mistake": "Flips one side: hours over miles.",
-      "maps_to": {
-        "question": "missing-value",
-        "with": {
-          "a": "hours",
-          "b": "miles",
-          "d": "minutes"
+      "op": "choose",
+      "concept": "rate_pair",
+      "say": "Which two quantities go together?",
+      "options": [
+        {
+          "say": "150 miles in 3 hours",
+          "correct": true,
+          "binds": {
+            "a": "miles",
+            "b": "hours"
+          }
         }
-      }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "unit_conversion",
+      "say": "Are the two times in the same units?",
+      "options": [
+        {
+          "say": "No: convert 90 minutes to hours",
+          "correct": true,
+          "steps": [
+            {
+              "op": "divide",
+              "args": [
+                "minutes",
+                60
+              ],
+              "out": "new_hours",
+              "say": "Convert minutes to hours"
+            }
+          ],
+          "binds": {
+            "d": "new_hours"
+          }
+        },
+        {
+          "say": "Use 90 as it is",
+          "trap": "Uses 90 without converting minutes to hours.",
+          "binds": {
+            "d": "minutes"
+          }
+        }
+      ]
+    },
+    {
+      "op": "choose",
+      "concept": "correspondence",
+      "say": "Which way round does the ratio go?",
+      "options": [
+        {
+          "say": "Miles over hours on both sides",
+          "correct": true
+        },
+        {
+          "say": "Hours over miles on one side",
+          "trap": "Flips one side: hours over miles.",
+          "binds": {
+            "a": "hours",
+            "b": "miles"
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "answer": 75,
+  "answer_text": "75 miles"
 }

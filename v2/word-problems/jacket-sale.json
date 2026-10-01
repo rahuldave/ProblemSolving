@@ -4,8 +4,7 @@
   "text": "A jacket normally costs $80. This week it is 15% off. How much does the jacket cost this week?",
   "concepts": [
     "question_type",
-    "unknown",
-    "follow_up"
+    "unknown"
   ],
   "quantities": [
     {
@@ -13,56 +12,81 @@
       "text": "costs $80",
       "value": 80,
       "unit": "dollars",
-      "counts": "original price",
-      "role": "used"
+      "counts": "original price"
     },
     {
       "id": "off",
       "text": "15% off",
       "value": 15,
       "unit": "percent",
-      "counts": "discount",
-      "role": "used"
+      "counts": "discount"
     }
   ],
-  "unknown": {
+  "asks": {
     "text": "how much does it cost this week",
-    "counts": "sale price",
     "unit": "dollars"
   },
-  "relationship": {
-    "cue": "% off",
-    "note": "15% of the original price is taken off."
-  },
-  "maps_to": {
-    "question": "percent-of",
-    "with": {
-      "p": "off",
-      "n": "price"
-    }
-  },
-  "then": {
-    "expr": "subtract(price, result)",
-    "note": "subtract the savings from the original price"
-  },
-  "answer": 68,
-  "answer_text": "$68",
-  "traps": [
+  "extract": [
     {
-      "concept": "unknown",
-      "mistake": "Answers the savings instead of the new price.",
-      "maps_to": {
-        "question": "percent-of",
-        "with": {
-          "p": "off",
-          "n": "price"
+      "op": "choose",
+      "concept": "question_type",
+      "say": "What kind of question is this?",
+      "options": [
+        {
+          "say": "15% of the price comes off: a percent of a number",
+          "correct": true,
+          "question": "percent-of",
+          "binds": {
+            "p": "off",
+            "n": "price"
+          }
+        },
+        {
+          "say": "$15 comes off",
+          "trap": "Takes off $15 instead of 15%.",
+          "steps": [
+            {
+              "op": "subtract",
+              "args": [
+                "price",
+                "off"
+              ],
+              "out": "less",
+              "say": "Take 15 off the price"
+            }
+          ],
+          "answer": "less"
         }
-      }
+      ]
     },
     {
-      "concept": "question_type",
-      "mistake": "Takes off $15 instead of 15%.",
-      "expr": "subtract(price, off)"
+      "op": "choose",
+      "concept": "unknown",
+      "say": "What does the question ask for?",
+      "options": [
+        {
+          "say": "The new price",
+          "correct": true,
+          "then": [
+            {
+              "op": "subtract",
+              "args": [
+                "price",
+                "result"
+              ],
+              "out": "final",
+              "say": "Subtract the savings from the price"
+            }
+          ]
+        },
+        {
+          "say": "The savings",
+          "trap": "Answers the savings instead of the new price.",
+          "then": []
+        }
+      ]
     }
-  ]
+  ],
+  "answer": 68,
+  "answer_text": "$68"
 }

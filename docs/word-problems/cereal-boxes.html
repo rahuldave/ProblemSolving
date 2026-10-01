@@ -330,53 +330,95 @@ ul.task-list li input[type="checkbox"] {
 <blockquote class="blockquote">
 <p>A 12-ounce box of cereal costs $3.00 and a 20-ounce box costs $4.50. The store is 2 miles from home. Which box is the better buy?</p>
 </blockquote>
+<p><strong>Asked:</strong> which box is the better buy (box). <strong>Is a:</strong> <a href="../questions/better-buy.html">Which is the better buy?</a>. <strong>Answer:</strong> the 20-ounce box ($0.225 per ounce vs $0.25).</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Phrase</th>
 <th>Value</th>
 <th>Counts</th>
-<th>Role</th>
+<th>Needed?</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>“a 12-ounce box”</td>
-<td>12</td>
+<td>12 ounces</td>
 <td>cereal in the small box</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“costs $3.00”</td>
-<td>3.00</td>
+<td>3.00 dollars</td>
 <td>price of the small box</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“a 20-ounce box”</td>
-<td>20</td>
+<td>20 ounces</td>
 <td>cereal in the big box</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="even">
 <td>“costs $4.50”</td>
-<td>4.50</td>
+<td>4.50 dollars</td>
 <td>price of the big box</td>
-<td>used</td>
+<td>yes</td>
 </tr>
 <tr class="odd">
 <td>“2 miles from home”</td>
-<td>2</td>
+<td>2 miles</td>
 <td>distance to the store</td>
-<td>distractor</td>
+<td><strong>no</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Asked:</strong> which box is the better buy (box). <strong>Link:</strong> “box … costs”: Each box pairs ounces with dollars; compare dollars per ounce, and the smaller wins.</p>
-<p><strong>Maps to</strong> <a href="../questions/better-buy.html">better-buy</a>: q1 = 12, p1 = 3, q2 = 20, p2 = 4.5. <strong>Answer:</strong> the 20-ounce box ($0.225 per ounce vs $0.25).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Concept</th>
+<th>Correct</th>
+<th>Traps → wrong answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>What kind of question is this?</td>
+<td>Recognize the question type</td>
+<td>Which costs less for what you get: a better buy</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>Which number isn’t needed?</td>
+<td>Ignore numbers that don’t matter</td>
+<td>2 miles from home</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>What do you compare?</td>
+<td>Find the pair that forms the ratio</td>
+<td>Each box’s price per ounce</td>
+<td>Just the prices → the 12-ounce box</td>
+</tr>
+<tr class="even">
+<td>Which way wins?</td>
+<td>Which way wins</td>
+<td>The lower price per ounce</td>
+<td>The higher price per ounce → the 12-ounce box</td>
+</tr>
+</tbody>
+</table>
+<p>The graph starts at the story. The <strong>Extract</strong> frame holds the decisions; red dashed arrows leave a decision for each trap and run to the wrong answer it produces. The thick green arrow carries the extracted numbers into the question, drawn exactly as on the question’s own page. Any follow-up step comes after, then the answer in the story’s terms. The legend is at the bottom.</p>
 <figure class="graph fit figure">
 <div class="graph-scroll">
-<img src="../svg/wp-cereal-boxes.svg" alt="Cereal boxes" style="width:3654px" loading="lazy" class="figure-img">
+<img src="../svg/wp-cereal-boxes.svg" alt="Cereal boxes" style="width:5314px" loading="lazy" class="figure-img">
 </div>
 <figcaption>
 <button type="button" class="graph-zoom">
@@ -387,17 +429,19 @@ Actual size
 </figure>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Trap</th>
 <th>Mistake</th>
-<th>Gives</th>
+<th>Leads to</th>
 <th>Caught by the answer?</th>
+<th>Gives itself away with</th>
 </tr>
 </thead>
 <tbody>
@@ -406,12 +450,14 @@ Actual size
 <td>Compares prices only and picks the cheaper box.</td>
 <td>the 12-ounce box</td>
 <td>yes</td>
+<td>—</td>
 </tr>
 <tr class="even">
 <td>Which way wins</td>
-<td>Finds ounces per dollar but picks the smaller one.</td>
+<td>Picks the box with the higher price per ounce.</td>
 <td>the 12-ounce box</td>
 <td>yes</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>

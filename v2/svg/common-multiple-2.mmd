@@ -1,52 +1,31 @@
 flowchart LR
   n0(["Find a common multiple of 4 and 7."])
   n1(["Answer: 28"])
-  n2["Know the LCM"]
-  n3["LCM(4, 7) = 28"]
-  n2 --> n3
-  n3 --> n1
-  n4["List multiples"]
-  n5["4 × 7 = 28"]
+  n2{{"× Which first step?"}}
+  n3["Find the greatest common factor<br/>GCF(4, 7) = 1<br/>[factor · across]"]
+  n4["Divide one number by the GCF<br/>4 ÷ 1 = 4"]
+  n5["Multiply by the other number<br/>4 × 7 = 28"]
+  n6["Recall the least common multiple<br/>LCM(4, 7) = 28<br/>[multiply · across]"]
+  n7["List multiples of 4 until 7 divides one<br/>4 × 7 = 28<br/>[multiply · within]"]
+  n8{{"× Which next step?"}}
+  n0 --> n2
+  n2 -->|"Use the GCF"| n3
   n4 --> n5
   n5 --> n1
-  n6["Multiply them"]
-  n7["4 × 7 = 28"]
-  n6 --> n7
-  n7 --> n1
-  n8["Use the GCF"]
-  n9["GCF(4, 7) = 1"]
-  n8 --> n9
-  n10["4 ÷ 1 = 4"]
-  n9 --> n10
-  n11["4 × 7 = 28"]
-  n10 --> n11
-  n11 --> n1
-  n12["GCF(4, 7) = 1"]
-  n13{{"factor · across"}}
-  n0 --> n13
-  n13 --> n12
-  n12 --> n8
-  n14["LCM(4, 7) = 28"]
-  n15{{"multiply · across"}}
-  n0 --> n15
-  n15 --> n14
-  n14 --> n2
-  n16["4 × 7 = 28"]
-  n15 --> n16
-  n17{{"multiply · within"}}
-  n0 --> n17
-  n17 --> n16
-  n16 --> n4
-  n16 --> n6
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n13,n15,n17 cls
-  class n12,n14,n16 first
-  class n2,n4,n6,n8 method
-  class n3,n5,n7,n9,n10,n11 step
-  class n0,n1 ans
+  n3 --> n4
+  n2 -->|"Know the LCM"| n6
+  n6 --> n1
+  n2 -->|"List multiples or Multiply them"| n7
+  n7 --> n8
+  n8 -->|"List multiples"| n1
+  n8 -->|"Multiply them"| n1
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n2,n8 k_choice
+  class n1 k_end
+  class n3,n6,n7 k_first
+  class n0 k_start
+  class n4,n5 k_step

@@ -32,14 +32,48 @@
         "scope": "across"
       },
       "methods": [
+        "compare_growth",
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "scale_up": [
-          "missing-value/scale_factor"
+          "Find the missing value in a proportion"
         ]
       },
-      "feedback": "This starts: Scale one offer to the other's size."
+      "feedback": "This step starts several methods: Compare growth, Scale one offer to the other's size.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p2",
+              "p1"
+            ]
+          },
+          "methods": [
+            "compare_growth"
+          ],
+          "feedback": "This starts: Compare growth."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "divide(q2, q1)",
+              "p1"
+            ]
+          },
+          "methods": [
+            "scale_up"
+          ],
+          "inside": {
+            "scale_up": [
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Scale one offer to the other's size."
+        }
+      ]
     },
     {
       "match": {
@@ -57,12 +91,12 @@
         "price_per_unit",
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "price_per_unit": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ],
         "scale_up": [
-          "to-decimal/divide"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Price per unit, Scale one offer to the other's size.",
@@ -78,9 +112,9 @@
           "methods": [
             "price_per_unit"
           ],
-          "via": {
+          "inside": {
             "price_per_unit": [
-              "to-decimal/divide"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Price per unit."
@@ -96,9 +130,9 @@
           "methods": [
             "scale_up"
           ],
-          "via": {
+          "inside": {
             "scale_up": [
-              "missing-value/unit_rate"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Scale one offer to the other's size."
@@ -114,14 +148,36 @@
           "methods": [
             "price_per_unit"
           ],
-          "via": {
+          "inside": {
             "price_per_unit": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Price per unit."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p2",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "price_per_unit"
+      ],
+      "inside": {
+        "price_per_unit": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Price per unit."
     },
     {
       "match": {
@@ -139,12 +195,12 @@
         "scale_up",
         "units_per_dollar"
       ],
-      "via": {
+      "inside": {
         "scale_up": [
-          "to-decimal/divide"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ],
         "units_per_dollar": [
-          "to-decimal/divide"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
@@ -160,9 +216,9 @@
           "methods": [
             "scale_up"
           ],
-          "via": {
+          "inside": {
             "scale_up": [
-              "missing-value/inverse_rate"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Scale one offer to the other's size."
@@ -178,9 +234,9 @@
           "methods": [
             "units_per_dollar"
           ],
-          "via": {
+          "inside": {
             "units_per_dollar": [
-              "to-decimal/divide"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Units per dollar."
@@ -196,14 +252,36 @@
           "methods": [
             "units_per_dollar"
           ],
-          "via": {
+          "inside": {
             "units_per_dollar": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Units per dollar."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "q2",
+          "p2"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "units_per_dollar"
+      ],
+      "inside": {
+        "units_per_dollar": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Units per dollar."
     },
     {
       "match": {
@@ -220,9 +298,9 @@
       "methods": [
         "common_quantity"
       ],
-      "via": {
+      "inside": {
         "common_quantity": [
-          "common-multiple/gcf_formula"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common quantity."
@@ -242,9 +320,9 @@
       "methods": [
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "scale_up": [
-          "simplify-fraction/repeated"
+          "Find the missing value in a proportion › Simplify a fraction"
         ]
       },
       "feedback": "This starts: Scale one offer to the other's size."
@@ -264,9 +342,9 @@
       "methods": [
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "scale_up": [
-          "simplify-fraction/gcf"
+          "Find the missing value in a proportion › Simplify a fraction"
         ]
       },
       "feedback": "This starts: Scale one offer to the other's size."
@@ -286,9 +364,9 @@
       "methods": [
         "common_quantity"
       ],
-      "via": {
+      "inside": {
         "common_quantity": [
-          "common-multiple/recall"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common quantity."
@@ -309,12 +387,12 @@
         "cross_multiply",
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "cross_multiply": [
-          "cross-products/diagonals"
+          "Cross products"
         ],
         "scale_up": [
-          "missing-value/cross_multiply"
+          "Find the missing value in a proportion"
         ]
       },
       "feedback": "This step starts several methods: Cross-multiply, Scale one offer to the other's size.",
@@ -330,9 +408,9 @@
           "methods": [
             "scale_up"
           ],
-          "via": {
+          "inside": {
             "scale_up": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Scale one offer to the other's size."
@@ -348,14 +426,36 @@
           "methods": [
             "cross_multiply"
           ],
-          "via": {
+          "inside": {
             "cross_multiply": [
-              "cross-products/diagonals"
+              "Cross products"
             ]
           },
           "feedback": "This starts: Cross-multiply."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "p2",
+          "q1"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "cross_multiply"
+      ],
+      "inside": {
+        "cross_multiply": [
+          "Cross products"
+        ]
+      },
+      "feedback": "This starts: Cross-multiply."
     },
     {
       "match": {
@@ -372,9 +472,9 @@
       "methods": [
         "common_quantity"
       ],
-      "via": {
+      "inside": {
         "common_quantity": [
-          "common-multiple/product"
+          "Find a common multiple"
         ]
       },
       "feedback": "This starts: Common quantity."
@@ -395,12 +495,12 @@
         "scale_up",
         "units_per_dollar"
       ],
-      "via": {
+      "inside": {
         "scale_up": [
-          "to-decimal/power_of_ten"
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ],
         "units_per_dollar": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
@@ -417,18 +517,40 @@
             "scale_up",
             "units_per_dollar"
           ],
-          "via": {
+          "inside": {
             "scale_up": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "units_per_dollar": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
           "note": "Same first two steps; ask the student what they plan to do next."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "p2"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "units_per_dollar"
+      ],
+      "inside": {
+        "units_per_dollar": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Units per dollar."
     },
     {
       "match": {
@@ -447,16 +569,16 @@
         "price_per_unit",
         "scale_up"
       ],
-      "via": {
+      "inside": {
         "common_quantity": [
-          "common-multiple/list_multiples"
+          "Find a common multiple"
         ],
         "price_per_unit": [
-          "to-decimal/power_of_ten"
+          "Write a fraction as a decimal"
         ],
         "scale_up": [
-          "missing-value/ratio_table",
-          "to-decimal/power_of_ten"
+          "Find the missing value in a proportion",
+          "Find the missing value in a proportion › Write a fraction as a decimal"
         ]
       },
       "feedback": "This step starts several methods: Common quantity, Price per unit, Scale one offer to the other's size.",
@@ -472,9 +594,27 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "missing-value/scale_factor"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(int, q1)",
+              "q2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -490,9 +630,9 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "simplify-fraction/repeated"
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -508,9 +648,45 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p2",
+              "common_factor(p2, q2)"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p2",
+              "q2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -526,9 +702,27 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "to-decimal/divide"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "q2",
+              "p2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -544,9 +738,27 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "simplify-fraction/gcf"
+              "Find the missing value in a proportion › Simplify a fraction"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "p2",
+              "q2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion › Simplify a fraction"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -564,20 +776,38 @@
             "price_per_unit",
             "scale_up"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ],
             "price_per_unit": [
-              "to-decimal/power_of_ten"
+              "Write a fraction as a decimal"
             ],
             "scale_up": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This step starts several methods: Common quantity, Price per unit, Scale one offer to the other's size.",
           "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "p2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
         },
         {
           "match": {
@@ -590,10 +820,29 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "missing-value/ratio_table",
-              "to-decimal/power_of_ten"
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "q2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion",
+              "Find the missing value in a proportion › Write a fraction as a decimal"
             ]
           },
           "feedback": "This starts: Common quantity."
@@ -609,14 +858,54 @@
           "methods": [
             "common_quantity"
           ],
-          "via": {
+          "inside": {
             "common_quantity": [
-              "missing-value/cross_multiply"
+              "Find the missing value in a proportion"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "multiply(int, q1)",
+              "p2"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "inside": {
+            "common_quantity": [
+              "Find the missing value in a proportion"
             ]
           },
           "feedback": "This starts: Common quantity."
         }
       ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "price_per_unit"
+      ],
+      "inside": {
+        "price_per_unit": [
+          "Write a fraction as a decimal"
+        ]
+      },
+      "feedback": "This starts: Price per unit."
     }
   ]
 }

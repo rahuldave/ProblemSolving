@@ -1,115 +1,146 @@
 flowchart LR
   n0(["Offer 1: 6 units for $4.2. Offer 2: 10 units for $7.5. Which is the better buy?"])
   n1(["Answer: first"])
-  n2["Price per unit"]
-  n3["Write 4.2/6 as a decimal → 0.7"]
-  n2 --> n3
-  n4["Write 7.5/10 as a decimal → 0.75"]
+  n2{{"× Which first step?"}}
+  n3["Find the scale factor between the bottoms<br/>10 ÷ 6 ≈ 1.667<br/>[divide · across]<br/>[in: Find the missing value in a proportion]"]
+  n4{{"× Which next step?"}}
+  n5["Scale the top by the same factor<br/>4.2 × 5/3 = 7<br/>[in: Find the missing value in a proportion]"]
+  n6["Same bottom, so compare the tops<br/>7 ＜ 7.5"]
+  n7["Find how much the top grows<br/>7.5 ÷ 4.2 ≈ 1.786"]
+  n8["If the top grows faster, the second fraction is bigger<br/>25/14 ＞ 5/3"]
+  n9["Find how much the top grows<br/>7.5 ÷ 4.2 ≈ 1.786<br/>[divide · across]"]
+  n10["Find how much the bottom grows<br/>10 ÷ 6 ≈ 1.667"]
+  n11["If the top grows faster, the second fraction is bigger<br/>25/14 ＞ 5/3"]
+  n12["Divide the top by the bottom<br/>10 ÷ 7.5 ≈ 1.333<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n13[["Find the first fraction's flipped rate<br/>Write 6/4.2 as a decimal → ≈ 1.429"]]
+  n14["The smaller flipped rate is the bigger fraction<br/>10/7 ＞ 4/3"]
+  n15["Divide the top by the bottom<br/>4.2 ÷ 6 = 0.7<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n16{{"× Which next step?"}}
+  n17["Divide the top by the bottom<br/>7.5 ÷ 10 = 0.75<br/>[in: Write a fraction as a decimal]"]
+  n18["Compare the decimals<br/>0.7 ＜ 0.75"]
+  n19["Scale up to 10<br/>0.7 × 10 = 7<br/>[in: Find the missing value in a proportion]"]
+  n20["Divide the top by the bottom<br/>6 ÷ 4.2 ≈ 1.429<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n21{{"× Which next step?"}}
+  n22["Divide the top by the bottom<br/>10 ÷ 7.5 ≈ 1.333<br/>[in: Write a fraction as a decimal]"]
+  n23["The smaller flipped rate is the bigger fraction<br/>10/7 ＞ 4/3"]
+  n24["Divide by that rate<br/>10 ÷ 10/7 = 7<br/>[in: Find the missing value in a proportion]"]
+  n25["Divide the top by the bottom<br/>7.5 ÷ 10 = 0.75<br/>[divide · within]<br/>[in: Write a fraction as a decimal]"]
+  n26[["Write the first fraction as a decimal<br/>Write 4.2/6 as a decimal → 0.7"]]
+  n27["Compare the decimals<br/>0.7 ＜ 0.75"]
+  n28["Find the greatest common factor<br/>GCF(6, 10) = 2<br/>[factor · across]<br/>[in: Find a common multiple]"]
+  n29["Divide one number by the GCF<br/>6 ÷ 2 = 3<br/>[in: Find a common multiple]"]
+  n30["Multiply by the other number<br/>3 × 10 = 30<br/>[in: Find a common multiple]"]
+  n31{"all"}
+  n32{"all"}
+  n33[["Rewrite the first fraction over 30<br/>Solve 4.2/6 = x/30 → 21"]]
+  n34[["Rewrite the second fraction over 30<br/>Solve 7.5/10 = x/30 → 22.5"]]
+  n35["Same bottom, so compare the tops<br/>21 ＜ 22.5"]
+  n36["Recall the least common multiple<br/>LCM(6, 10) = 30<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+  n37{"all"}
+  n38{"all"}
+  n39[["Rewrite the first fraction over 30<br/>Solve 4.2/6 = x/30 → 21"]]
+  n40[["Rewrite the second fraction over 30<br/>Solve 7.5/10 = x/30 → 22.5"]]
+  n41["Same bottom, so compare the tops<br/>21 ＜ 22.5"]
+  n42["Multiply across the diagonal<br/>4.2 × 10 = 42<br/>[multiply · across]<br/>[in: Find the missing value in a proportion]"]
+  n43{{"× Which next step?"}}
+  n44["Divide by the remaining number<br/>42 ÷ 6 = 7<br/>[in: Find the missing value in a proportion]"]
+  n45["Multiply the second top by the first bottom<br/>7.5 × 6 = 45<br/>[in: Cross products]"]
+  n46["The bigger product sits with the bigger fraction<br/>42 ＜ 45"]
+  n47["Multiply the two numbers<br/>6 × 10 = 60<br/>[multiply · across]<br/>[in: Find a common multiple]"]
+  n48{"all"}
+  n49{"all"}
+  n50[["Rewrite the first fraction over 60<br/>Solve 4.2/6 = x/60 → 42"]]
+  n51[["Rewrite the second fraction over 60<br/>Solve 7.5/10 = x/60 → 45"]]
+  n52["Same bottom, so compare the tops<br/>42 ＜ 45"]
+  n53["Multiply the second top by the first bottom<br/>7.5 × 6 = 45<br/>[multiply · across]<br/>[in: Cross products]"]
+  n54["Multiply the first top by the second bottom<br/>4.2 × 10 = 42<br/>[in: Cross products]"]
+  n55["The bigger product sits with the bigger fraction<br/>42 ＜ 45"]
+  n56["List multiples of 6 until 10 divides one<br/>6 × 5 = 30<br/>[multiply · within]<br/>[in: Find a common multiple]"]
+  n0 --> n2
+  n2 -->|"Compare growth or Scale one offer to the other's size"| n3
   n3 --> n4
-  n5["0.7 #lt; 0.75"]
-  n4 --> n5
-  n5 --> n1
-  n6["Units per dollar"]
-  n7["Write 6/4.2 as a decimal → ≈ 1.429"]
-  n6 --> n7
-  n8["Write 10/7.5 as a decimal → ≈ 1.333"]
+  n4 -->|"Scale one offer to the other's size"| n5
+  n6 --> n1
+  n5 --> n6
+  n4 -->|"Compare growth"| n7
+  n8 --> n1
   n7 --> n8
-  n9["10/7 #gt; 4/3"]
-  n8 --> n9
-  n9 --> n1
-  n10["Common quantity"]
-  n11["Find a common multiple of 6 and 10 → 30"]
+  n2 -->|"Compare growth"| n9
   n10 --> n11
-  n12["Solve 4.2/6 = x/30 → 21"]
-  n11 --> n12
-  n13["Solve 7.5/10 = x/30 → 22.5"]
-  n12 --> n13
-  n14["21 #lt; 22.5"]
+  n11 --> n1
+  n9 --> n10
+  n2 -->|"Units per dollar"| n12
   n13 --> n14
   n14 --> n1
-  n15["Scale one offer to the other's size"]
-  n16["Solve 4.2/6 = x/10 → 7"]
+  n12 --> n13
+  n2 -->|"Price per unit or Scale one offer to the other's size"| n15
   n15 --> n16
-  n17["7 #lt; 7.5"]
-  n16 --> n17
-  n17 --> n1
-  n18["Cross-multiply"]
-  n19["Find the cross products of 4.2/6 and 7.5/10 → 42/45"]
-  n18 --> n19
-  n20["42 #lt; 45"]
-  n19 --> n20
-  n20 --> n1
-  n21["Compare growth"]
-  n22["7.5 ÷ 4.2 ≈ 1.786"]
-  n21 --> n22
-  n23["10 ÷ 6 ≈ 1.667"]
+  n16 -->|"Price per unit"| n17
+  n18 --> n1
+  n17 --> n18
+  n16 -->|"Scale one offer to the other's size"| n19
+  n19 --> n6
+  n2 -->|"Scale one offer to the other's size or Units per dollar"| n20
+  n20 --> n21
+  n21 -->|"Units per dollar"| n22
+  n23 --> n1
   n22 --> n23
-  n24["25/14 #gt; 5/3"]
-  n23 --> n24
-  n24 --> n1
-  n25["10 ÷ 6 ≈ 1.667"]
-  n26{{"divide · across"}}
-  n0 --> n26
-  n26 --> n25
-  n25 -->|"missing-value/scale_factor"| n15
-  n27["7.5 ÷ 4.2 ≈ 1.786"]
+  n21 -->|"Scale one offer to the other's size"| n24
+  n24 --> n6
+  n2 -->|"Price per unit"| n25
   n26 --> n27
-  n27 --> n21
-  n28["4.2 ÷ 6 = 0.7"]
-  n29{{"divide · within"}}
-  n0 --> n29
-  n29 --> n28
-  n30["then 7.5 ÷ 10 = 0.75"]
-  n28 --> n30
-  n30 -->|"to-decimal/divide / to-decimal/power_of_ten"| n2
-  n31["then 0.7 × 10 = 7"]
-  n28 --> n31
-  n31 -->|"missing-value/unit_rate"| n15
-  n32["6 ÷ 4.2 ≈ 1.429"]
-  n29 --> n32
-  n33["then 10 ÷ 7.5 ≈ 1.333"]
-  n32 --> n33
-  n33 -->|"to-decimal/divide"| n6
-  n34["then 10 ÷ 10/7 = 7"]
-  n32 --> n34
-  n34 -->|"missing-value/inverse_rate"| n15
-  n35["GCF(6, 10) = 2"]
-  n36{{"factor · across"}}
-  n0 --> n36
-  n36 --> n35
-  n35 -->|"common-multiple/gcf_formula"| n10
-  n37["4.2 × 10 = 42"]
-  n38{{"multiply · across"}}
-  n0 --> n38
-  n38 --> n37
-  n39["then 42 ÷ 6 = 7"]
+  n27 --> n1
+  n25 --> n26
+  n2 -->|"Common quantity"| n28
+  n29 --> n30
+  n31 --> n33
+  n33 --> n32
+  n31 --> n34
+  n34 --> n32
+  n30 --> n31
+  n32 --> n35
+  n35 --> n1
+  n28 --> n29
+  n2 -->|"Common quantity"| n36
   n37 --> n39
-  n39 -->|"missing-value/cross_multiply"| n15
-  n40["then 7.5 × 6 = 45"]
+  n39 --> n38
   n37 --> n40
-  n40 -->|"cross-products/diagonals"| n18
-  n41["6 × 10 = 60"]
+  n40 --> n38
   n38 --> n41
-  n41 -->|"common-multiple/product"| n10
-  n42["LCM(6, 10) = 30"]
-  n38 --> n42
-  n42 -->|"common-multiple/recall"| n10
-  n43["6 × 5 = 30"]
-  n44{{"multiply · within"}}
-  n0 --> n44
-  n44 --> n43
-  n43 -->|"common-multiple/list_multiples"| n10
-  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
-  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
-  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
-  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
-  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
-  classDef step fill:#ffffff,stroke:#999,color:#222
-  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
-  class n26,n29,n36,n38,n44 cls
-  class n25,n27,n28,n32,n35,n37,n41,n42,n43 first
-  class n30,n31,n33,n34,n39,n40 second
-  class n2,n6,n10,n15,n18,n21 method
-  class n3,n4,n7,n8,n11,n12,n13,n16,n19 skill
-  class n5,n9,n14,n17,n20,n22,n23,n24 step
-  class n0,n1 ans
+  n41 --> n1
+  n36 --> n37
+  n2 -->|"Cross-multiply or Scale one offer to the other's size"| n42
+  n42 --> n43
+  n43 -->|"Scale one offer to the other's size"| n44
+  n44 --> n6
+  n43 -->|"Cross-multiply"| n45
+  n46 --> n1
+  n45 --> n46
+  n2 -->|"Common quantity"| n47
+  n48 --> n50
+  n50 --> n49
+  n48 --> n51
+  n51 --> n49
+  n49 --> n52
+  n52 --> n1
+  n47 --> n48
+  n2 -->|"Cross-multiply"| n53
+  n54 --> n55
+  n55 --> n1
+  n53 --> n54
+  n2 -->|"Common quantity"| n56
+  n56 --> n37
+  classDef k_all fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef k_call fill:#e3f4e6,stroke:#3f9a55,color:#222
+  classDef k_choice fill:#fff1cc,stroke:#c99a1a,color:#222
+  classDef k_end fill:#d4f0da,stroke:#2f8a45,color:#222,font-weight:bold
+  classDef k_first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef k_start fill:#fde4e1,stroke:#c4554a,color:#222
+  classDef k_step fill:#ffffff,stroke:#7a8599,color:#222
+  class n31,n32,n37,n38,n48,n49 k_all
+  class n13,n26,n33,n34,n39,n40,n50,n51 k_call
+  class n2,n4,n16,n21,n43 k_choice
+  class n1 k_end
+  class n3,n9,n12,n15,n20,n25,n28,n36,n42,n47,n53,n56 k_first
+  class n0 k_start
+  class n5,n6,n7,n8,n10,n11,n14,n17,n18,n19,n22,n23,n24,n27,n29,n30,n35,n41,n44,n45,n46,n52,n54,n55 k_step
