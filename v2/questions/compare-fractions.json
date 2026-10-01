@@ -1,0 +1,131 @@
+{
+  "id": "compare-fractions",
+  "kind": "core",
+  "title": "Compare two fractions",
+  "prompt": "Which is larger: {a}/{b} or {c}/{d}? (Or are they equal?)",
+  "inputs": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
+  "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
+  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+  "outputs": ["answer"],
+  "default_method": "cross_multiply",
+  "examples": [
+    { "id": "3/4 vs 5/7", "values": { "a": 3, "b": 4, "c": 5, "d": 7 }, "answer": "first" },
+    { "id": "3/8 vs 2/5", "values": { "a": 3, "b": 8, "c": 2, "d": 5 }, "answer": "second" }
+  ],
+  "methods": {
+    "cross_multiply": {
+      "name": "Cross-multiply",
+      "idea": "{a}/{b} > {c}/{d} exactly when {a}×{d} > {c}×{b}.",
+      "best_when": "A quick check with small numbers.",
+      "steps": [
+        { "op": "use", "question": "cross-products", "with": { "a": "a", "b": "b", "c": "c", "d": "d" }, "out": { "p1": "p1", "p2": "p2" } },
+        { "op": "compare", "args": ["p1", "p2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "The bigger product is on the side of the bigger fraction." }
+      ]
+    },
+    "common_denominator": {
+      "name": "Common denominator",
+      "idea": "Rewrite both fractions over the same denominator, then compare numerators.",
+      "best_when": "The denominators are small or related.",
+      "steps": [
+        { "op": "use", "question": "common-multiple", "with": { "x": "b", "y": "d" }, "out": { "answer": "L" }, "text": "Common denominator: {L}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "L" }, "out": { "answer": "n1" }, "text": "{a}/{b} = {n1}/{L}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "c", "b": "d", "d": "L" }, "out": { "answer": "n2" }, "text": "{c}/{d} = {n2}/{L}" },
+        { "op": "compare", "args": ["n1", "n2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Same denominator, so compare numerators." }
+      ]
+    },
+    "match_denominator": {
+      "name": "Rewrite one fraction over the other's denominator",
+      "idea": "Turn {a}/{b} into something over {d}, then compare numerators with {c}.",
+      "best_when": "{d} is a multiple of {b}.",
+      "steps": [
+        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "d" }, "out": { "answer": "n1" }, "text": "{a}/{b} = {n1}/{d}" },
+        { "op": "compare", "args": ["n1", "c"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Compare {n1} with {c}." }
+      ]
+    },
+    "common_numerator": {
+      "name": "Common numerator",
+      "idea": "With equal numerators, the smaller denominator gives the bigger fraction.",
+      "best_when": "The numerators are smaller or simpler than the denominators.",
+      "steps": [
+        { "op": "use", "question": "common-multiple", "with": { "x": "a", "y": "c" }, "out": { "answer": "N" }, "text": "Common numerator: {N}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "b", "b": "a", "d": "N" }, "out": { "answer": "e1" }, "text": "{a}/{b} = {N}/{e1}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "d", "b": "c", "d": "N" }, "out": { "answer": "e2" }, "text": "{c}/{d} = {N}/{e2}" },
+        { "op": "compare", "args": ["e1", "e2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "Same numerator, so the smaller denominator wins." }
+      ]
+    },
+    "decimal": {
+      "name": "Convert to decimals",
+      "idea": "Write each fraction as a decimal and compare.",
+      "best_when": "A calculator is allowed.",
+      "steps": [
+        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "q1" } },
+        { "op": "use", "question": "to-decimal", "with": { "x": "c", "y": "d" }, "out": { "answer": "q2" } },
+        { "op": "compare", "args": ["q1", "q2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" } }
+      ]
+    },
+    "unit_rate": {
+      "name": "Compare unit rates (flipped fractions)",
+      "idea": "How much bottom per 1 of top? The bigger rate belongs to the smaller fraction.",
+      "best_when": "The context is a rate (miles per hour, items per dollar).",
+      "steps": [
+        { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r1" } },
+        { "op": "use", "question": "to-decimal", "with": { "x": "d", "y": "c" }, "out": { "answer": "r2" } },
+        { "op": "compare", "args": ["r1", "r2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" } }
+      ]
+    },
+    "scale_factor": {
+      "name": "Compare scale factors",
+      "idea": "How much do the tops grow ({c} ÷ {a}) compared with the bottoms ({d} ÷ {b})?",
+      "best_when": "One fraction looks like a scaled-up version of the other.",
+      "steps": [
+        { "op": "divide", "args": ["c", "a"], "out": "k1", "text": "{c} ÷ {a} = {k1}" },
+        { "op": "divide", "args": ["d", "b"], "out": "k2", "text": "{d} ÷ {b} = {k2}" },
+        { "op": "compare", "args": ["k1", "k2"], "out": "answer", "meaning": { ">": "second", "<": "first", "=": "equal" }, "text": "If the tops grow faster, the second fraction is bigger." }
+      ]
+    },
+    "ratio_table": {
+      "name": "Ratio table",
+      "idea": "Scale {a}:{b} by 2, 3, 4, … until the top reaches {c}, then compare bottoms.",
+      "best_when": "{c} is a small whole-number multiple of {a}.",
+      "steps": [
+        { "op": "multiply", "args": ["a", "k"], "out": "ak", "search": { "var": "k", "until": ["ak", "c"] }, "text": "{a} × {k} = {ak}" },
+        { "op": "multiply", "args": ["b", "k"], "out": "bk", "text": "{b} × {k} = {bk}" },
+        { "op": "compare", "args": ["bk", "d"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "Same top; the smaller bottom is the bigger fraction." }
+      ]
+    },
+    "graph": {
+      "name": "Graph the points",
+      "idea": "Plot ({a}, {b}) and ({c}, {d}); the steeper line from the origin belongs to the smaller fraction.",
+      "best_when": "Building intuition.",
+      "steps": [
+        { "op": "plot", "args": [["a", "b"], ["c", "d"]], "text": "Plot ({a}, {b}) and ({c}, {d})." },
+        { "op": "divide", "args": ["b", "a"], "out": "s1", "text": "Slope {b} ÷ {a} = {s1}" },
+        { "op": "divide", "args": ["d", "c"], "out": "s2", "text": "Slope {d} ÷ {c} = {s2}" },
+        { "op": "compare", "args": ["s1", "s2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" } }
+      ]
+    },
+    "simplify": {
+      "name": "Simplify both",
+      "idea": "Reduce both fractions to lowest terms; equal fractions reduce to the same thing.",
+      "best_when": "Checking equality (proportions).",
+      "decides": "equality_only",
+      "steps": [
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" } },
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "c", "y": "d" }, "out": { "x1": "c1", "y1": "d1" } },
+        { "op": "compare", "args": [["a1", "b1"], ["c1", "d1"]], "out": "answer", "meaning": { "=": "equal", "≠": "not equal" } }
+      ]
+    },
+    "distance_from_one": {
+      "name": "Distance from 1",
+      "idea": "Find how far each fraction is from 1; the one closer to 1 is bigger.",
+      "best_when": "Both fractions are just below 1 (7/8 vs 9/10).",
+      "watch_out": "Comparing the gaps is a smaller compare-fractions question.",
+      "steps": [
+        { "op": "subtract", "args": ["b", "a"], "out": "r1", "text": "{a}/{b} is {r1}/{b} away from 1." },
+        { "op": "subtract", "args": ["d", "c"], "out": "r2", "text": "{c}/{d} is {r2}/{d} away from 1." },
+        { "op": "use", "question": "compare-fractions", "with": { "a": "r1", "b": "b", "c": "r2", "d": "d" }, "out": { "answer": "gap" }, "text": "Compare the gaps {r1}/{b} and {r2}/{d}." },
+        { "op": "map", "args": ["gap"], "out": "answer", "table": { "first": "second", "second": "first", "equal": "equal", "not equal": "not equal" }, "hidden": true }
+      ]
+    }
+  }
+}

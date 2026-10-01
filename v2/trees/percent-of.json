@@ -1,0 +1,186 @@
+{
+  "question": "percent-of",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "n",
+          "10"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "benchmark_10_5"
+      ],
+      "feedback": "This starts: Build from 10% and 5%."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "n",
+          "100"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "one_percent"
+      ],
+      "feedback": "This starts: Find 1% first."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p",
+          "100"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "via": {
+        "decimal": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This starts: Convert to a decimal and multiply."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p",
+          "common_factor(p, 100)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "fraction"
+      ],
+      "via": {
+        "fraction": [
+          "simplify-fraction/repeated"
+        ]
+      },
+      "feedback": "This starts: Use a simplified fraction."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "100",
+          "p"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "fraction"
+      ],
+      "via": {
+        "fraction": [
+          "simplify-fraction/gcf"
+        ]
+      },
+      "feedback": "This starts: Use a simplified fraction."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "n",
+          "p"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "multiply_first"
+      ],
+      "feedback": "This starts: Multiply, then divide by 100."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "100",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal",
+        "ratio_table"
+      ],
+      "via": {
+        "decimal": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Convert to a decimal and multiply, Ratio table.",
+      "next": [
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "p"
+            ]
+          },
+          "methods": [
+            "decimal",
+            "ratio_table"
+          ],
+          "via": {
+            "decimal": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Convert to a decimal and multiply, Ratio table.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "divide(p, 100)",
+          "n"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "mental": true,
+      "feedback": "The student did the conversion in their head first."
+    }
+  ]
+}

@@ -1,0 +1,622 @@
+{
+  "question": "better-buy",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p2",
+          "p1"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "across"
+      },
+      "methods": [
+        "compare_growth"
+      ],
+      "feedback": "This starts: Compare growth."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "q2",
+          "q1"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "across"
+      },
+      "methods": [
+        "scale_up"
+      ],
+      "via": {
+        "scale_up": [
+          "missing-value/scale_factor"
+        ]
+      },
+      "feedback": "This starts: Scale one offer to the other's size."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p1",
+          "q1"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "price_per_unit",
+        "scale_up"
+      ],
+      "via": {
+        "price_per_unit": [
+          "to-decimal/divide"
+        ],
+        "scale_up": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This step starts several methods: Price per unit, Scale one offer to the other's size.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p2",
+              "q2"
+            ]
+          },
+          "methods": [
+            "price_per_unit"
+          ],
+          "via": {
+            "price_per_unit": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Price per unit."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "divide(p1, q1)",
+              "q2"
+            ]
+          },
+          "methods": [
+            "scale_up"
+          ],
+          "via": {
+            "scale_up": [
+              "missing-value/unit_rate"
+            ]
+          },
+          "feedback": "This starts: Scale one offer to the other's size."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "q2"
+            ]
+          },
+          "methods": [
+            "price_per_unit"
+          ],
+          "via": {
+            "price_per_unit": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Price per unit."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "q1",
+          "p1"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "scale_up",
+        "units_per_dollar"
+      ],
+      "via": {
+        "scale_up": [
+          "to-decimal/divide"
+        ],
+        "units_per_dollar": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "q2",
+              "divide(q1, p1)"
+            ]
+          },
+          "methods": [
+            "scale_up"
+          ],
+          "via": {
+            "scale_up": [
+              "missing-value/inverse_rate"
+            ]
+          },
+          "feedback": "This starts: Scale one offer to the other's size."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "q2",
+              "p2"
+            ]
+          },
+          "methods": [
+            "units_per_dollar"
+          ],
+          "via": {
+            "units_per_dollar": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Units per dollar."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "p2"
+            ]
+          },
+          "methods": [
+            "units_per_dollar"
+          ],
+          "via": {
+            "units_per_dollar": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Units per dollar."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "q1",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "across"
+      },
+      "methods": [
+        "common_quantity"
+      ],
+      "via": {
+        "common_quantity": [
+          "common-multiple/gcf_formula"
+        ]
+      },
+      "feedback": "This starts: Common quantity."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "p1",
+          "common_factor(p1, q1)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "scale_up"
+      ],
+      "via": {
+        "scale_up": [
+          "simplify-fraction/repeated"
+        ]
+      },
+      "feedback": "This starts: Scale one offer to the other's size."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "p1",
+          "q1"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "scale_up"
+      ],
+      "via": {
+        "scale_up": [
+          "simplify-fraction/gcf"
+        ]
+      },
+      "feedback": "This starts: Scale one offer to the other's size."
+    },
+    {
+      "match": {
+        "op": "lcm",
+        "args": [
+          "q1",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_quantity"
+      ],
+      "via": {
+        "common_quantity": [
+          "common-multiple/recall"
+        ]
+      },
+      "feedback": "This starts: Common quantity."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "p1",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "cross_multiply",
+        "scale_up"
+      ],
+      "via": {
+        "cross_multiply": [
+          "cross-products/diagonals"
+        ],
+        "scale_up": [
+          "missing-value/cross_multiply"
+        ]
+      },
+      "feedback": "This step starts several methods: Cross-multiply, Scale one offer to the other's size.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(p1, q2)",
+              "q1"
+            ]
+          },
+          "methods": [
+            "scale_up"
+          ],
+          "via": {
+            "scale_up": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Scale one offer to the other's size."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "p2",
+              "q1"
+            ]
+          },
+          "methods": [
+            "cross_multiply"
+          ],
+          "via": {
+            "cross_multiply": [
+              "cross-products/diagonals"
+            ]
+          },
+          "feedback": "This starts: Cross-multiply."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "q1",
+          "q2"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_quantity"
+      ],
+      "via": {
+        "common_quantity": [
+          "common-multiple/product"
+        ]
+      },
+      "feedback": "This starts: Common quantity."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "p1"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "scale_up",
+        "units_per_dollar"
+      ],
+      "via": {
+        "scale_up": [
+          "to-decimal/power_of_ten"
+        ],
+        "units_per_dollar": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
+      "next": [
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "q1"
+            ]
+          },
+          "methods": [
+            "scale_up",
+            "units_per_dollar"
+          ],
+          "via": {
+            "scale_up": [
+              "to-decimal/power_of_ten"
+            ],
+            "units_per_dollar": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Scale one offer to the other's size, Units per dollar.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "q1"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "common_quantity",
+        "price_per_unit",
+        "scale_up"
+      ],
+      "via": {
+        "common_quantity": [
+          "common-multiple/list_multiples"
+        ],
+        "price_per_unit": [
+          "to-decimal/power_of_ten"
+        ],
+        "scale_up": [
+          "missing-value/ratio_table",
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Common quantity, Price per unit, Scale one offer to the other's size.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(int, q1)",
+              "q1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "missing-value/scale_factor"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p1",
+              "common_factor(p1, q1)"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "simplify-fraction/repeated"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "p1",
+              "q1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "q1",
+              "p1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "p1",
+              "q1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "simplify-fraction/gcf"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "p1"
+            ]
+          },
+          "methods": [
+            "common_quantity",
+            "price_per_unit",
+            "scale_up"
+          ],
+          "via": {
+            "common_quantity": [
+              "to-decimal/power_of_ten"
+            ],
+            "price_per_unit": [
+              "to-decimal/power_of_ten"
+            ],
+            "scale_up": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Common quantity, Price per unit, Scale one offer to the other's size.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "int",
+              "q1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "multiply(int, q1)",
+              "p1"
+            ]
+          },
+          "methods": [
+            "common_quantity"
+          ],
+          "via": {
+            "common_quantity": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Common quantity."
+        }
+      ]
+    }
+  ]
+}

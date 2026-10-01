@@ -1,0 +1,44 @@
+{
+  "id": "simplify-fraction",
+  "kind": "skill",
+  "title": "Simplify a fraction",
+  "prompt": "Simplify {x}/{y}.",
+  "inputs": { "x": "numerator (or first term of a ratio)", "y": "denominator (or second term)" },
+  "quantities": { "fraction": ["x", "y"] },
+  "symmetries": [],
+  "outputs": ["x1", "y1"],
+  "default_method": "gcf",
+  "examples": [
+    { "id": "6/8", "values": { "x": 6, "y": 8 }, "answer": { "x1": 3, "y1": 4 } },
+    { "id": "72/96", "values": { "x": 72, "y": 96 }, "answer": { "x1": 3, "y1": 4 } }
+  ],
+  "methods": {
+    "gcf": {
+      "name": "Divide by the GCF",
+      "idea": "Find the greatest common factor once and divide both terms by it.",
+      "best_when": "You can spot the GCF.",
+      "steps": [
+        { "op": "gcf", "args": ["x", "y"], "out": "g", "text": "GCF({x}, {y}) = {g}" },
+        { "op": "divide", "args": ["x", "g"], "out": "x1", "text": "{x} ÷ {g} = {x1}" },
+        { "op": "divide", "args": ["y", "g"], "out": "y1", "text": "{y} ÷ {g} = {y1}" }
+      ]
+    },
+    "repeated": {
+      "name": "Divide out common factors repeatedly",
+      "idea": "Keep dividing both terms by any shared factor (2, 3, 5, …) until none is left.",
+      "best_when": "The numbers are large and the GCF isn't obvious.",
+      "steps": [
+        {
+          "op": "repeat",
+          "init": { "x1": "x", "y1": "y" },
+          "choose": { "var": "f", "any": "common_factor", "of": ["x1", "y1"] },
+          "steps": [
+            { "op": "divide", "args": ["x1", "f"], "out": "x1", "text": "Divide the first term by {f}." },
+            { "op": "divide", "args": ["y1", "f"], "out": "y1", "text": "Divide the second term by {f}." }
+          ],
+          "text": "Divide both terms by a common factor; repeat until none is left."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "cross-products",
+  "kind": "skill",
+  "title": "Cross products",
+  "prompt": "Find the cross products of {a}/{b} and {c}/{d}.",
+  "inputs": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
+  "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
+  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+  "outputs": ["p1", "p2"],
+  "default_method": "diagonals",
+  "examples": [
+    { "id": "3/4 and 5/7", "values": { "a": 3, "b": 4, "c": 5, "d": 7 }, "answer": { "p1": 21, "p2": 20 } },
+    { "id": "6/8 and 72/96", "values": { "a": 6, "b": 8, "c": 72, "d": 96 }, "answer": { "p1": 576, "p2": 576 } }
+  ],
+  "methods": {
+    "diagonals": {
+      "name": "Multiply the diagonals",
+      "idea": "Multiply each numerator by the other fraction's denominator.",
+      "steps": [
+        { "op": "multiply", "args": ["a", "d"], "out": "p1", "text": "{a} × {d} = {p1}" },
+        { "op": "multiply", "args": ["c", "b"], "out": "p2", "text": "{c} × {b} = {p2}" }
+      ]
+    }
+  }
+}

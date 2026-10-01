@@ -1,0 +1,73 @@
+{
+  "id": "missing-value",
+  "kind": "core",
+  "title": "Find the missing value in a proportion",
+  "prompt": "Solve {a}/{b} = x/{d}.",
+  "inputs": { "a": "known numerator", "b": "known denominator", "d": "denominator next to x" },
+  "quantities": { "known_ratio": ["a", "b"], "unknown_ratio": ["d"] },
+  "symmetries": [],
+  "outputs": ["answer"],
+  "default_method": "cross_multiply",
+  "examples": [
+    { "id": "3/5 = x/40", "values": { "a": 3, "b": 5, "d": 40 }, "answer": 24 },
+    { "id": "4/6 = x/15", "values": { "a": 4, "b": 6, "d": 15 }, "answer": 10 }
+  ],
+  "methods": {
+    "cross_multiply": {
+      "name": "Cross-multiply and divide",
+      "idea": "{a} × {d} = {b} × x, so x = {a} × {d} ÷ {b}.",
+      "best_when": "Always works; most useful when there's no whole-number scale factor.",
+      "steps": [
+        { "op": "multiply", "args": ["a", "d"], "out": "p", "text": "{a} × {d} = {p}" },
+        { "op": "divide", "args": ["p", "b"], "out": "answer", "text": "x = {p} ÷ {b} = {answer}" }
+      ]
+    },
+    "scale_factor": {
+      "name": "Scale factor",
+      "idea": "Find what turns {b} into {d}, then do the same to {a}.",
+      "best_when": "{d} is a whole-number multiple of {b}.",
+      "steps": [
+        { "op": "divide", "args": ["d", "b"], "out": "k", "text": "{d} ÷ {b} = {k}" },
+        { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+      ]
+    },
+    "unit_rate": {
+      "name": "Unit rate",
+      "idea": "Find the value per 1, then scale up to {d}.",
+      "best_when": "{a}/{b} is a friendly decimal.",
+      "steps": [
+        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "r" }, "text": "{a} ÷ {b} = {r} per 1" },
+        { "op": "multiply", "args": ["r", "d"], "out": "answer", "text": "x = {r} × {d} = {answer}" }
+      ]
+    },
+    "inverse_rate": {
+      "name": "Inverse rate",
+      "idea": "Find how many of the second quantity per 1 of the first, then divide.",
+      "best_when": "{b}/{a} is a friendly number.",
+      "steps": [
+        { "op": "use", "question": "to-decimal", "with": { "x": "b", "y": "a" }, "out": { "answer": "r" }, "text": "{b} ÷ {a} = {r}" },
+        { "op": "divide", "args": ["d", "r"], "out": "answer", "text": "x = {d} ÷ {r} = {answer}" }
+      ]
+    },
+    "ratio_table": {
+      "name": "Ratio table",
+      "idea": "Build {a}:{b} up by ×2, ×3, … until the second term reaches {d}.",
+      "best_when": "{d} is a small whole-number multiple of {b}.",
+      "watch_out": "If no whole-number multiple of {b} reaches {d}, simplify {a}/{b} first.",
+      "steps": [
+        { "op": "multiply", "args": ["b", "k"], "out": "bk", "search": { "var": "k", "until": ["bk", "d"] }, "text": "{b} × {k} = {bk}" },
+        { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+      ]
+    },
+    "simplify_then_scale": {
+      "name": "Simplify, then scale",
+      "idea": "Reduce {a}/{b} first so a whole-number scale factor appears.",
+      "best_when": "{a}/{b} isn't in lowest terms.",
+      "steps": [
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "a", "y": "b" }, "out": { "x1": "a1", "y1": "b1" }, "text": "{a}/{b} = {a1}/{b1}" },
+        { "op": "divide", "args": ["d", "b1"], "out": "k", "text": "{d} ÷ {b1} = {k}" },
+        { "op": "multiply", "args": ["a1", "k"], "out": "answer", "text": "x = {a1} × {k} = {answer}" }
+      ]
+    }
+  }
+}

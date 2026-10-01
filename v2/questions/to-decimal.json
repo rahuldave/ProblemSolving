@@ -1,0 +1,37 @@
+{
+  "id": "to-decimal",
+  "kind": "skill",
+  "title": "Write a fraction as a decimal",
+  "prompt": "Write {x}/{y} as a decimal.",
+  "inputs": { "x": "numerator", "y": "denominator" },
+  "quantities": { "fraction": ["x", "y"] },
+  "symmetries": [],
+  "outputs": ["answer"],
+  "default_method": "divide",
+  "output_format": "decimal",
+  "examples": [
+    { "id": "3/4", "values": { "x": 3, "y": 4 }, "answer": "0.75" },
+    { "id": "5/8", "values": { "x": 5, "y": 8 }, "answer": "0.625" }
+  ],
+  "methods": {
+    "divide": {
+      "name": "Divide",
+      "idea": "Divide the numerator by the denominator (long division or a calculator).",
+      "best_when": "Always works.",
+      "steps": [
+        { "op": "divide", "args": ["x", "y"], "out": "answer", "text": "{x} ÷ {y} = {answer}" }
+      ]
+    },
+    "power_of_ten": {
+      "name": "Scale to 10, 100, 1000",
+      "idea": "Multiply top and bottom so the denominator becomes 10, 100, or 1000, then read off the decimal.",
+      "best_when": "The denominator only has factors 2 and 5 (2, 4, 5, 8, 20, 25, …).",
+      "watch_out": "Impossible when the denominator has another prime factor (3, 7, …).",
+      "steps": [
+        { "op": "multiply", "args": ["y", "k"], "out": "yk", "search": { "var": "k", "until_power_of_ten": "yk" }, "text": "{y} × {k} = {yk}" },
+        { "op": "multiply", "args": ["x", "k"], "out": "xk", "text": "{x} × {k} = {xk}" },
+        { "op": "divide", "args": ["xk", "yk"], "out": "answer", "text": "{xk}/{yk} = {answer}" }
+      ]
+    }
+  }
+}

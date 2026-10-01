@@ -1,0 +1,566 @@
+{
+  "schema_version": "1.0",
+  "description": "Solution methods for arithmetic problem types, classified by the first step a student takes (and by the second step when several methods share a first step). Intended to drive an app that recognizes a student's method from what they write first and gives method-specific help.",
+
+  "classification": {
+    "levels": [
+      { "key": "operation", "question": "What does the first step do?", "values": ["divide", "multiply", "factor", "subtract", "represent"] },
+      { "key": "scope", "question": "Which numbers does it use?", "values": ["within", "across"] },
+      { "key": "operands", "question": "Which exact numbers, in which order?", "values": "see each first_steps[].match" }
+    ],
+    "tie_break": "When several methods share a first step, the node lists all of them and its `next` array tells them apart by the second step. If no step tells them apart, the node keeps several methods and a `note` explains why."
+  },
+
+  "vocabulary": {
+    "operations": {
+      "add":       { "arity": 2, "commutative": true },
+      "subtract":  { "arity": 2, "commutative": false },
+      "multiply":  { "arity": 2, "commutative": true },
+      "divide":    { "arity": 2, "commutative": false, "note": "Also covers writing a fraction such as 15/100." },
+      "gcf":       { "arity": 2, "commutative": true, "note": "Greatest common factor." },
+      "lcm":       { "arity": 2, "commutative": true, "note": "Least common multiple; listing multiples counts too." },
+      "floor_div": { "arity": 2, "commutative": false, "note": "Bookkeeping only (hidden)." },
+      "mod":       { "arity": 2, "commutative": false, "note": "Bookkeeping only (hidden)." },
+      "plot":      { "arity": "n", "commutative": true, "note": "Plot points; args are [x, y] pairs. Produces no number." },
+      "compare":   { "arity": 2, "commutative": false, "note": "Args are two values or two [x, y] pairs. Its output is the meaning[] entry for the relation found ('=', '<', '>'; '≠' is a fallback for '<' or '>')." }
+    },
+    "scopes": {
+      "within": "Uses numbers from only one quantity (one ratio, one fraction, one offer), or one quantity plus a constant.",
+      "across": "Pairs numbers from different quantities."
+    },
+    "step_fields": {
+      "op": "operation name",
+      "args": "variable names, outputs of earlier steps, numeric literals, or (in matches only) wildcards",
+      "out": "name for the result, usable by later steps",
+      "text": "student-facing template; {name} is replaced with the value",
+      "hidden": "true for bookkeeping steps a student would not write",
+      "search": "trial-and-error step: {var, until:[out, target]}; var takes values 1, 2, 3, … until out equals target",
+      "meaning": "compare steps only: relation → answer"
+    },
+    "wildcards": {
+      "{\"any\": \"integer\"}": "any whole number the student chose (e.g. building a table by ×2, ×3)",
+      "{\"any\": \"common_factor\", \"of\": [x, y]}": "any number > 1 that divides both x and y"
+    },
+    "matching_rules": [
+      "1. Parse the student's step into (op, numbers, result).",
+      "2. Map each number to a name: problem variables first, then the problem's `derived` values, then outputs of the student's earlier matched steps, then literals.",
+      "3. Try first_steps nodes with exact names before nodes with wildcards.",
+      "4. Ignore argument order for commutative operations.",
+      "5. Also try each mapping listed in the problem's `symmetries` (e.g. the student starts with the second ratio).",
+      "6. If the matched node lists several methods and has `next`, classify the student's following step against `next`."
+    ]
+  },
+
+  "problem_types": [
+    {
+      "id": "proportion-check",
+      "title": "Are two ratios proportional?",
+      "prompt": "Are {a}:{b} and {c}:{d} proportional?",
+      "variables": { "a": "first term of ratio 1", "b": "second term of ratio 1", "c": "first term of ratio 2", "d": "second term of ratio 2" },
+      "quantities": { "ratio1": ["a", "b"], "ratio2": ["c", "d"] },
+      "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+      "examples": [
+        { "id": "6:8 vs 72:96", "values": { "a": 6, "b": 8, "c": 72, "d": 96 }, "answer": "proportional" },
+        { "id": "4:6 vs 10:14", "values": { "a": 4, "b": 6, "c": 10, "d": 14 }, "answer": "not proportional" }
+      ],
+      "methods": {
+        "simplify": {
+          "name": "Simplify both ratios",
+          "idea": "Reduce each ratio to lowest terms and compare.",
+          "best_when": "The numbers have obvious common factors.",
+          "steps": [
+            { "op": "gcf", "args": ["a", "b"], "out": "g1", "text": "The GCF of {a} and {b} is {g1}." },
+            { "op": "divide", "args": ["a", "g1"], "out": "a1", "text": "{a} ÷ {g1} = {a1}" },
+            { "op": "divide", "args": ["b", "g1"], "out": "b1", "text": "{b} ÷ {g1} = {b1}, so {a}:{b} = {a1}:{b1}" },
+            { "op": "gcf", "args": ["c", "d"], "out": "g2", "text": "The GCF of {c} and {d} is {g2}." },
+            { "op": "divide", "args": ["c", "g2"], "out": "c1", "text": "{c} ÷ {g2} = {c1}" },
+            { "op": "divide", "args": ["d", "g2"], "out": "d1", "text": "{d} ÷ {g2} = {d1}, so {c}:{d} = {c1}:{d1}" },
+            { "op": "compare", "args": [["a1", "b1"], ["c1", "d1"]], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Compare {a1}:{b1} with {c1}:{d1}." }
+          ]
+        },
+        "cross_multiply": {
+          "name": "Cross-multiply",
+          "idea": "a/b = c/d exactly when a×d = b×c.",
+          "best_when": "The numbers are awkward and don't share obvious factors.",
+          "steps": [
+            { "op": "multiply", "args": ["a", "d"], "out": "p1", "text": "{a} × {d} = {p1}" },
+            { "op": "multiply", "args": ["b", "c"], "out": "p2", "text": "{b} × {c} = {p2}" },
+            { "op": "compare", "args": ["p1", "p2"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Compare {p1} and {p2}." }
+          ]
+        },
+        "scale_factor": {
+          "name": "Find a scale factor",
+          "idea": "Check whether one multiplier turns the first ratio into the second.",
+          "best_when": "One ratio is clearly a multiple of the other.",
+          "steps": [
+            { "op": "divide", "args": ["c", "a"], "out": "k1", "text": "{c} ÷ {a} = {k1}" },
+            { "op": "divide", "args": ["d", "b"], "out": "k2", "text": "{d} ÷ {b} = {k2}" },
+            { "op": "compare", "args": ["k1", "k2"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Are both factors the same?" }
+          ]
+        },
+        "decimal": {
+          "name": "Convert to decimals",
+          "idea": "Turn each ratio into one number (first ÷ second) and compare.",
+          "best_when": "A calculator is allowed, or the divisions are easy.",
+          "steps": [
+            { "op": "divide", "args": ["a", "b"], "out": "q1", "text": "{a} ÷ {b} = {q1}" },
+            { "op": "divide", "args": ["c", "d"], "out": "q2", "text": "{c} ÷ {d} = {q2}" },
+            { "op": "compare", "args": ["q1", "q2"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Compare {q1} and {q2}." }
+          ]
+        },
+        "unit_rate": {
+          "name": "Compare unit rates",
+          "idea": "How much of the second quantity is there per 1 of the first?",
+          "best_when": "The problem is about rates (miles per hour, cost per item).",
+          "steps": [
+            { "op": "divide", "args": ["b", "a"], "out": "r1", "text": "{b} ÷ {a} = {r1} per 1" },
+            { "op": "divide", "args": ["d", "c"], "out": "r2", "text": "{d} ÷ {c} = {r2} per 1" },
+            { "op": "compare", "args": ["r1", "r2"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Compare {r1} and {r2}." }
+          ]
+        },
+        "graph": {
+          "name": "Graph the points",
+          "idea": "Proportional pairs lie on one straight line through the origin.",
+          "best_when": "Building intuition about proportionality.",
+          "steps": [
+            { "op": "plot", "args": [["a", "b"], ["c", "d"]], "text": "Plot ({a}, {b}) and ({c}, {d})." },
+            { "op": "divide", "args": ["b", "a"], "out": "s1", "text": "Slope to ({a}, {b}): {b} ÷ {a} = {s1}" },
+            { "op": "divide", "args": ["d", "c"], "out": "s2", "text": "Slope to ({c}, {d}): {d} ÷ {c} = {s2}" },
+            { "op": "compare", "args": ["s1", "s2"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Same slope means the same line through (0, 0)." }
+          ]
+        },
+        "ratio_table": {
+          "name": "Ratio table",
+          "idea": "Scale the first ratio up by 2, 3, 4, … until it reaches the second.",
+          "best_when": "The scale factor is a small whole number.",
+          "watch_out": "If no whole-number multiple hits the target, simplify the first ratio and try again, or switch methods.",
+          "steps": [
+            { "op": "multiply", "args": ["a", "k"], "out": "ak", "search": { "var": "k", "until": ["ak", "c"] }, "text": "Multiply both terms by 2, 3, 4, … until the first term reaches {c} (×{k})." },
+            { "op": "multiply", "args": ["b", "k"], "out": "bk", "text": "{b} × {k} = {bk}" },
+            { "op": "compare", "args": ["bk", "d"], "out": "answer", "meaning": { "=": "proportional", "≠": "not proportional" }, "text": "Does {bk} match {d}?" }
+          ]
+        }
+      },
+      "first_steps": [
+        { "match": { "op": "gcf", "args": ["a", "b"] }, "class": { "operation": "factor", "scope": "within" }, "methods": ["simplify"], "feedback": "You're simplifying the ratio to lowest terms." },
+        { "match": { "op": "divide", "args": ["a", { "any": "common_factor", "of": ["a", "b"] }] }, "class": { "operation": "factor", "scope": "within" }, "methods": ["simplify"], "feedback": "You're dividing out a common factor, which simplifies the ratio." },
+        { "match": { "op": "divide", "args": ["a", "b"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["decimal"], "feedback": "You're turning the ratio into a decimal." },
+        { "match": { "op": "divide", "args": ["b", "a"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["unit_rate", "graph"], "feedback": "You're finding a unit rate (this is also the slope of the line through the point).", "note": "Unit rate and graph slope do identical arithmetic; only a drawing tells them apart." },
+        { "match": { "op": "plot", "args": [["a", "b"], ["c", "d"]] }, "class": { "operation": "represent", "scope": "within" }, "methods": ["graph"], "feedback": "You're graphing the ratios as points." },
+        { "match": { "op": "divide", "args": ["c", "a"] }, "class": { "operation": "divide", "scope": "across" }, "methods": ["scale_factor"], "feedback": "You're finding the scale factor between the ratios." },
+        { "match": { "op": "divide", "args": ["d", "b"] }, "class": { "operation": "divide", "scope": "across" }, "methods": ["scale_factor"], "feedback": "You're finding the scale factor between the ratios." },
+        { "match": { "op": "multiply", "args": ["a", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["cross_multiply"], "feedback": "You're cross-multiplying." },
+        { "match": { "op": "multiply", "args": ["b", "c"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["cross_multiply"], "feedback": "You're cross-multiplying." },
+        { "match": { "op": "multiply", "args": ["a", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["ratio_table"], "feedback": "You're scaling the ratio up, as in a ratio table." },
+        { "match": { "op": "multiply", "args": ["b", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["ratio_table"], "feedback": "You're scaling the ratio up, as in a ratio table." }
+      ]
+    },
+
+    {
+      "id": "compare-fractions",
+      "title": "Which fraction is larger?",
+      "prompt": "Which is larger: {a}/{b} or {c}/{d}?",
+      "variables": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
+      "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
+      "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+      "examples": [
+        { "id": "3/4 vs 5/7", "values": { "a": 3, "b": 4, "c": 5, "d": 7 }, "answer": "first" },
+        { "id": "3/8 vs 2/5", "values": { "a": 3, "b": 8, "c": 2, "d": 5 }, "answer": "second" }
+      ],
+      "methods": {
+        "cross_multiply": {
+          "name": "Cross-multiply",
+          "idea": "a/b > c/d exactly when a×d > c×b.",
+          "best_when": "Quick check with small numbers.",
+          "steps": [
+            { "op": "multiply", "args": ["a", "d"], "out": "p1", "text": "{a} × {d} = {p1}" },
+            { "op": "multiply", "args": ["c", "b"], "out": "p2", "text": "{c} × {b} = {p2}" },
+            { "op": "compare", "args": ["p1", "p2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "The bigger product is on the side of the bigger fraction." }
+          ]
+        },
+        "common_denominator": {
+          "name": "Common denominator",
+          "idea": "Rewrite both fractions with the same denominator; then compare numerators.",
+          "best_when": "The denominators are related (one divides the other) or small.",
+          "steps": [
+            { "op": "lcm", "args": ["b", "d"], "out": "L", "text": "A common denominator of {b} and {d} is {L}." },
+            { "op": "divide", "args": ["L", "b"], "out": "m1", "text": "{L} ÷ {b} = {m1}" },
+            { "op": "multiply", "args": ["a", "m1"], "out": "n1", "text": "{a}/{b} = {n1}/{L}" },
+            { "op": "divide", "args": ["L", "d"], "out": "m2", "text": "{L} ÷ {d} = {m2}" },
+            { "op": "multiply", "args": ["c", "m2"], "out": "n2", "text": "{c}/{d} = {n2}/{L}" },
+            { "op": "compare", "args": ["n1", "n2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Same denominator, so compare {n1} and {n2}." }
+          ]
+        },
+        "common_numerator": {
+          "name": "Common numerator",
+          "idea": "With equal numerators, the smaller denominator gives the bigger fraction.",
+          "best_when": "The numerators are smaller or simpler than the denominators.",
+          "steps": [
+            { "op": "lcm", "args": ["a", "c"], "out": "N", "text": "A common numerator of {a} and {c} is {N}." },
+            { "op": "divide", "args": ["N", "a"], "out": "m1", "text": "{N} ÷ {a} = {m1}" },
+            { "op": "multiply", "args": ["b", "m1"], "out": "e1", "text": "{a}/{b} = {N}/{e1}" },
+            { "op": "divide", "args": ["N", "c"], "out": "m2", "text": "{N} ÷ {c} = {m2}" },
+            { "op": "multiply", "args": ["d", "m2"], "out": "e2", "text": "{c}/{d} = {N}/{e2}" },
+            { "op": "compare", "args": ["e1", "e2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "Same numerator, so the smaller denominator wins." }
+          ]
+        },
+        "decimal": {
+          "name": "Convert to decimals",
+          "idea": "Divide each numerator by its denominator and compare.",
+          "best_when": "A calculator is allowed.",
+          "steps": [
+            { "op": "divide", "args": ["a", "b"], "out": "q1", "text": "{a} ÷ {b} = {q1}" },
+            { "op": "divide", "args": ["c", "d"], "out": "q2", "text": "{c} ÷ {d} = {q2}" },
+            { "op": "compare", "args": ["q1", "q2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "equal" }, "text": "Compare {q1} and {q2}." }
+          ]
+        },
+        "distance_from_one": {
+          "name": "Distance from 1",
+          "idea": "Find how far each fraction is from 1; the one closer to 1 is bigger.",
+          "best_when": "Both fractions are just below 1 (e.g. 7/8 vs 9/10).",
+          "watch_out": "The gaps are fractions too, so comparing them is a smaller version of the same problem.",
+          "steps": [
+            { "op": "subtract", "args": ["b", "a"], "out": "r1", "text": "{b} − {a} = {r1}" },
+            { "op": "divide", "args": ["r1", "b"], "out": "gap1", "text": "{a}/{b} is {r1}/{b} away from 1." },
+            { "op": "subtract", "args": ["d", "c"], "out": "r2", "text": "{d} − {c} = {r2}" },
+            { "op": "divide", "args": ["r2", "d"], "out": "gap2", "text": "{c}/{d} is {r2}/{d} away from 1." },
+            { "op": "compare", "args": ["gap1", "gap2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "equal" }, "text": "The smaller gap belongs to the bigger fraction." }
+          ]
+        }
+      },
+      "first_steps": [
+        {
+          "match": { "op": "multiply", "args": ["a", "d"], "out": "p1" },
+          "class": { "operation": "multiply", "scope": "across" },
+          "methods": ["cross_multiply", "common_denominator"],
+          "feedback": "You're multiplying across. That starts cross-multiplication, and it's also the new numerator if you use {b}×{d} as a common denominator.",
+          "next": [
+            { "match": { "op": "multiply", "args": ["b", "d"] }, "methods": ["common_denominator"], "feedback": "You're building the common denominator {b}×{d}." },
+            { "match": { "op": "multiply", "args": ["c", "b"] }, "methods": ["cross_multiply", "common_denominator"], "feedback": "You're comparing the cross products.", "note": "Same arithmetic either way. Ask whether the student thinks of the products as cross products or as numerators over {b}×{d}." }
+          ]
+        },
+        { "match": { "op": "multiply", "args": ["b", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_denominator"], "feedback": "You're making a common denominator by multiplying the denominators." },
+        { "match": { "op": "lcm", "args": ["b", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_denominator"], "feedback": "You're finding the least common denominator." },
+        { "match": { "op": "multiply", "args": ["b", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["common_denominator"], "feedback": "You're listing multiples of {b} to find a common denominator." },
+        { "match": { "op": "lcm", "args": ["a", "c"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_numerator"], "feedback": "You're making the numerators equal." },
+        { "match": { "op": "multiply", "args": ["a", "c"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_numerator"], "feedback": "You're making the numerators equal." },
+        { "match": { "op": "divide", "args": ["a", "b"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["decimal"], "feedback": "You're converting to a decimal." },
+        { "match": { "op": "subtract", "args": ["b", "a"] }, "class": { "operation": "subtract", "scope": "within" }, "methods": ["distance_from_one"], "feedback": "You're finding how far the fraction is from 1." }
+      ]
+    },
+
+    {
+      "id": "missing-value",
+      "title": "Find the missing value in a proportion",
+      "prompt": "Solve {a}/{b} = x/{d}.",
+      "variables": { "a": "known numerator", "b": "known denominator", "d": "denominator next to x" },
+      "quantities": { "known_ratio": ["a", "b"], "unknown_ratio": ["d"] },
+      "symmetries": [],
+      "examples": [
+        { "id": "3/5 = x/40", "values": { "a": 3, "b": 5, "d": 40 }, "answer": 24 },
+        { "id": "4/6 = x/15", "values": { "a": 4, "b": 6, "d": 15 }, "answer": 10 }
+      ],
+      "methods": {
+        "cross_multiply": {
+          "name": "Cross-multiply and divide",
+          "idea": "a×d = b×x, so x = a×d ÷ b.",
+          "best_when": "Always works; most useful when there's no whole-number scale factor.",
+          "steps": [
+            { "op": "multiply", "args": ["a", "d"], "out": "p", "text": "{a} × {d} = {p}" },
+            { "op": "divide", "args": ["p", "b"], "out": "answer", "text": "x = {p} ÷ {b} = {answer}" }
+          ]
+        },
+        "scale_factor": {
+          "name": "Scale factor",
+          "idea": "Find what turns {b} into {d}, then do the same to {a}.",
+          "best_when": "{d} is a whole-number multiple of {b}.",
+          "steps": [
+            { "op": "divide", "args": ["d", "b"], "out": "k", "text": "{d} ÷ {b} = {k}" },
+            { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+          ]
+        },
+        "unit_rate": {
+          "name": "Unit rate",
+          "idea": "Find the value per 1, then scale up to {d}.",
+          "best_when": "{a} ÷ {b} is a friendly number.",
+          "steps": [
+            { "op": "divide", "args": ["a", "b"], "out": "r", "text": "{a} ÷ {b} = {r} per 1" },
+            { "op": "multiply", "args": ["r", "d"], "out": "answer", "text": "x = {r} × {d} = {answer}" }
+          ]
+        },
+        "inverse_rate": {
+          "name": "Inverse rate",
+          "idea": "Find how many of the second quantity per 1 of the first, then divide.",
+          "best_when": "{b} ÷ {a} is a friendly number.",
+          "steps": [
+            { "op": "divide", "args": ["b", "a"], "out": "r", "text": "{b} ÷ {a} = {r}" },
+            { "op": "divide", "args": ["d", "r"], "out": "answer", "text": "x = {d} ÷ {r} = {answer}" }
+          ]
+        },
+        "ratio_table": {
+          "name": "Ratio table",
+          "idea": "Build up {a}:{b} by ×2, ×3, … until the second term reaches {d}.",
+          "best_when": "{d} is a small whole-number multiple of {b}.",
+          "watch_out": "If no whole-number multiple of {b} reaches {d}, simplify {a}/{b} first.",
+          "steps": [
+            { "op": "multiply", "args": ["b", "k"], "out": "bk", "search": { "var": "k", "until": ["bk", "d"] }, "text": "Multiply by 2, 3, 4, … until {b} becomes {d} (×{k})." },
+            { "op": "multiply", "args": ["a", "k"], "out": "answer", "text": "x = {a} × {k} = {answer}" }
+          ]
+        },
+        "simplify_then_scale": {
+          "name": "Simplify, then scale",
+          "idea": "Reduce {a}/{b} first so a whole-number scale factor appears.",
+          "best_when": "{a}/{b} isn't in lowest terms.",
+          "steps": [
+            { "op": "gcf", "args": ["a", "b"], "out": "g", "text": "The GCF of {a} and {b} is {g}." },
+            { "op": "divide", "args": ["a", "g"], "out": "a1", "text": "{a} ÷ {g} = {a1}" },
+            { "op": "divide", "args": ["b", "g"], "out": "b1", "text": "{b} ÷ {g} = {b1}, so {a}/{b} = {a1}/{b1}" },
+            { "op": "divide", "args": ["d", "b1"], "out": "k", "text": "{d} ÷ {b1} = {k}" },
+            { "op": "multiply", "args": ["a1", "k"], "out": "answer", "text": "x = {a1} × {k} = {answer}" }
+          ]
+        }
+      },
+      "first_steps": [
+        { "match": { "op": "multiply", "args": ["a", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["cross_multiply"], "feedback": "You're cross-multiplying." },
+        { "match": { "op": "divide", "args": ["d", "b"] }, "class": { "operation": "divide", "scope": "across" }, "methods": ["scale_factor"], "feedback": "You're finding the scale factor from {b} to {d}." },
+        { "match": { "op": "divide", "args": ["a", "b"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["unit_rate"], "feedback": "You're finding a unit rate." },
+        { "match": { "op": "divide", "args": ["b", "a"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["inverse_rate"], "feedback": "You're finding the rate the other way round." },
+        { "match": { "op": "gcf", "args": ["a", "b"] }, "class": { "operation": "factor", "scope": "within" }, "methods": ["simplify_then_scale"], "feedback": "You're simplifying the known ratio first." },
+        { "match": { "op": "divide", "args": ["a", { "any": "common_factor", "of": ["a", "b"] }] }, "class": { "operation": "factor", "scope": "within" }, "methods": ["simplify_then_scale"], "feedback": "You're simplifying the known ratio first." },
+        { "match": { "op": "multiply", "args": ["b", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["ratio_table"], "feedback": "You're building a ratio table." },
+        { "match": { "op": "multiply", "args": ["a", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["ratio_table"], "feedback": "You're building a ratio table." }
+      ]
+    },
+
+    {
+      "id": "better-buy",
+      "title": "Which is the better buy?",
+      "prompt": "Offer 1: {q1} units for ${p1}. Offer 2: {q2} units for ${p2}. Which is the better buy?",
+      "variables": { "q1": "quantity in offer 1", "p1": "price of offer 1", "q2": "quantity in offer 2", "p2": "price of offer 2" },
+      "quantities": { "offer1": ["q1", "p1"], "offer2": ["q2", "p2"] },
+      "symmetries": [ { "q1": "q2", "p1": "p2", "q2": "q1", "p2": "p1" } ],
+      "examples": [
+        { "id": "12 oz $3.00 vs 20 oz $4.50", "values": { "q1": 12, "p1": "3.00", "q2": 20, "p2": "4.50" }, "answer": "second" },
+        { "id": "6 cans $4.20 vs 10 cans $7.50", "values": { "q1": 6, "p1": "4.20", "q2": 10, "p2": "7.50" }, "answer": "first" }
+      ],
+      "methods": {
+        "price_per_unit": {
+          "name": "Price per unit",
+          "idea": "Find the cost of 1 unit in each offer; the lower one is better.",
+          "best_when": "This is the default; shelf labels do it this way.",
+          "steps": [
+            { "op": "divide", "args": ["p1", "q1"], "out": "u1", "text": "${p1} ÷ {q1} = ${u1} per unit" },
+            { "op": "divide", "args": ["p2", "q2"], "out": "u2", "text": "${p2} ÷ {q2} = ${u2} per unit" },
+            { "op": "compare", "args": ["u1", "u2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "same" }, "text": "The lower unit price wins." }
+          ]
+        },
+        "units_per_dollar": {
+          "name": "Units per dollar",
+          "idea": "Find how much $1 buys in each offer; more is better.",
+          "best_when": "The quantities divide evenly by the prices.",
+          "steps": [
+            { "op": "divide", "args": ["q1", "p1"], "out": "v1", "text": "{q1} ÷ {p1} = {v1} units per $1" },
+            { "op": "divide", "args": ["q2", "p2"], "out": "v2", "text": "{q2} ÷ {p2} = {v2} units per $1" },
+            { "op": "compare", "args": ["v1", "v2"], "out": "answer", "meaning": { ">": "first", "<": "second", "=": "same" }, "text": "More per dollar wins." }
+          ]
+        },
+        "common_quantity": {
+          "name": "Common quantity",
+          "idea": "Price both offers at the same quantity.",
+          "best_when": "The quantities have a small common multiple.",
+          "steps": [
+            { "op": "lcm", "args": ["q1", "q2"], "out": "Q", "text": "A common quantity for {q1} and {q2} is {Q}." },
+            { "op": "divide", "args": ["Q", "q1"], "out": "m1", "text": "{Q} ÷ {q1} = {m1}" },
+            { "op": "multiply", "args": ["p1", "m1"], "out": "c1", "text": "Offer 1 for {Q} units: ${p1} × {m1} = ${c1}" },
+            { "op": "divide", "args": ["Q", "q2"], "out": "m2", "text": "{Q} ÷ {q2} = {m2}" },
+            { "op": "multiply", "args": ["p2", "m2"], "out": "c2", "text": "Offer 2 for {Q} units: ${p2} × {m2} = ${c2}" },
+            { "op": "compare", "args": ["c1", "c2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "same" }, "text": "Same quantity, so the lower price wins." }
+          ]
+        },
+        "scale_up": {
+          "name": "Scale one offer to the other's size",
+          "idea": "What would offer 1 cost for {q2} units?",
+          "best_when": "One quantity is a simple multiple of the other.",
+          "steps": [
+            { "op": "divide", "args": ["q2", "q1"], "out": "k", "text": "{q2} ÷ {q1} = {k}" },
+            { "op": "multiply", "args": ["p1", "k"], "out": "c1", "text": "At offer 1's rate, {q2} units cost ${p1} × {k} = ${c1}" },
+            { "op": "compare", "args": ["c1", "p2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "same" }, "text": "Compare ${c1} with ${p2}." }
+          ]
+        },
+        "cross_multiply": {
+          "name": "Cross-multiply",
+          "idea": "p1/q1 < p2/q2 exactly when p1×q2 < p2×q1.",
+          "best_when": "Fast, but the products are harder to interpret.",
+          "steps": [
+            { "op": "multiply", "args": ["p1", "q2"], "out": "x1", "text": "{p1} × {q2} = {x1}" },
+            { "op": "multiply", "args": ["p2", "q1"], "out": "x2", "text": "{p2} × {q1} = {x2}" },
+            { "op": "compare", "args": ["x1", "x2"], "out": "answer", "meaning": { "<": "first", ">": "second", "=": "same" }, "text": "The smaller product is on the side of the cheaper offer." }
+          ]
+        }
+      },
+      "first_steps": [
+        { "match": { "op": "divide", "args": ["p1", "q1"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["price_per_unit"], "feedback": "You're finding the price per unit." },
+        { "match": { "op": "divide", "args": ["q1", "p1"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["units_per_dollar"], "feedback": "You're finding how much one dollar buys." },
+        { "match": { "op": "lcm", "args": ["q1", "q2"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_quantity"], "feedback": "You're finding a common quantity to compare at." },
+        { "match": { "op": "multiply", "args": ["q1", "q2"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["common_quantity"], "feedback": "You're finding a common quantity to compare at." },
+        { "match": { "op": "divide", "args": ["q2", "q1"] }, "class": { "operation": "divide", "scope": "across" }, "methods": ["scale_up"], "feedback": "You're scaling one offer to the other's size." },
+        { "match": { "op": "multiply", "args": ["p1", "q2"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["cross_multiply"], "feedback": "You're cross-multiplying." }
+      ]
+    },
+
+    {
+      "id": "percent-of",
+      "title": "Find a percent of a number",
+      "prompt": "What is {p}% of {n}?",
+      "variables": { "p": "the percent", "n": "the whole" },
+      "quantities": { "percent": ["p"], "whole": ["n"] },
+      "symmetries": [],
+      "derived": {
+        "pct": { "op": "divide", "args": ["p", 100], "text": "{p}% written as a decimal", "note": "Lets the app recognize a student who writes 0.15 × 80 without showing the conversion." }
+      },
+      "examples": [
+        { "id": "15% of 80", "values": { "p": 15, "n": 80 }, "answer": 12 },
+        { "id": "35% of 60", "values": { "p": 35, "n": 60 }, "answer": 21 }
+      ],
+      "methods": {
+        "decimal": {
+          "name": "Convert to a decimal and multiply",
+          "idea": "{p}% = {pct}, so multiply {n} by {pct}.",
+          "best_when": "A calculator is allowed.",
+          "steps": [
+            { "op": "divide", "args": ["p", 100], "out": "pct", "text": "{p}% = {pct}" },
+            { "op": "multiply", "args": ["pct", "n"], "out": "answer", "text": "{pct} × {n} = {answer}" }
+          ]
+        },
+        "fraction": {
+          "name": "Convert to a fraction",
+          "idea": "{p}% = {p}/100; simplify it, then take that fraction of {n}.",
+          "best_when": "The percent simplifies nicely (25% = 1/4, 15% = 3/20).",
+          "steps": [
+            { "op": "divide", "args": ["p", 100], "out": "pct", "text": "{p}% = {p}/100" },
+            { "op": "gcf", "args": ["p", 100], "out": "g", "text": "The GCF of {p} and 100 is {g}." },
+            { "op": "divide", "args": ["p", "g"], "out": "num", "text": "{p} ÷ {g} = {num}" },
+            { "op": "divide", "args": [100, "g"], "out": "den", "text": "100 ÷ {g} = {den}, so {p}% = {num}/{den}" },
+            { "op": "divide", "args": ["n", "den"], "out": "part", "text": "{n} ÷ {den} = {part}" },
+            { "op": "multiply", "args": ["part", "num"], "out": "answer", "text": "{part} × {num} = {answer}" }
+          ]
+        },
+        "one_percent": {
+          "name": "Find 1% first",
+          "idea": "1% of {n} is {n} ÷ 100; multiply that by {p}.",
+          "best_when": "Mental math with any percent.",
+          "steps": [
+            { "op": "divide", "args": ["n", 100], "out": "one", "text": "1% of {n} = {one}" },
+            { "op": "multiply", "args": ["one", "p"], "out": "answer", "text": "{p}% = {one} × {p} = {answer}" }
+          ]
+        },
+        "benchmark_10_5": {
+          "name": "Build from 10% and 5%",
+          "idea": "10% is easy (÷10) and 5% is half of that; add up the pieces.",
+          "best_when": "The percent is a multiple of 5.",
+          "watch_out": "Doesn't apply directly when the percent isn't a multiple of 5.",
+          "steps": [
+            { "op": "divide", "args": ["n", 10], "out": "ten", "text": "10% of {n} = {ten}" },
+            { "op": "divide", "args": ["ten", 2], "out": "five", "text": "5% of {n} = {five}" },
+            { "op": "floor_div", "args": ["p", 10], "out": "t", "hidden": true },
+            { "op": "mod", "args": ["p", 10], "out": "r", "hidden": true },
+            { "op": "divide", "args": ["r", 5], "out": "f", "hidden": true, "requires_integer": true },
+            { "op": "multiply", "args": ["ten", "t"], "out": "A", "text": "{p}% = {t} × 10% + {f} × 5%: {t} × {ten} = {A}" },
+            { "op": "multiply", "args": ["five", "f"], "out": "B", "text": "{f} × {five} = {B}" },
+            { "op": "add", "args": ["A", "B"], "out": "answer", "text": "{A} + {B} = {answer}" }
+          ]
+        },
+        "multiply_first": {
+          "name": "Multiply, then divide by 100",
+          "idea": "{p}% of {n} = {p} × {n} ÷ 100.",
+          "best_when": "Avoiding decimals until the last step.",
+          "steps": [
+            { "op": "multiply", "args": ["p", "n"], "out": "pn", "text": "{p} × {n} = {pn}" },
+            { "op": "divide", "args": ["pn", 100], "out": "answer", "text": "{pn} ÷ 100 = {answer}" }
+          ]
+        }
+      },
+      "first_steps": [
+        {
+          "match": { "op": "divide", "args": ["p", 100], "out": "pct" },
+          "class": { "operation": "divide", "scope": "within" },
+          "methods": ["decimal", "fraction"],
+          "feedback": "You're converting the percent. Next, will you use it as a decimal or as a fraction?",
+          "next": [
+            { "match": { "op": "multiply", "args": ["pct", "n"] }, "methods": ["decimal"], "feedback": "You're multiplying by the decimal." },
+            { "match": { "op": "gcf", "args": ["p", 100] }, "methods": ["fraction"], "feedback": "You're simplifying the fraction." },
+            { "match": { "op": "divide", "args": ["p", { "any": "common_factor", "of": ["p", 100] }] }, "methods": ["fraction"], "feedback": "You're simplifying the fraction." }
+          ]
+        },
+        { "match": { "op": "multiply", "args": ["pct", "n"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["decimal"], "feedback": "You converted to a decimal in your head and multiplied." },
+        { "match": { "op": "gcf", "args": ["p", 100] }, "class": { "operation": "factor", "scope": "within" }, "methods": ["fraction"], "feedback": "You're simplifying {p}/100." },
+        { "match": { "op": "divide", "args": ["n", 100] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["one_percent"], "feedback": "You're finding 1% first." },
+        { "match": { "op": "divide", "args": ["n", 10] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["benchmark_10_5"], "feedback": "You're finding 10% first." },
+        { "match": { "op": "multiply", "args": ["p", "n"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["multiply_first"], "feedback": "You're multiplying first and will divide by 100 at the end." }
+      ]
+    },
+
+    {
+      "id": "add-fractions",
+      "title": "Add two fractions",
+      "prompt": "Find {a}/{b} + {c}/{d}.",
+      "variables": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
+      "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
+      "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+      "examples": [
+        { "id": "5/6 + 3/4", "values": { "a": 5, "b": 6, "c": 3, "d": 4 }, "answer": "19/12" },
+        { "id": "2/3 + 1/5", "values": { "a": 2, "b": 3, "c": 1, "d": 5 }, "answer": "13/15", "note": "Here the LCM equals the product (15), so a bare '15' can't tell the two common-denominator methods apart." }
+      ],
+      "methods": {
+        "lcd": {
+          "name": "Least common denominator",
+          "idea": "Rewrite both fractions over the LCM of the denominators, then add numerators.",
+          "best_when": "The denominators share a factor (6 and 4).",
+          "steps": [
+            { "op": "lcm", "args": ["b", "d"], "out": "L", "text": "The LCD of {b} and {d} is {L}." },
+            { "op": "divide", "args": ["L", "b"], "out": "m1", "text": "{L} ÷ {b} = {m1}" },
+            { "op": "multiply", "args": ["a", "m1"], "out": "n1", "text": "{a}/{b} = {n1}/{L}" },
+            { "op": "divide", "args": ["L", "d"], "out": "m2", "text": "{L} ÷ {d} = {m2}" },
+            { "op": "multiply", "args": ["c", "m2"], "out": "n2", "text": "{c}/{d} = {n2}/{L}" },
+            { "op": "add", "args": ["n1", "n2"], "out": "s", "text": "{n1} + {n2} = {s}" },
+            { "op": "divide", "args": ["s", "L"], "out": "answer", "text": "{s}/{L}, simplified: {answer}" }
+          ]
+        },
+        "product_denominator": {
+          "name": "Multiply the denominators",
+          "idea": "Use {b}×{d} as the denominator ((a×d + c×b) / (b×d), the 'bow-tie'), then simplify.",
+          "best_when": "The denominators share no factors.",
+          "watch_out": "When the denominators share a factor, the result needs simplifying at the end.",
+          "steps": [
+            { "op": "multiply", "args": ["b", "d"], "out": "P", "text": "{b} × {d} = {P}" },
+            { "op": "multiply", "args": ["a", "d"], "out": "n1", "text": "{a} × {d} = {n1}" },
+            { "op": "multiply", "args": ["c", "b"], "out": "n2", "text": "{c} × {b} = {n2}" },
+            { "op": "add", "args": ["n1", "n2"], "out": "s", "text": "{n1} + {n2} = {s}, giving {s}/{P}" },
+            { "op": "gcf", "args": ["s", "P"], "out": "g", "text": "The GCF of {s} and {P} is {g}." },
+            { "op": "divide", "args": ["s", "g"], "out": "sn", "text": "{s} ÷ {g} = {sn}" },
+            { "op": "divide", "args": ["P", "g"], "out": "sd", "text": "{P} ÷ {g} = {sd}" },
+            { "op": "divide", "args": ["sn", "sd"], "out": "answer", "text": "{sn}/{sd}" }
+          ]
+        },
+        "decimal": {
+          "name": "Convert to decimals",
+          "idea": "Turn each fraction into a decimal and add.",
+          "best_when": "Only an approximate answer is needed.",
+          "watch_out": "Repeating decimals (5/6 = 0.8333…) make the sum inexact.",
+          "steps": [
+            { "op": "divide", "args": ["a", "b"], "out": "q1", "text": "{a} ÷ {b} = {q1}" },
+            { "op": "divide", "args": ["c", "d"], "out": "q2", "text": "{c} ÷ {d} = {q2}" },
+            { "op": "add", "args": ["q1", "q2"], "out": "answer", "text": "{q1} + {q2} = {answer}" }
+          ]
+        }
+      },
+      "first_steps": [
+        { "match": { "op": "lcm", "args": ["b", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["lcd"], "feedback": "You're finding the least common denominator." },
+        { "match": { "op": "multiply", "args": ["b", { "any": "integer" }] }, "class": { "operation": "multiply", "scope": "within" }, "methods": ["lcd"], "feedback": "You're listing multiples of {b} to find a common denominator." },
+        { "match": { "op": "multiply", "args": ["b", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["product_denominator"], "feedback": "You're multiplying the denominators together." },
+        { "match": { "op": "multiply", "args": ["a", "d"] }, "class": { "operation": "multiply", "scope": "across" }, "methods": ["product_denominator"], "feedback": "You're using the bow-tie (cross-multiply) shortcut." },
+        { "match": { "op": "divide", "args": ["a", "b"] }, "class": { "operation": "divide", "scope": "within" }, "methods": ["decimal"], "feedback": "You're converting to decimals." }
+      ]
+    }
+  ]
+}

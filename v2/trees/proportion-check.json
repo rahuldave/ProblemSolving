@@ -1,0 +1,917 @@
+{
+  "question": "proportion-check",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "c",
+          "a"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "across"
+      },
+      "methods": [
+        "scale_factor"
+      ],
+      "feedback": "This starts: Compare scale factors."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "d",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "across"
+      },
+      "methods": [
+        "match_denominator"
+      ],
+      "via": {
+        "match_denominator": [
+          "missing-value/scale_factor"
+        ]
+      },
+      "feedback": "This starts: Rewrite one fraction over the other's denominator."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "a",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal",
+        "match_denominator"
+      ],
+      "via": {
+        "decimal": [
+          "to-decimal/divide"
+        ],
+        "match_denominator": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This step starts several methods: Convert to decimals, Rewrite one fraction over the other's denominator.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "c",
+              "d"
+            ]
+          },
+          "methods": [
+            "decimal"
+          ],
+          "via": {
+            "decimal": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Convert to decimals."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "divide(a, b)"
+            ]
+          },
+          "methods": [
+            "match_denominator"
+          ],
+          "via": {
+            "match_denominator": [
+              "missing-value/unit_rate"
+            ]
+          },
+          "feedback": "This starts: Rewrite one fraction over the other's denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "d",
+              "int"
+            ]
+          },
+          "methods": [
+            "decimal"
+          ],
+          "via": {
+            "decimal": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Convert to decimals."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "b",
+          "a"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "match_denominator",
+        "unit_rate"
+      ],
+      "via": {
+        "match_denominator": [
+          "to-decimal/divide"
+        ],
+        "unit_rate": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Compare unit rates (flipped fractions).",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "c"
+            ]
+          },
+          "methods": [
+            "unit_rate"
+          ],
+          "via": {
+            "unit_rate": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Compare unit rates (flipped fractions)."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "d",
+              "divide(b, a)"
+            ]
+          },
+          "methods": [
+            "match_denominator"
+          ],
+          "via": {
+            "match_denominator": [
+              "missing-value/inverse_rate"
+            ]
+          },
+          "feedback": "This starts: Rewrite one fraction over the other's denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "c",
+              "int"
+            ]
+          },
+          "methods": [
+            "unit_rate"
+          ],
+          "via": {
+            "unit_rate": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Compare unit rates (flipped fractions)."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "a",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "across"
+      },
+      "methods": [
+        "common_numerator"
+      ],
+      "via": {
+        "common_numerator": [
+          "common-multiple/gcf_formula"
+        ]
+      },
+      "feedback": "This starts: Common numerator."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/gcf_formula"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "a",
+          "common_factor(a, b)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "match_denominator",
+        "simplify"
+      ],
+      "via": {
+        "match_denominator": [
+          "simplify-fraction/repeated"
+        ],
+        "simplify": [
+          "simplify-fraction/repeated"
+        ]
+      },
+      "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "common_factor(a, b)"
+            ]
+          },
+          "methods": [
+            "match_denominator",
+            "simplify"
+          ],
+          "via": {
+            "match_denominator": [
+              "simplify-fraction/repeated"
+            ],
+            "simplify": [
+              "simplify-fraction/repeated"
+            ]
+          },
+          "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "a",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "match_denominator",
+        "simplify"
+      ],
+      "via": {
+        "match_denominator": [
+          "simplify-fraction/gcf"
+        ],
+        "simplify": [
+          "simplify-fraction/gcf"
+        ]
+      },
+      "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "gcf(a, b)"
+            ]
+          },
+          "methods": [
+            "match_denominator",
+            "simplify"
+          ],
+          "via": {
+            "match_denominator": [
+              "simplify-fraction/gcf"
+            ],
+            "simplify": [
+              "simplify-fraction/gcf"
+            ]
+          },
+          "feedback": "This step starts several methods: Rewrite one fraction over the other's denominator, Simplify both.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "lcm",
+        "args": [
+          "a",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_numerator"
+      ],
+      "via": {
+        "common_numerator": [
+          "common-multiple/recall"
+        ]
+      },
+      "feedback": "This starts: Common numerator."
+    },
+    {
+      "match": {
+        "op": "lcm",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/recall"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "c"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_numerator"
+      ],
+      "via": {
+        "common_numerator": [
+          "common-multiple/product"
+        ]
+      },
+      "feedback": "This starts: Common numerator."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "cross_multiply",
+        "match_denominator"
+      ],
+      "via": {
+        "cross_multiply": [
+          "cross-products/diagonals"
+        ],
+        "match_denominator": [
+          "missing-value/cross_multiply"
+        ]
+      },
+      "feedback": "This step starts several methods: Cross-multiply, Rewrite one fraction over the other's denominator.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(a, d)",
+              "b"
+            ]
+          },
+          "methods": [
+            "match_denominator"
+          ],
+          "via": {
+            "match_denominator": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Rewrite one fraction over the other's denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "c"
+            ]
+          },
+          "methods": [
+            "cross_multiply"
+          ],
+          "via": {
+            "cross_multiply": [
+              "cross-products/diagonals"
+            ]
+          },
+          "feedback": "This starts: Cross-multiply."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/product"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "common_numerator",
+        "match_denominator",
+        "ratio_table",
+        "unit_rate"
+      ],
+      "via": {
+        "common_numerator": [
+          "common-multiple/list_multiples"
+        ],
+        "match_denominator": [
+          "to-decimal/power_of_ten"
+        ],
+        "unit_rate": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Common numerator, Rewrite one fraction over the other's denominator, Ratio table, Compare unit rates (flipped fractions).",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "a"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "common_factor(b, a)"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "simplify-fraction/repeated"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(a, int)",
+              "a"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "missing-value/scale_factor"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "simplify-fraction/gcf"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_numerator",
+            "match_denominator",
+            "ratio_table",
+            "unit_rate"
+          ],
+          "via": {
+            "common_numerator": [
+              "to-decimal/power_of_ten"
+            ],
+            "match_denominator": [
+              "to-decimal/power_of_ten"
+            ],
+            "unit_rate": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Common numerator, Rewrite one fraction over the other's denominator, Ratio table, Compare unit rates (flipped fractions).",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "multiply(a, int)"
+            ]
+          },
+          "methods": [
+            "common_numerator"
+          ],
+          "via": {
+            "common_numerator": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Common numerator."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "common_denominator",
+        "decimal",
+        "match_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/list_multiples"
+        ],
+        "decimal": [
+          "to-decimal/power_of_ten"
+        ],
+        "match_denominator": [
+          "missing-value/ratio_table",
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Common denominator, Convert to decimals, Rewrite one fraction over the other's denominator.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "common_factor(a, b)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "simplify-fraction/repeated"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "a"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, int)",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/scale_factor"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "simplify-fraction/gcf"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator",
+            "decimal",
+            "match_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/power_of_ten"
+            ],
+            "decimal": [
+              "to-decimal/power_of_ten"
+            ],
+            "match_denominator": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Common denominator, Convert to decimals, Rewrite one fraction over the other's denominator.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "multiply(b, int)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        }
+      ]
+    },
+    {
+      "match": {
+        "op": "plot",
+        "args": [
+          "(a, b)",
+          "(c, d)"
+        ]
+      },
+      "class": {
+        "operation": "represent",
+        "scope": "across"
+      },
+      "methods": [
+        "graph"
+      ],
+      "feedback": "This starts: Graph the points."
+    },
+    {
+      "match": {
+        "op": "subtract",
+        "args": [
+          "b",
+          "a"
+        ]
+      },
+      "class": {
+        "operation": "subtract",
+        "scope": "within"
+      },
+      "methods": [
+        "distance_from_one"
+      ],
+      "feedback": "This starts: Distance from 1."
+    }
+  ]
+}

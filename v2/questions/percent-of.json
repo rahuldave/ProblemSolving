@@ -1,0 +1,45 @@
+{
+  "id": "percent-of",
+  "kind": "applied",
+  "title": "Find a percent of a number",
+  "prompt": "What is {p}% of {n}?",
+  "inputs": { "p": "the percent", "n": "the whole" },
+  "quantities": { "percent": ["p"], "whole": ["n"] },
+  "symmetries": [],
+  "outputs": ["answer"],
+  "mental_first_steps": [ { "op": "divide", "args": ["p", "100"] } ],
+  "examples": [
+    { "id": "15% of 80", "values": { "p": 15, "n": 80 }, "answer": 12 },
+    { "id": "35% of 60", "values": { "p": 35, "n": 60 }, "answer": 21 }
+  ],
+  "reduces_to": {
+    "question": "missing-value",
+    "with": { "a": "p", "b": 100, "d": "n" },
+    "note": "p% of n means p/100 = x/n.",
+    "methods": {
+      "unit_rate": { "id": "decimal", "name": "Convert to a decimal and multiply", "idea": "{p}% = {p} ÷ 100; multiply that by {n}." },
+      "scale_factor": { "id": "one_percent", "name": "Find 1% first", "idea": "1% of {n} is {n} ÷ 100; multiply by {p}." },
+      "cross_multiply": { "id": "multiply_first", "name": "Multiply, then divide by 100", "idea": "{p} × {n} ÷ 100." },
+      "simplify_then_scale": { "id": "fraction", "name": "Use a simplified fraction", "idea": "{p}/100 simplifies (15/100 = 3/20); take that fraction of {n}." },
+      "ratio_table": { "id": "ratio_table", "name": "Ratio table", "idea": "Scale {p}:100 until the 100 becomes {n}." }
+    }
+  },
+  "methods": {
+    "benchmark_10_5": {
+      "name": "Build from 10% and 5%",
+      "idea": "10% is easy (÷ 10) and 5% is half of that; add up the pieces.",
+      "best_when": "The percent is a multiple of 5.",
+      "watch_out": "Doesn't apply directly when the percent isn't a multiple of 5.",
+      "steps": [
+        { "op": "divide", "args": ["n", 10], "out": "ten", "text": "10% of {n} = {ten}" },
+        { "op": "divide", "args": ["ten", 2], "out": "five", "text": "5% of {n} = {five}" },
+        { "op": "floor_div", "args": ["p", 10], "out": "t", "hidden": true },
+        { "op": "mod", "args": ["p", 10], "out": "r", "hidden": true },
+        { "op": "divide", "args": ["r", 5], "out": "f", "hidden": true, "requires_integer": true },
+        { "op": "multiply", "args": ["ten", "t"], "out": "A", "text": "{t} × 10% = {A}" },
+        { "op": "multiply", "args": ["five", "f"], "out": "B", "text": "{f} × 5% = {B}" },
+        { "op": "add", "args": ["A", "B"], "out": "answer", "text": "{A} + {B} = {answer}" }
+      ]
+    }
+  }
+}

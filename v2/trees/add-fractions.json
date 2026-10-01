@@ -1,0 +1,294 @@
+{
+  "question": "add-fractions",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "a",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "decimal"
+      ],
+      "via": {
+        "decimal": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This starts: Convert to decimals."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/gcf_formula"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "lcm",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/recall"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "bow_tie"
+      ],
+      "via": {
+        "bow_tie": [
+          "cross-products/diagonals"
+        ]
+      },
+      "feedback": "This starts: Bow-tie (cross-multiply)."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "common_denominator"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/product"
+        ]
+      },
+      "feedback": "This starts: Common denominator."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "common_denominator",
+        "decimal"
+      ],
+      "via": {
+        "common_denominator": [
+          "common-multiple/list_multiples"
+        ],
+        "decimal": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Common denominator, Convert to decimals.",
+      "next": [
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "a",
+              "common_factor(a, b)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "simplify-fraction/repeated"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "b",
+              "a"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/divide"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "divide",
+            "args": [
+              "multiply(b, int)",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/scale_factor"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "gcf",
+            "args": [
+              "a",
+              "b"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "simplify-fraction/gcf"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator",
+            "decimal"
+          ],
+          "via": {
+            "common_denominator": [
+              "to-decimal/power_of_ten"
+            ],
+            "decimal": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Common denominator, Convert to decimals.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "multiply(b, int)"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/cross_multiply"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        },
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "b",
+              "int"
+            ]
+          },
+          "methods": [
+            "common_denominator"
+          ],
+          "via": {
+            "common_denominator": [
+              "missing-value/ratio_table",
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This starts: Common denominator."
+        }
+      ]
+    }
+  ]
+}

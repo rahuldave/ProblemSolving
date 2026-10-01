@@ -1,0 +1,23 @@
+{
+  "question": "cross-products",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "diagonals"
+      ],
+      "feedback": "This starts: Multiply the diagonals."
+    }
+  ]
+}

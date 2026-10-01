@@ -1,0 +1,479 @@
+# Are two ratios proportional?
+
+`proportion-check` · applied · prompt: *Are {a}:{b} and {c}:{d} proportional?*
+
+Reduces to [compare-fractions](compare-fractions.md) with `{"a": "a", "b": "b", "c": "c", "d": "d"}`. 
+
+| Method | Idea | Steps use |
+|---|---|---|
+| **Cross-multiply** `cross_multiply` (= compare-fractions · cross_multiply) | {a}/{b} > {c}/{d} exactly when {a}×{d} > {c}×{b}. | — |
+| **Common denominator** `common_denominator` (= compare-fractions · common_denominator) | Rewrite both fractions over the same denominator, then compare numerators. | — |
+| **Rewrite one fraction over the other's denominator** `match_denominator` (= compare-fractions · match_denominator) | Turn {a}/{b} into something over {d}, then compare numerators with {c}. | — |
+| **Common numerator** `common_numerator` (= compare-fractions · common_numerator) | With equal numerators, the smaller denominator gives the bigger fraction. | — |
+| **Convert to decimals** `decimal` (= compare-fractions · decimal) | Write each fraction as a decimal and compare. | — |
+| **Compare unit rates (flipped fractions)** `unit_rate` (= compare-fractions · unit_rate) | How much bottom per 1 of top? The bigger rate belongs to the smaller fraction. | — |
+| **Compare scale factors** `scale_factor` (= compare-fractions · scale_factor) | How much do the tops grow ({c} ÷ {a}) compared with the bottoms ({d} ÷ {b})? | — |
+| **Ratio table** `ratio_table` (= compare-fractions · ratio_table) | Scale {a}:{b} by 2, 3, 4, … until the top reaches {c}, then compare bottoms. | — |
+| **Graph the points** `graph` (= compare-fractions · graph) | Plot ({a}, {b}) and ({c}, {d}); the steeper line from the origin belongs to the smaller fraction. | — |
+| **Simplify both** `simplify` (= compare-fractions · simplify) | Reduce both fractions to lowest terms; equal fractions reduce to the same thing. | — |
+| **Distance from 1** `distance_from_one` (= compare-fractions · distance_from_one) | Find how far each fraction is from 1; the one closer to 1 is bigger. | — |
+
+Reading the graphs: **hexagons** group first steps by operation · scope; **blue** = first step, **purple** = second step (only where methods share a first step); **yellow** = method; **green dashed** = a call to another question (see its own page); edge labels show which skill method produced the step.
+
+## Are 6:8 and 72:96 proportional?
+
+```mermaid
+flowchart LR
+  n0(["Are 6:8 and 72:96 proportional?"])
+  n1(["Answer: proportional"])
+  n2["Cross-multiply"]
+  n3["Find the cross products of 6/8 and 72/96 → 576/576"]
+  n2 --> n3
+  n4["576 = 576"]
+  n3 --> n4
+  n4 --> n1
+  n5["Common denominator"]
+  n6["Find a common multiple of 8 and 96 → 96"]
+  n5 --> n6
+  n7["Solve 6/8 = x/96 → 72"]
+  n6 --> n7
+  n8["Solve 72/96 = x/96 → 72"]
+  n7 --> n8
+  n9["72 = 72"]
+  n8 --> n9
+  n9 --> n1
+  n10["Rewrite one fraction over the other's denominator"]
+  n11["Solve 6/8 = x/96 → 72"]
+  n10 --> n11
+  n12["72 = 72"]
+  n11 --> n12
+  n12 --> n1
+  n13["Common numerator"]
+  n14["Find a common multiple of 6 and 72 → 72"]
+  n13 --> n14
+  n15["Solve 8/6 = x/72 → 96"]
+  n14 --> n15
+  n16["Solve 96/72 = x/72 → 96"]
+  n15 --> n16
+  n17["96 = 96"]
+  n16 --> n17
+  n17 --> n1
+  n18["Convert to decimals"]
+  n19["Write 6/8 as a decimal → 0.75"]
+  n18 --> n19
+  n20["Write 72/96 as a decimal → 0.75"]
+  n19 --> n20
+  n21["0.75 = 0.75"]
+  n20 --> n21
+  n21 --> n1
+  n22["Compare unit rates (flipped fractions)"]
+  n23["Write 8/6 as a decimal → ≈ 1.333"]
+  n22 --> n23
+  n24["Write 96/72 as a decimal → ≈ 1.333"]
+  n23 --> n24
+  n25["4/3 = 4/3"]
+  n24 --> n25
+  n25 --> n1
+  n26["Compare scale factors"]
+  n27["72 ÷ 6 = 12"]
+  n26 --> n27
+  n28["96 ÷ 8 = 12"]
+  n27 --> n28
+  n29["12 = 12"]
+  n28 --> n29
+  n29 --> n1
+  n30["Ratio table"]
+  n31["6 × 12 = 72"]
+  n30 --> n31
+  n32["8 × 12 = 96"]
+  n31 --> n32
+  n33["96 = 96"]
+  n32 --> n33
+  n33 --> n1
+  n34["Graph the points"]
+  n35["plot (6, 8), (72, 96)"]
+  n34 --> n35
+  n36["8 ÷ 6 ≈ 1.333"]
+  n35 --> n36
+  n37["96 ÷ 72 ≈ 1.333"]
+  n36 --> n37
+  n38["4/3 = 4/3"]
+  n37 --> n38
+  n38 --> n1
+  n39["Simplify both"]
+  n40["Simplify 6/8 → 3/4"]
+  n39 --> n40
+  n41["Simplify 72/96 → 3/4"]
+  n40 --> n41
+  n42["3:4 = 3:4"]
+  n41 --> n42
+  n42 --> n1
+  n43["Distance from 1"]
+  n44["8 − 6 = 2"]
+  n43 --> n44
+  n45["96 − 72 = 24"]
+  n44 --> n45
+  n46["Which is larger: 2/8 or 24/96? (Or are they equal?) → equal"]
+  n45 --> n46
+  n46 --> n1
+  n47["72 ÷ 6 = 12"]
+  n48{{"divide · across"}}
+  n0 --> n48
+  n48 --> n47
+  n47 --> n26
+  n49["96 ÷ 8 = 12"]
+  n48 --> n49
+  n49 -->|"missing-value/scale_factor"| n10
+  n50["6 ÷ 8 = 0.75"]
+  n51{{"divide · within"}}
+  n0 --> n51
+  n51 --> n50
+  n52["then 0.75 × 96 = 72"]
+  n50 --> n52
+  n52 -->|"missing-value/unit_rate"| n10
+  n53["then 72 ÷ 96 = 0.75"]
+  n50 --> n53
+  n53 -->|"to-decimal/divide"| n18
+  n54["8 ÷ 6 ≈ 1.333"]
+  n51 --> n54
+  n55["then 96 ÷ 4/3 = 72"]
+  n54 --> n55
+  n55 -->|"missing-value/inverse_rate"| n10
+  n56["then 96 ÷ 72 ≈ 1.333"]
+  n54 --> n56
+  n56 -->|"to-decimal/divide"| n22
+  n57["GCF(6, 72) = 6"]
+  n58{{"factor · across"}}
+  n0 --> n58
+  n58 --> n57
+  n57 -->|"common-multiple/gcf_formula"| n13
+  n59["GCF(8, 96) = 8"]
+  n58 --> n59
+  n59 -->|"common-multiple/gcf_formula"| n5
+  n60["6 ÷ 2 = 3"]
+  n61{{"factor · within"}}
+  n0 --> n61
+  n61 --> n60
+  n62["then 8 ÷ 2 = 4"]
+  n60 --> n62
+  n62 -->|"simplify-fraction/repeated"| n10
+  n62 -->|"simplify-fraction/repeated"| n39
+  n63["GCF(6, 8) = 2"]
+  n61 --> n63
+  n64["then 6 ÷ 2 = 3"]
+  n63 --> n64
+  n64 -->|"simplify-fraction/gcf"| n10
+  n64 -->|"simplify-fraction/gcf"| n39
+  n65["6 × 72 = 432"]
+  n66{{"multiply · across"}}
+  n0 --> n66
+  n66 --> n65
+  n65 -->|"common-multiple/product"| n13
+  n67["6 × 96 = 576"]
+  n66 --> n67
+  n68["then 72 × 8 = 576"]
+  n67 --> n68
+  n68 -->|"cross-products/diagonals"| n2
+  n69["then 576 ÷ 8 = 72"]
+  n67 --> n69
+  n69 -->|"missing-value/cross_multiply"| n10
+  n70["8 × 96 = 768"]
+  n66 --> n70
+  n70 -->|"common-multiple/product"| n5
+  n71["LCM(6, 72) = 72"]
+  n66 --> n71
+  n71 -->|"common-multiple/recall"| n13
+  n72["LCM(8, 96) = 96"]
+  n66 --> n72
+  n72 -->|"common-multiple/recall"| n5
+  n73["6 × 12 = 72"]
+  n74{{"multiply · within"}}
+  n0 --> n74
+  n74 --> n73
+  n75["then 8 × 72 = 576"]
+  n73 --> n75
+  n75 -->|"missing-value/cross_multiply"| n13
+  n76["then 72 ÷ 6 = 12"]
+  n73 --> n76
+  n76 -->|"missing-value/scale_factor"| n13
+  n77["then 8 ÷ 6 ≈ 1.333"]
+  n73 --> n77
+  n77 -->|"to-decimal/divide"| n13
+  n78["then 6 ÷ 8 = 0.75"]
+  n73 --> n78
+  n78 -->|"to-decimal/divide"| n13
+  n79["then 8 × 125 = 1000"]
+  n73 --> n79
+  n79 -->|"to-decimal/power_of_ten"| n13
+  n80["then 6 × 12 = 72"]
+  n73 --> n80
+  n80 -->|"missing-value/ratio_table"| n13
+  n81["then GCF(8, 6) = 2"]
+  n73 --> n81
+  n81 -->|"simplify-fraction/gcf"| n13
+  n82["then 8 ÷ 2 = 4"]
+  n73 --> n82
+  n82 -->|"simplify-fraction/repeated"| n13
+  n83["then 8 × 12 = 96"]
+  n73 --> n83
+  n83 --> n30
+  n84["8 × 12 = 96"]
+  n74 --> n84
+  n85["then 6 × 96 = 576"]
+  n84 --> n85
+  n85 -->|"missing-value/cross_multiply"| n5
+  n86["then 96 ÷ 8 = 12"]
+  n84 --> n86
+  n86 -->|"missing-value/scale_factor"| n5
+  n87["then 6 ÷ 8 = 0.75"]
+  n84 --> n87
+  n87 -->|"to-decimal/divide"| n5
+  n88["then 8 × 125 = 1000"]
+  n84 --> n88
+  n88 -->|"to-decimal/power_of_ten"| n5
+  n89["then 8 ÷ 6 ≈ 1.333"]
+  n84 --> n89
+  n89 -->|"to-decimal/divide"| n5
+  n90["then 8 × 12 = 96"]
+  n84 --> n90
+  n90 -->|"missing-value/ratio_table"| n5
+  n91["then GCF(6, 8) = 2"]
+  n84 --> n91
+  n91 -->|"simplify-fraction/gcf"| n5
+  n92["then 6 ÷ 2 = 3"]
+  n84 --> n92
+  n92 -->|"simplify-fraction/repeated"| n5
+  n93["then 6 × 12 = 72"]
+  n84 --> n93
+  n93 -->|"missing-value/ratio_table"| n10
+  n94["8 × 125 = 1000"]
+  n74 --> n94
+  n95["then 6 × 125 = 750"]
+  n94 --> n95
+  n95 -->|"to-decimal/power_of_ten"| n18
+  n95 -->|"to-decimal/power_of_ten"| n10
+  n96["plot (6, 8), (72, 96)"]
+  n97{{"represent · across"}}
+  n0 --> n97
+  n97 --> n96
+  n96 --> n34
+  n98["8 − 6 = 2"]
+  n99{{"subtract · within"}}
+  n0 --> n99
+  n99 --> n98
+  n98 --> n43
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class n48,n51,n58,n61,n66,n74,n97,n99 cls
+  class n47,n49,n50,n54,n57,n59,n60,n63,n65,n67,n70,n71,n72,n73,n84,n94,n96,n98 first
+  class n52,n53,n55,n56,n62,n64,n68,n69,n75,n76,n77,n78,n79,n80,n81,n82,n83,n85,n86,n87,n88,n89,n90,n91,n92,n93,n95 second
+  class n2,n5,n10,n13,n18,n22,n26,n30,n34,n39,n43 method
+  class n3,n6,n7,n8,n11,n14,n15,n16,n19,n20,n23,n24,n40,n41,n46 skill
+  class n4,n9,n12,n17,n21,n25,n27,n28,n29,n31,n32,n33,n35,n36,n37,n38,n42,n44,n45 step
+  class n0,n1 ans
+```
+
+## Are 4:6 and 10:14 proportional?
+
+```mermaid
+flowchart LR
+  n0(["Are 4:6 and 10:14 proportional?"])
+  n1(["Answer: not proportional"])
+  n2["Cross-multiply"]
+  n3["Find the cross products of 4/6 and 10/14 → 56/60"]
+  n2 --> n3
+  n4["56 #lt; 60"]
+  n3 --> n4
+  n4 --> n1
+  n5["Common denominator"]
+  n6["Find a common multiple of 6 and 14 → 42"]
+  n5 --> n6
+  n7["Solve 4/6 = x/42 → 28"]
+  n6 --> n7
+  n8["Solve 10/14 = x/42 → 30"]
+  n7 --> n8
+  n9["28 #lt; 30"]
+  n8 --> n9
+  n9 --> n1
+  n10["Rewrite one fraction over the other's denominator"]
+  n11["Solve 4/6 = x/14 → 28/3"]
+  n10 --> n11
+  n12["28/3 #lt; 10"]
+  n11 --> n12
+  n12 --> n1
+  n13["Common numerator"]
+  n14["Find a common multiple of 4 and 10 → 20"]
+  n13 --> n14
+  n15["Solve 6/4 = x/20 → 30"]
+  n14 --> n15
+  n16["Solve 14/10 = x/20 → 28"]
+  n15 --> n16
+  n17["30 #gt; 28"]
+  n16 --> n17
+  n17 --> n1
+  n18["Convert to decimals"]
+  n19["Write 4/6 as a decimal → ≈ 0.667"]
+  n18 --> n19
+  n20["Write 10/14 as a decimal → ≈ 0.714"]
+  n19 --> n20
+  n21["2/3 #lt; 5/7"]
+  n20 --> n21
+  n21 --> n1
+  n22["Compare unit rates (flipped fractions)"]
+  n23["Write 6/4 as a decimal → 1.5"]
+  n22 --> n23
+  n24["Write 14/10 as a decimal → 1.4"]
+  n23 --> n24
+  n25["1.5 #gt; 1.4"]
+  n24 --> n25
+  n25 --> n1
+  n26["Compare scale factors"]
+  n27["10 ÷ 4 = 2.5"]
+  n26 --> n27
+  n28["14 ÷ 6 ≈ 2.333"]
+  n27 --> n28
+  n29["2.5 #gt; 7/3"]
+  n28 --> n29
+  n29 --> n1
+  n30["Graph the points"]
+  n31["plot (4, 6), (10, 14)"]
+  n30 --> n31
+  n32["6 ÷ 4 = 1.5"]
+  n31 --> n32
+  n33["14 ÷ 10 = 1.4"]
+  n32 --> n33
+  n34["1.5 #gt; 1.4"]
+  n33 --> n34
+  n34 --> n1
+  n35["Simplify both"]
+  n36["Simplify 4/6 → 2/3"]
+  n35 --> n36
+  n37["Simplify 10/14 → 5/7"]
+  n36 --> n37
+  n38["2:3 ≠ 5:7"]
+  n37 --> n38
+  n38 --> n1
+  n39["Distance from 1"]
+  n40["6 − 4 = 2"]
+  n39 --> n40
+  n41["14 − 10 = 4"]
+  n40 --> n41
+  n42["Which is larger: 2/6 or 4/14? (Or are they equal?) → first"]
+  n41 --> n42
+  n42 --> n1
+  n43["10 ÷ 4 = 2.5"]
+  n44{{"divide · across"}}
+  n0 --> n44
+  n44 --> n43
+  n43 --> n26
+  n45["14 ÷ 6 ≈ 2.333"]
+  n44 --> n45
+  n45 -->|"missing-value/scale_factor"| n10
+  n46["4 ÷ 6 ≈ 0.667"]
+  n47{{"divide · within"}}
+  n0 --> n47
+  n47 --> n46
+  n48["then 2/3 × 14 = 28/3"]
+  n46 --> n48
+  n48 -->|"missing-value/unit_rate"| n10
+  n49["then 10 ÷ 14 ≈ 0.714"]
+  n46 --> n49
+  n49 -->|"to-decimal/divide"| n18
+  n50["6 ÷ 4 = 1.5"]
+  n47 --> n50
+  n51["then 14 ÷ 1.5 ≈ 9.333"]
+  n50 --> n51
+  n51 -->|"missing-value/inverse_rate"| n10
+  n52["then 14 ÷ 10 = 1.4"]
+  n50 --> n52
+  n52 -->|"to-decimal/divide / to-decimal/power_of_ten"| n22
+  n53["GCF(4, 10) = 2"]
+  n54{{"factor · across"}}
+  n0 --> n54
+  n54 --> n53
+  n53 -->|"common-multiple/gcf_formula"| n13
+  n55["GCF(6, 14) = 2"]
+  n54 --> n55
+  n55 -->|"common-multiple/gcf_formula"| n5
+  n56["4 ÷ 2 = 2"]
+  n57{{"factor · within"}}
+  n0 --> n57
+  n57 --> n56
+  n58["then 6 ÷ 2 = 3"]
+  n56 --> n58
+  n58 -->|"simplify-fraction/repeated"| n10
+  n58 -->|"simplify-fraction/repeated"| n35
+  n59["GCF(4, 6) = 2"]
+  n57 --> n59
+  n60["then 4 ÷ 2 = 2"]
+  n59 --> n60
+  n60 -->|"simplify-fraction/gcf"| n10
+  n60 -->|"simplify-fraction/gcf"| n35
+  n61["4 × 10 = 40"]
+  n62{{"multiply · across"}}
+  n0 --> n62
+  n62 --> n61
+  n61 -->|"common-multiple/product"| n13
+  n63["4 × 14 = 56"]
+  n62 --> n63
+  n64["then 10 × 6 = 60"]
+  n63 --> n64
+  n64 -->|"cross-products/diagonals"| n2
+  n65["then 56 ÷ 6 ≈ 9.333"]
+  n63 --> n65
+  n65 -->|"missing-value/cross_multiply"| n10
+  n66["6 × 14 = 84"]
+  n62 --> n66
+  n66 -->|"common-multiple/product"| n5
+  n67["LCM(4, 10) = 20"]
+  n62 --> n67
+  n67 -->|"common-multiple/recall"| n13
+  n68["LCM(6, 14) = 42"]
+  n62 --> n68
+  n68 -->|"common-multiple/recall"| n5
+  n69["4 × 25 = 100"]
+  n70{{"multiply · within"}}
+  n0 --> n70
+  n70 --> n69
+  n71["then 6 × 25 = 150"]
+  n69 --> n71
+  n71 -->|"to-decimal/power_of_ten"| n10
+  n71 -->|"to-decimal/power_of_ten"| n22
+  n72["4 × 5 = 20"]
+  n70 --> n72
+  n72 -->|"common-multiple/list_multiples"| n13
+  n73["6 × 7 = 42"]
+  n70 --> n73
+  n73 -->|"common-multiple/list_multiples"| n5
+  n74["plot (4, 6), (10, 14)"]
+  n75{{"represent · across"}}
+  n0 --> n75
+  n75 --> n74
+  n74 --> n30
+  n76["6 − 4 = 2"]
+  n77{{"subtract · within"}}
+  n0 --> n77
+  n77 --> n76
+  n76 --> n39
+  classDef cls fill:#eef0f6,stroke:#8a90a6,color:#222
+  classDef first fill:#e3edfd,stroke:#5b7fd1,color:#222
+  classDef second fill:#efe6fb,stroke:#8b63c9,color:#222
+  classDef method fill:#fff1cc,stroke:#c99a1a,color:#222,font-weight:bold
+  classDef skill fill:#e3f4e6,stroke:#3f9a55,stroke-dasharray:5 3,color:#222
+  classDef step fill:#ffffff,stroke:#999,color:#222
+  classDef ans fill:#fde4e1,stroke:#c4554a,color:#222
+  class n44,n47,n54,n57,n62,n70,n75,n77 cls
+  class n43,n45,n46,n50,n53,n55,n56,n59,n61,n63,n66,n67,n68,n69,n72,n73,n74,n76 first
+  class n48,n49,n51,n52,n58,n60,n64,n65,n71 second
+  class n2,n5,n10,n13,n18,n22,n26,n30,n35,n39 method
+  class n3,n6,n7,n8,n11,n14,n15,n16,n19,n20,n23,n24,n36,n37,n42 skill
+  class n4,n9,n12,n17,n21,n25,n27,n28,n29,n31,n32,n33,n34,n38,n40,n41 step
+  class n0,n1 ans
+```
+
+Not applicable here: Ratio table (`ratio_table`)

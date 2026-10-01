@@ -1,0 +1,54 @@
+{
+  "id": "add-fractions",
+  "kind": "core",
+  "title": "Add two fractions",
+  "prompt": "Find {a}/{b} + {c}/{d}.",
+  "inputs": { "a": "numerator 1", "b": "denominator 1", "c": "numerator 2", "d": "denominator 2" },
+  "quantities": { "fraction1": ["a", "b"], "fraction2": ["c", "d"] },
+  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+  "outputs": ["answer"],
+  "default_method": "common_denominator",
+  "examples": [
+    { "id": "5/6 + 3/4", "values": { "a": 5, "b": 6, "c": 3, "d": 4 }, "answer": "19/12" },
+    { "id": "2/3 + 1/5", "values": { "a": 2, "b": 3, "c": 1, "d": 5 }, "answer": "13/15" }
+  ],
+  "methods": {
+    "common_denominator": {
+      "name": "Common denominator",
+      "idea": "Rewrite both fractions over a common denominator, add the numerators, simplify.",
+      "best_when": "Always; use the least common multiple to keep numbers small.",
+      "steps": [
+        { "op": "use", "question": "common-multiple", "with": { "x": "b", "y": "d" }, "out": { "answer": "L" }, "text": "Common denominator: {L}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "a", "b": "b", "d": "L" }, "out": { "answer": "n1" }, "text": "{a}/{b} = {n1}/{L}" },
+        { "op": "use", "question": "missing-value", "with": { "a": "c", "b": "d", "d": "L" }, "out": { "answer": "n2" }, "text": "{c}/{d} = {n2}/{L}" },
+        { "op": "add", "args": ["n1", "n2"], "out": "s", "text": "{n1} + {n2} = {s}" },
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "s", "y": "L" }, "out": { "x1": "sn", "y1": "sd" }, "text": "{s}/{L} = {sn}/{sd}" },
+        { "op": "divide", "args": ["sn", "sd"], "out": "answer", "hidden": true }
+      ]
+    },
+    "bow_tie": {
+      "name": "Bow-tie (cross-multiply)",
+      "idea": "({a}×{d} + {c}×{b}) / ({b}×{d}), then simplify.",
+      "best_when": "Quick, with small denominators.",
+      "watch_out": "When the denominators share a factor, the result needs simplifying.",
+      "steps": [
+        { "op": "use", "question": "cross-products", "with": { "a": "a", "b": "b", "c": "c", "d": "d" }, "out": { "p1": "p1", "p2": "p2" } },
+        { "op": "multiply", "args": ["b", "d"], "out": "P", "text": "{b} × {d} = {P}" },
+        { "op": "add", "args": ["p1", "p2"], "out": "s", "text": "{p1} + {p2} = {s}" },
+        { "op": "use", "question": "simplify-fraction", "with": { "x": "s", "y": "P" }, "out": { "x1": "sn", "y1": "sd" }, "text": "{s}/{P} = {sn}/{sd}" },
+        { "op": "divide", "args": ["sn", "sd"], "out": "answer", "hidden": true }
+      ]
+    },
+    "decimal": {
+      "name": "Convert to decimals",
+      "idea": "Write each fraction as a decimal and add.",
+      "best_when": "An approximate answer is enough.",
+      "watch_out": "Repeating decimals (5/6 = 0.8333…) make the written sum inexact.",
+      "steps": [
+        { "op": "use", "question": "to-decimal", "with": { "x": "a", "y": "b" }, "out": { "answer": "q1" } },
+        { "op": "use", "question": "to-decimal", "with": { "x": "c", "y": "d" }, "out": { "answer": "q2" } },
+        { "op": "add", "args": ["q1", "q2"], "out": "answer", "text": "{q1} + {q2} = {answer}" }
+      ]
+    }
+  }
+}

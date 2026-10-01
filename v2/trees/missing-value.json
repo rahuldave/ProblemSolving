@@ -1,0 +1,195 @@
+{
+  "question": "missing-value",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "d",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "across"
+      },
+      "methods": [
+        "scale_factor"
+      ],
+      "feedback": "This starts: Scale factor."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "a",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "unit_rate"
+      ],
+      "via": {
+        "unit_rate": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This starts: Unit rate."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "b",
+          "a"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "inverse_rate"
+      ],
+      "via": {
+        "inverse_rate": [
+          "to-decimal/divide"
+        ]
+      },
+      "feedback": "This starts: Inverse rate."
+    },
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "a",
+          "common_factor(a, b)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "simplify_then_scale"
+      ],
+      "via": {
+        "simplify_then_scale": [
+          "simplify-fraction/repeated"
+        ]
+      },
+      "feedback": "This starts: Simplify, then scale."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "a",
+          "b"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "simplify_then_scale"
+      ],
+      "via": {
+        "simplify_then_scale": [
+          "simplify-fraction/gcf"
+        ]
+      },
+      "feedback": "This starts: Simplify, then scale."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "d"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "cross_multiply"
+      ],
+      "feedback": "This starts: Cross-multiply and divide."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "a",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "inverse_rate"
+      ],
+      "via": {
+        "inverse_rate": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This starts: Inverse rate."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "b",
+          "int"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "ratio_table",
+        "unit_rate"
+      ],
+      "via": {
+        "unit_rate": [
+          "to-decimal/power_of_ten"
+        ]
+      },
+      "feedback": "This step starts several methods: Ratio table, Unit rate.",
+      "next": [
+        {
+          "match": {
+            "op": "multiply",
+            "args": [
+              "a",
+              "int"
+            ]
+          },
+          "methods": [
+            "ratio_table",
+            "unit_rate"
+          ],
+          "via": {
+            "unit_rate": [
+              "to-decimal/power_of_ten"
+            ]
+          },
+          "feedback": "This step starts several methods: Ratio table, Unit rate.",
+          "note": "Same first two steps; ask the student what they plan to do next."
+        }
+      ]
+    }
+  ]
+}

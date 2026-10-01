@@ -1,0 +1,53 @@
+{
+  "id": "common-multiple",
+  "kind": "skill",
+  "title": "Find a common multiple",
+  "prompt": "Find a common multiple of {x} and {y}.",
+  "inputs": { "x": "first number", "y": "second number" },
+  "quantities": { "first": ["x"], "second": ["y"] },
+  "symmetries": [ { "x": "y", "y": "x" } ],
+  "outputs": ["answer"],
+  "default_method": "recall",
+  "examples": [
+    { "id": "4 and 6", "values": { "x": 4, "y": 6 }, "answer": 12 },
+    { "id": "4 and 7", "values": { "x": 4, "y": 7 }, "answer": 28 }
+  ],
+  "methods": {
+    "recall": {
+      "name": "Know the LCM",
+      "idea": "Recognize the least common multiple directly.",
+      "best_when": "Small, familiar numbers.",
+      "steps": [
+        { "op": "lcm", "args": ["x", "y"], "out": "answer", "text": "LCM({x}, {y}) = {answer}" }
+      ]
+    },
+    "list_multiples": {
+      "name": "List multiples",
+      "idea": "Count up by {x} until you reach a number {y} divides.",
+      "best_when": "Small numbers.",
+      "steps": [
+        { "op": "multiply", "args": ["x", "k"], "out": "answer", "search": { "var": "k", "until_divisible_by": ["answer", "y"] }, "text": "{x}, {x}×2, {x}×3, … until {y} divides it: {answer}" }
+      ]
+    },
+    "product": {
+      "name": "Multiply them",
+      "idea": "{x} × {y} is always a common multiple.",
+      "best_when": "The numbers share no factors (then it's also the least).",
+      "watch_out": "When they share a factor, this isn't the least common multiple, so later numbers are bigger and need simplifying.",
+      "answer_relation": "multiple",
+      "steps": [
+        { "op": "multiply", "args": ["x", "y"], "out": "answer", "text": "{x} × {y} = {answer}" }
+      ]
+    },
+    "gcf_formula": {
+      "name": "Use the GCF",
+      "idea": "LCM = {x} ÷ GCF × {y}.",
+      "best_when": "Large numbers whose GCF you can find.",
+      "steps": [
+        { "op": "gcf", "args": ["x", "y"], "out": "g", "text": "GCF({x}, {y}) = {g}" },
+        { "op": "divide", "args": ["x", "g"], "out": "xg", "text": "{x} ÷ {g} = {xg}" },
+        { "op": "multiply", "args": ["xg", "y"], "out": "answer", "text": "{xg} × {y} = {answer}" }
+      ]
+    }
+  }
+}

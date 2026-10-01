@@ -1,0 +1,40 @@
+{
+  "question": "to-decimal",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "x",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "divide",
+        "scope": "within"
+      },
+      "methods": [
+        "divide"
+      ],
+      "feedback": "This starts: Divide."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "power_of_ten"
+      ],
+      "feedback": "This starts: Scale to 10, 100, 1000."
+    }
+  ]
+}

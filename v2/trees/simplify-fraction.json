@@ -1,0 +1,40 @@
+{
+  "question": "simplify-fraction",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "divide",
+        "args": [
+          "x",
+          "common_factor(x, y)"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "repeated"
+      ],
+      "feedback": "This starts: Divide out common factors repeatedly."
+    },
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "x",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "within"
+      },
+      "methods": [
+        "gcf"
+      ],
+      "feedback": "This starts: Divide by the GCF."
+    }
+  ]
+}

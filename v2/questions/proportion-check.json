@@ -1,0 +1,20 @@
+{
+  "id": "proportion-check",
+  "kind": "applied",
+  "title": "Are two ratios proportional?",
+  "prompt": "Are {a}:{b} and {c}:{d} proportional?",
+  "inputs": { "a": "first term of ratio 1", "b": "second term of ratio 1", "c": "first term of ratio 2", "d": "second term of ratio 2" },
+  "quantities": { "ratio1": ["a", "b"], "ratio2": ["c", "d"] },
+  "symmetries": [ { "a": "c", "b": "d", "c": "a", "d": "b" } ],
+  "outputs": ["answer"],
+  "examples": [
+    { "id": "6:8 vs 72:96", "values": { "a": 6, "b": 8, "c": 72, "d": 96 }, "answer": "proportional" },
+    { "id": "4:6 vs 10:14", "values": { "a": 4, "b": 6, "c": 10, "d": 14 }, "answer": "not proportional" }
+  ],
+  "reduces_to": {
+    "question": "compare-fractions",
+    "with": { "a": "a", "b": "b", "c": "c", "d": "d" },
+    "answer_map": { "equal": "proportional", "first": "not proportional", "second": "not proportional", "not equal": "not proportional" },
+    "methods": "all"
+  }
+}

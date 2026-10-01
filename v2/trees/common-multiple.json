@@ -1,0 +1,74 @@
+{
+  "question": "common-multiple",
+  "generated_by": "build.py",
+  "first_steps": [
+    {
+      "match": {
+        "op": "gcf",
+        "args": [
+          "x",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "factor",
+        "scope": "across"
+      },
+      "methods": [
+        "gcf_formula"
+      ],
+      "feedback": "This starts: Use the GCF."
+    },
+    {
+      "match": {
+        "op": "lcm",
+        "args": [
+          "x",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "recall"
+      ],
+      "feedback": "This starts: Know the LCM."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "x",
+          "y"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "across"
+      },
+      "methods": [
+        "product"
+      ],
+      "feedback": "This starts: Multiply them."
+    },
+    {
+      "match": {
+        "op": "multiply",
+        "args": [
+          "int",
+          "x"
+        ]
+      },
+      "class": {
+        "operation": "multiply",
+        "scope": "within"
+      },
+      "methods": [
+        "list_multiples"
+      ],
+      "feedback": "This starts: List multiples."
+    }
+  ]
+}
