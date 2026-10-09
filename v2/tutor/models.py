@@ -12,15 +12,31 @@ from typing import Annotated, Any, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 
-NUMBER = re.compile(r"-?(?:\d+(?:\.\d*)?|\.\d+)(?:/(?:\d+(?:\.\d*)?|\.\d+))?")
+NUMBER = re.compile(r"-?(?:\d+(?:\.\d*)?|\.\d+)(?:/(?:\d+(?:\.\d*)?|\.\d+))?", re.ASCII)  # 0-9 only
 MAX_NUMBER_TEXT = 30
+
+
+def number_value(text: str) -> Fraction:
+    """The value of a number in the parser's notation. A fraction's top and bottom may be decimals (3/0.5 = 6).
+    Raises ValueError for anything else, and for a zero bottom."""
+    if len(text) > MAX_NUMBER_TEXT or not NUMBER.fullmatch(text):
+        raise ValueError("not a number like 12, 0.75 or 2/3")
+    top, _, bottom = text.partition("/")
+    value = Fraction(top)
+    if bottom:
+        if Fraction(bottom) == 0:
+            raise ValueError("a fraction can't have 0 on the bottom")
+        value /= Fraction(bottom)
+    return value
 
 
 class Number(BaseModel):
     """A number as the student wrote it: 12, 0.75, 2/3. Keeping the text lets us accept 0.667 for 2/3.
 
-    Only the parser's notation is allowed: digits, an optional decimal point, an optional `/` denominator, an
-    optional leading minus. No exponents, at most 30 characters, and never a zero denominator."""
+    Only the parser's notation is allowed: digits, an optional decimal point, an optional `/` denominator (itself
+    possibly a decimal: 3/0.5 is 6), an optional leading minus. No exponents, at most 30 characters, and never a zero
+    denominator. The validator computes the value with number_value(), the same function `.value` uses, so the two
+    can't disagree."""
 
     text: str
     _value: Fraction | None = PrivateAttr(default=None)
@@ -29,16 +45,13 @@ class Number(BaseModel):
     @classmethod
     def parses(cls, v: str) -> str:
         v = v.strip().replace("$", "").replace(",", "")
-        if len(v) > MAX_NUMBER_TEXT or not NUMBER.fullmatch(v):
-            raise ValueError("not a number like 12, 0.75 or 2/3")
-        if "/" in v and Fraction(v.split("/")[1]) == 0:
-            raise ValueError("a fraction can't have 0 on the bottom")
+        number_value(v)
         return v
 
     @property
     def value(self) -> Fraction:
         if self._value is None:
-            self._value = Fraction(self.text)
+            self._value = number_value(self.text)
         return self._value
 
     @property

@@ -5,7 +5,10 @@
 // doesn't hold a number. Registers window.BoxKit.
 (function () {
   const SYM = {multiply: "×", divide: "÷", add: "+", subtract: "−"};
+  // The server's grammar (tutor/models.py NUMBER, at most 30 characters): a top and an optional bottom, each a whole
+  // number or a decimal (3/0.5 is 6). tests/test_boxes.py checks the two agree.
   const NUM = /^-?(\d+\.?\d*|\.\d+)(\/(\d+\.?\d*|\.\d+))?$/;
+  const MAX_NUM = 30;
   const clean = v => v.trim().replace(/[\s$,]/g, "");
   const N = text => ({text});
 
@@ -34,7 +37,7 @@
       set: v => { i.value = v || ""; },
       read(required) {
         const v = clean(i.value);
-        const bad = v ? !NUM.test(v) : (required || !i.optional);
+        const bad = v ? (!NUM.test(v) || v.length > MAX_NUM || /\/[0.]*$/.test(v)) : (required || !i.optional);
         i.classList.toggle("bx-bad", bad);
         return bad ? null : v;
       },

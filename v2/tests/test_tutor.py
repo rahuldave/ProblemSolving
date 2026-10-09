@@ -424,3 +424,75 @@ def test_number_caches_its_value_and_places():
     n = Number(text="0.667")
     assert n.value is n.value and n.places == 3 and Number(text="2/3").places is None
     assert Number(text="2/3").value == Fraction(2, 3)
+
+
+# ---------------------------------------------------------------- second review
+
+@pytest.mark.parametrize("text, value", [("3/0.5", 6), (".5/.25", 2), ("2/3", "2/3"), ("5.", 5), ("-1.5", "-3/2")])
+def test_decimal_denominators_have_their_value(text, value):
+    from fractions import Fraction
+    from tutor.models import Number, number_value
+    assert Number(text=text).value == Fraction(value) == number_value(text)
+
+
+def test_unicode_digits_are_not_numbers():
+    from pydantic import ValidationError
+    from tutor.models import Number
+    with pytest.raises(ValidationError):
+        Number(text="٣")
+
+
+def test_a_trap_step_after_settling_its_decision_reopens_it():
+    s = WordProblemSession("lemonade-more-sugar")
+    corr = next(di for di, d in enumerate(s.wp["extract"]) if d["concept"] == "correspondence")
+    s.decide(corr, correct_index(s, corr))
+    assert corr in s.decided
+    fb = s.submit("6 x 18 = 108")  # a tell of the flipped-ratio trap: contradicts the pick
+    assert kinds(fb) == ["trap"] and "doesn't fit what you chose" in fb[0].message
+    assert corr not in s.decided and s.di == corr and s.phase == "extract"
+
+
+def test_a_trap_pick_isnt_credited_by_a_later_step():
+    s = WordProblemSession("lemonade-more-sugar")
+    trap = next(i for i, j in enumerate(s.order[s.di], 1) if not s.wp["extract"][s.di]["options"][j].get("correct"))
+    first = s.di
+    assert kinds(s.submit(str(trap))) == ["trap"]
+    assert kinds(s.submit("6 x 18 = 108")) == ["trap"]
+    assert first not in s.decided and s.phase == "extract"
+
+
+@pytest.mark.parametrize("text", ["6 x 7 = 42", "4 x 7 = 28"])
+def test_a_wildcard_only_step_doesnt_credit_the_reading(text):
+    s = WordProblemSession("lemonade-more-sugar")
+    before = set(s.decided)
+    fb = s.submit(text)
+    assert kinds(fb) == ["unknown"] and "can't tell which reading" in fb[0].message
+    assert s.decided == before and s.phase == "extract"
+
+
+def test_letter_zero_is_an_error():
+    s = WordProblemSession("lemonade-more-sugar")
+    letter = s.ask()["decisions"][0]["letter"]
+    before = set(s.decided)
+    assert kinds(s.submit(f"{letter}0")) == ["error"] and s.decided == before
+
+
+def test_power_of_ten_rerun_only_10_100_1000():
+    q = question_of("to-decimal:1")
+    assert "correct" not in kinds(q.submit("4 x 2500 = 10000"))
+    with pytest.raises(engine.NotApplicable):
+        v = next(v for v in engine.variants_of("to-decimal") if v["method"] == "power_of_ten")
+        k = next(st["search"]["var"] for st in v["steps"] if "search" in st)
+        engine.run(v["steps"], {"x": 3, "y": 4}, {k: [engine.num(2500)]})
+    assert "correct" in kinds(question_of("to-decimal:1").submit("4 x 250 = 1000"))
+
+
+def test_method_isnt_announced_while_another_is_building_up():
+    q = question_of("compare-fractions:1")
+    fb = q.submit("5 x 4 = 20")  # cross-multiply, while other methods may still be building up toward 4 × k
+    assert set(q.live_methods()) - {"cross_multiply"}
+    msgs = [f.message for f in fb if f.kind == "method"]
+    assert msgs and msgs[0].startswith("That's Cross-multiply so far") and "You're using" not in msgs[0]
+    fb = q.submit("3 x 7 = 21")
+    assert q.live_methods() == ["cross_multiply"]
+    assert [f.message for f in fb if f.kind == "method"] == ["You're using: Cross-multiply."]

@@ -234,8 +234,11 @@ def chosen(env, var):
     return left.pop(0) if left else None
 
 
+POWERS_OF_TEN = {Fraction(10), Fraction(100), Fraction(1000)}  # what the step's sentence offers: 10, 100 or 1000
+
+
 def is_power_of_ten(v):
-    return v.denominator == 1 and v >= 10 and str(v.numerator).rstrip("0") == "1"
+    return v in POWERS_OF_TEN
 
 
 def exec_step(st, env, trace):

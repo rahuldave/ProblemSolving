@@ -70,7 +70,9 @@
     wait.append("Reading what you wrote ", dots);
     wait.setAttribute("role", "status");
     thread().append(wait);
-    box.querySelectorAll("textarea, button").forEach(e => { e.disabled = true; });
+    // while Claude reads, nothing else may change the session: the box, the option cards and Hint, Where, Done
+    const controls = [...(box.closest(".asker") || box).querySelectorAll("textarea, button")];
+    controls.forEach(e => { e.disabled = true; });
     try {
       const r = await ctx.api(`/api/sessions/${sid}/say`, {text});
       busy.delete(sid);
@@ -84,7 +86,7 @@
       if (ctx.sid !== sid) return;
       wait.remove();
       ctx.say(e.message, "error");
-      box.querySelectorAll("textarea, button").forEach(e => { e.disabled = false; });
+      controls.forEach(e => { e.disabled = false; });
     }
   }
 

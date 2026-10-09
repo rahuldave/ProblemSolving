@@ -774,3 +774,42 @@ def test_page_scripts_ignore_replies_for_another_session():
     assert "if (sent !== sid) return null;" in page and "asker.bxToken = null;" in page
     ai_js = (web.STATIC / "modes" / "ai.js").read_text()
     assert "busy.has(sid)" in ai_js and "if (ctx.sid !== sid) return;" in ai_js
+
+
+# ---------------------------------------------------------------- second review
+
+def test_decimal_denominator_through_step_is_not_a_500():
+    sid, q = start("missing-value:1")
+    r = client.post(f"/api/sessions/{sid}/step", json={"kind": "arithmetic", "op": "multiply", "left": {"text": "3/0.5"},
+                                                        "right": {"text": "2"}, "result": {"text": "12"}})
+    assert r.status_code == 200
+    for phase_key in ("lemonade-more-sugar",):
+        sid, s = start(phase_key)
+        r = client.post(f"/api/sessions/{sid}/step", json={"kind": "value", "value": {"text": ".5/.25"}})
+        assert r.status_code == 200
+
+
+def test_kernels_number_grammar_agrees_with_the_server():
+    import re
+    from tutor.models import number_value
+    js = (web.STATIC / "modes" / "kernels.js").read_text()
+    src = re.search(r"const NUM = /(.+)/;", js)[1].replace("\\/", "/")
+    jsnum = re.compile(src, re.ASCII)
+    for text in ["12", "0.75", "2/3", "3/0.5", ".5/.25", "5.", "-3", "1e5", "1/2/3", "abc", ".", "1..2", "0/1"]:
+        try:
+            number_value(text)
+            server = True
+        except ValueError:
+            server = False
+        assert bool(jsnum.fullmatch(text)) == server, text
+    assert "MAX_NUM = 30" in js and r"/\/[0.]*$/" in js  # the length cap and the zero bottom, as on the server
+
+
+def test_page_requests_are_tied_to_their_problem():
+    page = (web.STATIC / "index.html").read_text()
+    assert "if (mine !== starting) return;" in page and "post: async (path, body, shown)" in page
+    assert 'document.addEventListener("DOMContentLoaded", loadList)' in page  # the ways are registered first
+    boxes_js = (web.STATIC / "modes" / "boxes.js").read_text()
+    assert "ctx.post(`/api/sessions/${ctx.sid}/method`" in boxes_js and "ctx.api(`/api/sessions/${ctx.sid}/method`" not in boxes_js
+    ai_js = (web.STATIC / "modes" / "ai.js").read_text()
+    assert 'box.closest(".asker")' in ai_js  # Hint, Where and Done are disabled while Claude reads

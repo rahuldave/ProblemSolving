@@ -152,6 +152,8 @@ class QuestionSession:
         self.live = {r: 0 for r in range(len(self.routes))}  # route → number of its visible steps done
         self.choices = {}  # route → the student's own picks it was re-run with (run(choices=…))
         self.named = None  # the methods the last accepted step was a step of (None: every live method)
+        self.announced = None  # the method last announced as "You're using"
+        self.so_far = None  # the method announced as "That's X so far", while another was still building up
         self.tries = {}    # (route, position) → build-up steps written toward that step (6 × 2 = 12 toward 6 × 3)
         self.tree_entries = tree(qid)["first_steps"]  # the first steps are classified against the tree
         self.slips = 0
@@ -167,7 +169,7 @@ class QuestionSession:
         new = copy.copy(self)
         new.routes = self.routes[:self.expanded]
         new.live = {r: 0 for r in range(self.expanded)}
-        new.choices, new.named, new.tries, new.history = {}, None, {}, []
+        new.choices, new.named, new.tries, new.history, new.announced = {}, None, {}, [], None
         new.tree_entries = tree(self.qid)["first_steps"]
         new.slips = new.hints = 0
         new.phase, new.result, new.finished = "steps", None, None
@@ -342,8 +344,19 @@ class QuestionSession:
         out.append(Feedback(kind="correct", message=f"✓ {done.expression}  ({done.say})"))
         after = set(self.named_methods())
         if len(after) == 1 and after != before:
-            m = self.methods[next(iter(after))]
-            out.append(Feedback(kind="method", message=f"You're using: {m['name']}. {method_text(self.qid, next(iter(after)), 'idea', self.values)}"))
+            mid = next(iter(after))
+            m = self.methods[mid]
+            idea = method_text(self.qid, mid, 'idea', self.values)
+            if set(self.live_methods()) - after:  # another method is still building up toward its step
+                out.append(Feedback(kind="method", message=f"That's {m['name']} so far. {idea}"))
+                self.so_far = mid
+            else:
+                out.append(Feedback(kind="method", message=f"You're using: {m['name']}. {idea}"))
+                self.announced = mid
+        elif len(after) == 1 and self.so_far in after and self.announced not in after and not set(self.live_methods()) - after:
+            m = self.methods[next(iter(after))]  # the build-ups have gone: now it's settled
+            out.append(Feedback(kind="method", message=f"You're using: {m['name']}."))
+            self.announced = next(iter(after))
         elif len(after) > 1 and after != before:
             out.append(Feedback(kind="method", message=f"That step starts {self.names(after)}. Your next step will tell which."))
         if all(self.next_step(r) is None for r in advanced):
@@ -491,6 +504,7 @@ class QuestionSession:
             return [Feedback(kind="error", message=f"{mid!r} isn't one of the methods still open here.")]
         self.live = live
         self.named = {mid}
+        self.announced = mid
         if self.tree_entries is not None:  # still classifying against the tree: keep only this method's entries
             self.tree_entries = [e for e in self.tree_entries if mid in e["methods"]] or None
         m = self.methods[mid]
@@ -585,9 +599,9 @@ class WordProblemSession:
             self._proto = QuestionSession(self.plan["question"], values, self.classifier, ask_final=False)
         return self._proto.fresh()
 
-    def _start_solving(self):
+    def _start_solving(self, question=None):
         self.phase = "solve"
-        self.question = self._probe()
+        self.question = question or self._probe()
         lines = engine.bind_lines(self.wp, self.plan, self.run)
         return [Feedback(kind="info", message="So the story gives: " + "; ".join(lines) + ".\n"
                                               f"Now solve: {self.question.title()}")]
@@ -644,7 +658,9 @@ class WordProblemSession:
             ask = self.ask()
             if m and m[1] in [d["letter"] for d in ask["decisions"]]:  # b2: option 2 of decision b
                 di = next(d["decision"] for d in ask["decisions"] if d["letter"] == m[1])
-                return self.submit_input(ChoiceAnswer(index=max(1, int(m[2])), decision=di))
+                if not 1 <= int(m[2]) <= len(self.wp["extract"][di]["options"]):
+                    return [Feedback(kind="error", message=f"Pick a number from 1 to {len(self.wp['extract'][di]['options'])}.")]
+                return self.submit_input(ChoiceAnswer(index=int(m[2]), decision=di))
             try:
                 inp = parse(text, choices=len(self.wp["extract"][self.di]["options"]))
             except ParseError as e:
@@ -756,25 +772,36 @@ class WordProblemSession:
             dec = self.wp["extract"][di]
             fb = [Feedback(kind="info", message=f"That step settles it: {dec['say']} {o['say']}.")] + self._pre(step)
             return fb
-        cands = self._probe().candidates()
+        probe = self._probe()
+        cands = probe.candidates()
         cls = self.classifier.classify(step, cands)
         exact = cls.status == "match" and any(not is_wildcard(c) for c in cands if c.id in cls.matched)
         trap = self._trap_for(step)
-        if exact or (cls.status == "match" and not trap):
-            rest = [self.wp["extract"][di] for di in range(len(self.wp["extract"])) if di not in self.decided]
-            self.decided = set(range(len(self.wp["extract"])))
-            self.pre_todo = []
-            out = [Feedback(kind="info", message="That step means you read the story right: "
-                                                 + "; ".join(next(o["say"] for o in d["options"] if o.get("correct")) for d in rest) + ".")]
-            out += self._start_solving()
-            out += self.question.submit_step(step)
-            if self.question.phase == "done":
-                out += self._after_question()
-            return out
+        if cls.status == "match" and (exact or not trap):
+            fb = probe.submit_step(step)  # credit the reading only if the step is a step of one of its routes
+            if any(f.kind in ("correct", "slip") for f in fb):
+                rest = [self.wp["extract"][di] for di in range(len(self.wp["extract"])) if di not in self.decided]
+                self.decided = set(range(len(self.wp["extract"])))
+                self.pre_todo = []
+                out = [Feedback(kind="info", message="That step means you read the story right: "
+                                                     + "; ".join(next(o["say"] for o in d["options"] if o.get("correct")) for d in rest) + ".")]
+                out += self._start_solving(probe)
+                out += fb
+                if self.question.phase == "done":
+                    out += self._after_question()
+                return out
         if trap:
-            self.di = trap["decision"]
+            di = trap["decision"]
             same = (" It happens to give the same answer, for the wrong reason." if trap["same_as_correct"] else
                     f" That gives {engine.show(trap['run']['final'])}.")
+            if di in self.decided:  # a step of a trap's reading contradicts what the student chose: reopen it
+                self.decided.discard(di)
+                self.di = di
+                chose = next(o["say"] for o in self.wp["extract"][di]["options"] if o.get("correct"))
+                return [Feedback(kind="trap", message=f"“{written(step)}” looks like this reading: {trap['option']['trap']}"
+                                                      f"{same} That doesn't fit what you chose ({chose}), so let's "
+                                                      "look at that decision again.")]
+            self.di = di
             return [Feedback(kind="trap", message=f"“{written(step)}” looks like this reading: {trap['option']['trap']}"
                                                   f"{same} Let's sort out this decision first.")]
         return [Feedback(kind="unknown", message=f"I can't tell which reading “{written(step)}” comes from. "
@@ -784,9 +811,7 @@ class WordProblemSession:
         """The trap whose giveaway steps include this step, if any: the trap's own steps on its branch (18 + 6 = 24),
         and the first steps of its question, plots and comparisons included."""
         correct = set(self.run["firsts"])
-        for t in self.info["traps"]:
-            if t["decision"] in self.decided:
-                continue
+        for t in self.info["traps"]:  # a settled decision counts too: the step then contradicts it
             keys = list(t["pre_firsts"])
             if all(isinstance(v, str) for v in t["plan"]["binds"].values()):
                 keys += [k for k in t["run"]["firsts"] if k not in correct]

@@ -173,10 +173,13 @@ async function loadList() {
   if (want) start(want);
 }
 
+let starting = 0;  // only the latest start() draws: two quick clicks can finish out of order
 async function start(key) {
+  const mine = ++starting;
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.key === key));
   current = key; setUrl();
   const s = await api("/api/sessions", {problem: key});
+  if (mine !== starting) return;
   sid = s.id;
   const panel = $("#panel");
   panel.replaceChildren();
@@ -207,6 +210,7 @@ const ctx = {
   send: async (text, shown) => post(`/api/sessions/${sid}/input`, {text}, shown || text),
   sendTyped: async (input, shown) => post(`/api/sessions/${sid}/step`, input, shown),
   command: async cmd => post(`/api/sessions/${sid}/${cmd}`, {}, null),
+  post: async (path, body, shown) => post(path, body, shown),
   render,
 };
 
@@ -286,7 +290,8 @@ function tools(ctx) {
 ctx.tools = () => tools(ctx);
 TutorSetup.parse = TutorSteps.parse = typeWay;
 
-loadList();
+// after the mode scripts below have registered their ways (they run before DOMContentLoaded)
+document.addEventListener("DOMContentLoaded", loadList);
 </script>
 <script src="/static/modes/kernels.js"></script>
 <script src="/static/modes/components.js"></script>

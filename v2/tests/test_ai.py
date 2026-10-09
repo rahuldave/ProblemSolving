@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 from tutor import ai
 from tutor.evals import run as evalrun
 from tutor.evals.states import expected, reach
+from tutor.models import ChoiceAnswer
 from tutor.parse import parse
 from tutor.session import QuestionSession, WordProblemSession
 from tutor.web import app
@@ -209,6 +210,7 @@ def test_status_endpoint(monkeypatch):
 def test_say_route_with_fake_client(monkeypatch):
     monkeypatch.setattr(ai, "api_key", lambda: "sk-test")
     monkeypatch.setattr(ai, "_client", fake({"inputs": [step("multiply", "3", "40", "120")], "note": ""}))
+    monkeypatch.setattr(ai, "_client_key", ai._FIXED)
     sid = web.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
     r = web.post(f"/api/sessions/{sid}/say", json={"text": "3 times 40 is 120"}).json()
     assert r["interpreted"] == ["3 × 40 = 120"] and r["checked"] == [True]
@@ -305,6 +307,7 @@ def test_say_route_is_rate_limited_and_capped(monkeypatch):
     monkeypatch.setattr(ai, "api_key", lambda: "sk-test")
     c = fake({"inputs": [], "note": "Which numbers?"}, {"inputs": [], "note": "Which numbers?"})
     monkeypatch.setattr(ai, "_client", c)
+    monkeypatch.setattr(ai, "_client_key", ai._FIXED)
     monkeypatch.setattr(ai_web, "LIMIT", ai_web.RateLimit(per_session=(1, 600)))
     sid = web.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
     assert web.post(f"/api/sessions/{sid}/say", json={"text": "x" * 5000}).status_code == 200
@@ -319,3 +322,60 @@ def test_bad_numbers_from_the_model_are_dropped():
     s = QuestionSession("missing-value", {"a": 3, "b": 5, "d": 40})
     rd = ai.interpret(s, "x", fake({"inputs": [step("divide", "1/0", "2"), step("multiply", "1e10000000", "2")], "note": ""}))
     assert rd.inputs == [] and rd.note
+
+
+# ---------------------------------------------------------------- second review
+
+def test_env_file_with_bom_bad_bytes_and_unclosed_quote(tmp_path, monkeypatch):
+    import os
+    env = tmp_path / ".env"
+    env.write_bytes("﻿ANTHROPIC_API_KEY=\"unterminated # note\n".encode() + b"\xff\xfe junk\n")
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    ai.load_env(env)
+    assert os.environ["ANTHROPIC_API_KEY"] == "unterminated"
+    ai.load_env(tmp_path / "missing" / ".env")  # no file: nothing happens
+
+
+def test_client_is_rebuilt_when_the_key_changes(monkeypatch):
+    keys = iter(["sk-one", "sk-one", "sk-two"])
+    monkeypatch.setattr(ai, "api_key", lambda: next(keys))
+    monkeypatch.setattr(ai, "_client", None)
+    monkeypatch.setattr(ai, "_client_key", None)
+    a = ai.get_client()
+    assert ai.get_client() is a
+    b = ai.get_client()
+    assert b is not a and ai._client_key == "sk-two"
+
+
+def test_any_client_exception_gives_the_generic_note():
+    s = QuestionSession("missing-value", {"a": 3, "b": 5, "d": 40})
+    r = ai.say(s, "3 times 40", fake(error=RuntimeError("boom")))
+    assert r["note"] == ai.UNREACHABLE and r["error"] == "unexpected" and r["feedback"] == []
+
+
+def test_choices_resolve_by_the_decisions_the_request_showed():
+    s = WordProblemSession("lemonade-more-sugar")
+    ids = ai.decision_ids(s)  # taken when the request is built
+    first, second = ids[0], ids[1]
+    good = next(i for i, j in enumerate(s.order[second], 1) if s.wp["extract"][second]["options"][j].get("correct"))
+    s.decide(first, next(i for i, j in enumerate(s.order[first], 1) if s.wp["extract"][first]["options"][j].get("correct")))
+    # the session moved on while Claude was reading: "decision 2" still means the second one shown
+    fb, shown, checked = ai.feed(s, [ChoiceAnswer(index=good)], [2], ids)
+    assert checked == [True] and second in s.decided and kinds(fb)[0] == "correct"
+
+
+def test_rate_limiter_forgets_idle_sessions(monkeypatch):
+    from tutor import ai_web
+    monkeypatch.setattr(ai_web, "MAX_TRACKED", 3)
+    now = [0.0]
+    lim = ai_web.RateLimit(per_session=(5, 600), overall=(1000, 3600), clock=lambda: now[0])
+    for i in range(3):
+        assert lim.allow(f"s{i}")
+    now[0] = 700  # their windows have passed
+    assert lim.allow("new") and lim.allow("new2")
+    assert set(lim.calls) <= {"s0", "s1", "s2", "new", "new2"} and len(lim.calls) <= 3 + 1
+    lim.prune()
+    assert set(lim.calls) == {"new", "new2"}
+    for i in range(10):
+        lim.allow(f"x{i}")
+    assert len(lim.calls) <= 4  # capped

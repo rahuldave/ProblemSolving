@@ -175,10 +175,9 @@
     return box;
   }
 
+  // Through ctx.post, like every other request: the reply is drawn only if the student is still on that problem.
   async function chooseMethod(m, ctx) {
-    ctx.say("I'll start with: " + m.name);
-    try { ctx.render(await ctx.api(`/api/sessions/${ctx.sid}/method`, {method: m.id})); }
-    catch (e) { ctx.say(e.message, "error"); }
+    return ctx.post(`/api/sessions/${ctx.sid}/method`, {method: m.id}, "I'll start with: " + m.name);
   }
 
   function header(spec) {

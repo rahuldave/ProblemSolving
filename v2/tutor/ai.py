@@ -47,18 +47,24 @@ KEY_NAMES = ("ANTHROPIC_API_KEY", "ANTHROPIC_KEY")
 
 def load_env(path: Path = ENV_FILE, names=KEY_NAMES) -> None:
     """Read the API key lines (only `names`) from .env into os.environ, without overriding a variable that is
-    already set to something non-empty. Inline ` # comments` are stripped."""
-    if not path.is_file():
+    already set to something non-empty. Inline ` # comments` are stripped, a byte-order mark and an unclosed quote
+    are tolerated, and an unreadable file counts as no file (so /say and /status never fail on it)."""
+    try:
+        if not path.is_file():
+            return
+        text = path.read_text(encoding="utf-8-sig", errors="replace")
+    except OSError:
         return
-    for line in path.read_text().splitlines():
-        line = line.strip()
+    for line in text.splitlines():
+        line = line.strip().lstrip("\ufeff")
         if not line or line.startswith("#") or "=" not in line:
             continue
         k, v = line.split("=", 1)
         k = k.strip().removeprefix("export ").strip()
         v = v.strip()
-        if v[:1] in "\"'" and v[:1] and v[1:].find(v[0]) >= 0:  # a quoted value ends at its closing quote
-            v = v[1:1 + v[1:].find(v[0])]
+        if v[:1] and v[:1] in "\"'":
+            end = v[1:].find(v[0])
+            v = v[1:1 + end] if end >= 0 else v[1:].split(" #", 1)[0].strip()  # an unclosed quote: drop it
         else:
             v = v.split(" #", 1)[0].strip()
         if k in names and v and not os.environ.get(k):
@@ -75,20 +81,25 @@ def configured() -> bool:
 
 
 _client = None
+_client_key = None
+_FIXED = object()  # a client set with set_client() is kept whatever the key
 
 
 def get_client():
-    """The shared SDK client, made on first use. Tests replace it with set_client()."""
-    global _client
-    if _client is None:
+    """The shared SDK client, made on first use and made again when the key changes. Tests replace it with
+    set_client()."""
+    global _client, _client_key
+    key = api_key()
+    if _client is None or (_client_key is not _FIXED and _client_key != key):
         import anthropic
-        _client = anthropic.Anthropic(api_key=api_key(), timeout=TIMEOUT, max_retries=1)
+        _client = anthropic.Anthropic(api_key=key, timeout=TIMEOUT, max_retries=1)
+        _client_key = key
     return _client
 
 
 def set_client(client) -> None:
-    global _client
-    _client = client
+    global _client, _client_key
+    _client, _client_key = client, (_FIXED if client is not None else None)
 
 
 # ---------------------------------------------------------------- the prompt
@@ -403,6 +414,8 @@ def call(req: dict, client=None) -> Reading:
         return Reading(note=UNREACHABLE, error="connection")
     except anthropic.AnthropicError:  # e.g. no credentials at all
         return Reading(note=UNREACHABLE, error="client")
+    except Exception:  # anything else from the client or the network stack: the generic note, never a 500
+        return Reading(note=UNREACHABLE, error="unexpected")
     seconds = time.monotonic() - t0
     usage = _usage(resp)
     if resp.stop_reason == "refusal":
@@ -447,15 +460,25 @@ def describe(session, inp, di=None) -> str:
     return written(inp)
 
 
-def _decision_ids(session, decisions):
-    """Map the model's decision numbers (1 = being asked now) to the word problem's decision indexes."""
+def decision_ids(session) -> list[int]:
+    """The decisions as the request numbers them (1 = being asked now, then the other open ones): decision index of
+    each number. Taken when the request is built, so a reply is resolved by the decisions it was shown, even if the
+    session moved on while Claude was reading."""
+    if not (isinstance(session, WordProblemSession) and session.phase == "extract"):
+        return []
+    return list(_remaining_decisions(session))
+
+
+def _decision_ids(session, decisions, ids=None):
+    """Map the model's decision numbers to the word problem's decision indexes, through `ids` (decision_ids() at
+    request time; now, if not given)."""
     if not (isinstance(session, WordProblemSession) and session.phase == "extract"):
         return [None] * len(decisions)
-    rest = _remaining_decisions(session)
+    rest = decision_ids(session) if ids is None else ids
     return [rest[d - 1] if d is not None and 1 <= d <= len(rest) else None for d in decisions]
 
 
-def feed(session, inputs, decisions=None) -> tuple[list[Feedback], list[str], list[bool]]:
+def feed(session, inputs, decisions=None, ids=None) -> tuple[list[Feedback], list[str], list[bool]]:
     """Submit the inputs in order, stopping after the first one the session doesn't accept.
 
     While the story is being read, a choice answers the decision it names (any open one: the graph lets the
@@ -463,7 +486,7 @@ def feed(session, inputs, decisions=None) -> tuple[list[Feedback], list[str], li
     submitted, and the student is told. Returns (all feedback, the readable form of every input, whether the
     session was given each one)."""
     reading = isinstance(session, WordProblemSession) and session.phase == "extract"
-    dis = _decision_ids(session, decisions or [None] * len(inputs))
+    dis = _decision_ids(session, decisions or [None] * len(inputs), ids)
     out = []
     shown = [describe(session, inp, di) for inp, di in zip(inputs, dis)]
     checked = [False] * len(inputs)
@@ -493,7 +516,8 @@ def feed(session, inputs, decisions=None) -> tuple[list[Feedback], list[str], li
 
 def say(session, text: str, client=None) -> dict:
     """Interpret a message and feed it to the session: {feedback, interpreted, checked, note, error}."""
+    ids = decision_ids(session)
     reading = interpret(session, text, client)
-    feedback, shown, checked = feed(session, reading.inputs, reading.decisions) if reading.inputs else ([], [], [])
+    feedback, shown, checked = feed(session, reading.inputs, reading.decisions, ids) if reading.inputs else ([], [], [])
     return {"feedback": feedback, "interpreted": shown, "checked": checked, "note": reading.note,
             "error": reading.error}
