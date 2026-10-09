@@ -57,3 +57,17 @@ site, served by GitHub Pages) and `site/` (git-ignored Quarto sources). Don't ha
   plus one page, `tutor/static/index.html`. Sessions are kept in memory.
 - **Tests:** `v2/tests/test_tutor.py` includes an "automatic student" that types every route of every example and
   word problem and expects the tutor to reach the right answer. A data change that breaks a route shows up there.
+
+## Pull requests
+
+Every change in a PR needs adversarial validation by an Opus sub-agent before the PR is opened, and again before
+each later push to it. Use the Agent tool with `model: "opus"`, give it the PR's diff against `main`, and tell it to
+try to break the change, not to confirm it. It should:
+
+- run `cd v2 && python3 build.py --no-site` and `uv run pytest`, and check that the build leaves no uncommitted
+  changes to the generated outputs (`git status`);
+- look for inputs, examples, routes or word problems the change gets wrong, including cases the tests don't cover;
+- check that the tutor and the diagrams still agree, and that the tutor still accepts every route.
+
+Fix what it finds, or explain in the PR description why a finding doesn't apply, and repeat until it finds nothing.
+Summarize what the validation checked and found in the PR description.
