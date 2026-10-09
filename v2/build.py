@@ -213,13 +213,29 @@ def smallest_common_prime(x, y):
     return next((p for p in range(2, g + 1) if g % p == 0), None)
 
 
-def run(steps, values):
+def run(steps, values, choices=None):
+    """Run flat steps on these values. `choices` overrides the student's own picks, by variable: the factor of each
+    round of a `repeat` (any common factor, not just the smallest prime) and the multiplier of an
+    `until_power_of_ten` search (any power of ten, not just the first), in the order they come up."""
     env = {k: num(v) for k, v in values.items()}
+    if choices:
+        env["__choices__"] = {k: list(v) for k, v in choices.items()}
     trace = []
     for st in steps:
         exec_step(st, env, trace)
     env.pop("__trivial__", None)
+    env.pop("__choices__", None)
     return env, trace
+
+
+def chosen(env, var):
+    """The next override for `var` from run(choices=…), or None."""
+    left = env.get("__choices__", {}).get(var)
+    return left.pop(0) if left else None
+
+
+def is_power_of_ten(v):
+    return v.denominator == 1 and v >= 10 and str(v.numerator).rstrip("0") == "1"
 
 
 def exec_step(st, env, trace):
@@ -236,6 +252,12 @@ def exec_step(st, env, trace):
         if smallest_common_prime(*(val(a, env) for a in ch["of"])) is None:
             raise NotApplicable("already in lowest terms; nothing to divide out")
         while (f := smallest_common_prime(*(val(a, env) for a in ch["of"]))) is not None:
+            pick = chosen(env, ch["var"])
+            if pick is not None:
+                x, y = (val(a, env) for a in ch["of"])
+                if pick <= 1 or (x / pick).denominator != 1 or (y / pick).denominator != 1:
+                    raise NotApplicable(f"{pick} isn't a common factor")
+                f = int(pick)
             env[ch["var"]] = Fraction(f)
             trace.append(({"op": "pick", **ch, "loc": st.get("loc", ())}, None, f))
             for sub in st["steps"]:
@@ -258,7 +280,11 @@ def exec_step(st, env, trace):
         if "until" in s:
             k = val(s["until"][1], env) / base
         elif "until_power_of_ten" in s:
-            k = next((Fraction(10 ** n) / base for n in range(1, 16) if (Fraction(10 ** n) / base).denominator == 1), None)
+            k = chosen(env, var)
+            if k is not None and not is_power_of_ten(base * k):
+                raise NotApplicable(f"{fmt(base * k)} isn't a power of ten")
+            k = k if k is not None else next((Fraction(10 ** n) / base for n in range(1, 16)
+                                             if (Fraction(10 ** n) / base).denominator == 1), None)
         elif "until_divisible_by" in s:
             b, dv = whole(base, val(s["until_divisible_by"][1], env))
             k = Fraction(dv // math.gcd(b, dv))
@@ -902,8 +928,15 @@ def check_word_problem(wp):
             tells = [lab for key, lab in res["firsts"].items() if key not in correct["firsts"]]
             if any(not isinstance(v, str) for v in tplan["binds"].values()):
                 tells = []  # a count written as count/1 isn't a real reading of the methods; diagnose by answer
+            # the trap's own steps (18 + 6 = 24), drawn on its branch, give it away too, unless the correct reading
+            # also writes them
+            known = set(correct["firsts"]) | {label_key(*e) for e in correct["before"]}
+            pre = {label_key(*e): expression(*e) for e in res["before"]
+                   if e[0]["out"] in {st["out"] for st in o.get("steps", [])} and label_key(*e) not in known}
+            tells = list(pre.values()) + [t for t in tells if t not in pre.values()]
             traps.append({"decision": di, "concept": dec["concept"], "option": o, "plan": tplan, "run": res,
-                          "same_as_correct": same_answer(res["final"], correct["final"]), "tells": tells})
+                          "same_as_correct": same_answer(res["final"], correct["final"]), "tells": tells,
+                          "pre_firsts": pre})
     return ok, {"plan": plan, "run": correct, "traps": traps}
 
 

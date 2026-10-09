@@ -237,7 +237,7 @@ This is [missing-value](#missing-value) in context, with `{"a": "p", "b": 100, "
 | **Convert to a decimal and multiply** `decimal` (= missing-value · unit_rate) | {p}% = {p} ÷ 100; multiply that by {n}. | {a}/{b} is a friendly decimal. | [to-decimal](#to-decimal) |
 | **Find 1% first** `one_percent` (= missing-value · scale_factor) | 1% of {n} is {n} ÷ 100; multiply by {p}. | {d} is a whole-number multiple of {b}. | — |
 | **Multiply, then divide by 100** `multiply_first` (= missing-value · cross_multiply) | {p} × {n} ÷ 100. | Always works; most useful when there's no whole-number scale factor. | — |
-| **Use a simplified fraction** `fraction` (= missing-value · simplify_then_scale) | {p}/100 simplifies (15/100 = 3/20); take that fraction of {n}. | {a}/{b} isn't in lowest terms. | [simplify-fraction](#simplify-fraction) |
+| **Use a simplified fraction** `fraction` (= missing-value · simplify_then_scale) | Simplify {p}/100 to lowest terms, then take that fraction of {n}. | {a}/{b} isn't in lowest terms. | [simplify-fraction](#simplify-fraction) |
 | **Ratio table** `ratio_table` (= missing-value · ratio_table) | Scale {p}:100 until the 100 becomes {n}. | {d} is a small whole-number multiple of {b}. | — |
 | **Build from 10% and 5%** `benchmark_10_5` | 10% is easy (÷ 10) and 5% is half of that; add up the pieces. | The percent is a multiple of 5. | — |
 
@@ -533,7 +533,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 
 | Trap | Mistake | Leads to | Caught by the answer? | Gives itself away with |
 |---|---|---|---|---|
-| Recognize the question type | Takes off $15 instead of 15%. | 65 | yes | — |
+| Recognize the question type | Takes off $15 instead of 15%. | 65 | yes | `80 − 15 = 65` |
 | Name the unknown | Answers the savings instead of the new price. | 12 | yes | — |
 
 <a name="lemonade-in-all"></a>
@@ -568,7 +568,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 |---|---|---|---|---|
 | 'More' vs 'in all' | Reads 18 as 18 more glasses. | 12 | yes | — |
 | Finish the story | Stops at the sugar for all 18 glasses. | 12 | yes | — |
-| Scale, don't add | Adds instead of scaling: 12 more glasses, so 12 more spoons. | 12 | yes | — |
+| Scale, don't add | Adds instead of scaling: 12 more glasses, so 12 more spoons. | 12 | yes | `18 − 6 = 12` |
 
 <a name="lemonade-more-sugar"></a>
 
@@ -603,7 +603,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 |---|---|---|---|---|
 | Find the pair that forms the ratio | Pairs sugar with the water, which isn't needed. | 12 | **no**: same answer, so ask how they got it | — |
 | Keep the same order on both sides | Flips one side: glasses over sugar = x over glasses. | 27 | yes | `6 × 18 = 108`, `18 ÷ 4 = 4.5` |
-| 'More' vs 'in all' | Finds the sugar for all 24 glasses instead of the 18 extra. | 16 | yes | `4 × 24 = 96`, `24 ÷ 6 = 4`, `6 × 4 = 24` |
+| 'More' vs 'in all' | Finds the sugar for all 24 glasses instead of the 18 extra. | 16 | yes | `6 + 18 = 24`, `4 × 24 = 96`, `24 ÷ 6 = 4`, `6 × 4 = 24` |
 | 'More' vs 'in all' | Reads 18 as the new total and subtracts the 4 spoons already used. | 8 | yes | — |
 | Scale, don't add | Adds instead of scaling: 18 more glasses, so 18 more spoons. | 18 | yes | — |
 
@@ -636,7 +636,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 
 | Trap | Mistake | Leads to | Caught by the answer? | Gives itself away with |
 |---|---|---|---|---|
-| Find the pair that forms the ratio | Divides the scale by the map distance. | 50/7 | yes | — |
+| Find the pair that forms the ratio | Divides the scale by the map distance. | 50/7 | yes | `25 ÷ 3.5 ≈ 7.143` |
 | Keep the same order on both sides | Flips one side: inches over miles. | 0.14 | yes | `1 × 3.5 = 3.5`, `3.5 ÷ 25 = 0.14` |
 
 <a name="paint-shade"></a>
@@ -731,7 +731,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 
 | Trap | Mistake | Leads to | Caught by the answer? | Gives itself away with |
 |---|---|---|---|---|
-| Recognize the question type | Adds tops and bottoms: (5 + 3)/(6 + 4). | 0.8 | yes | — |
+| Recognize the question type | Adds tops and bottoms: (5 + 3)/(6 + 4). | 0.8 | yes | `5 + 3 = 8`, `6 + 4 = 10`, `8 ÷ 10 = 0.8` |
 
 <a name="sweeter-lemonade"></a>
 
@@ -828,7 +828,7 @@ The graph starts at the story. The **Extract** frame holds the decisions; red da
 | Trap | Mistake | Leads to | Caught by the answer? | Gives itself away with |
 |---|---|---|---|---|
 | Find the pair that forms the ratio | Takes 35% of the 10 bike riders. | 3.5 | yes | `10 ÷ 100 = 0.1`, `35 × 10 = 350`, `10 ÷ 10 = 1` |
-| Ignore numbers that don't matter | Takes the 10 bike riders out of the class first. | 17.5 | yes | `50 ÷ 100 = 0.5`, `35 × 50 = 1750`, `50 ÷ 10 = 5` |
+| Ignore numbers that don't matter | Takes the 10 bike riders out of the class first. | 17.5 | yes | `60 − 10 = 50`, `50 ÷ 100 = 0.5`, `35 × 50 = 1750`, `50 ÷ 10 = 5` |
 
 
 ## Rebuilding

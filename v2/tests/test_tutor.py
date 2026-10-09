@@ -96,7 +96,7 @@ def test_shared_first_step_then_second_step_decides():
 def test_either_order_inside_all_block():
     s = QuestionSession("compare-fractions", VALUES["compare-fractions"])
     s.submit("5 x 4 = 20")
-    assert s.live_methods() == ["cross_multiply"]
+    assert s.named_methods() == ["cross_multiply"]
     assert "correct" in kinds(s.submit("3 x 7 = 21"))
 
 
@@ -143,7 +143,7 @@ def test_word_problem_trap_by_first_step():
 def test_word_problem_correct_first_step_skips_decisions():
     s = WordProblemSession("lemonade-more-sugar")
     s.submit("4 x 18 = 72")
-    assert s.phase == "solve" and s.question.live_methods() == ["cross_multiply"]
+    assert s.phase == "solve" and s.question.named_methods() == ["cross_multiply"]
 
 
 # ---------------------------------------------------------------- the automatic student
@@ -182,6 +182,9 @@ def test_every_method_can_be_walked(qid, i):
 def test_every_word_problem_can_be_walked(wid):
     s = WordProblemSession(wid)
     while s.phase == "extract":
+        if s.pre_step():  # a step on a decision's ✓ edge (90 ÷ 60 = 1.5)
+            assert "correct" in kinds(s.submit(typed(s.pre_step())))
+            continue
         dec = s.wp["extract"][s.di]
         pick = next(i for i, j in enumerate(s.order[s.di], 1) if dec["options"][j].get("correct"))
         assert "correct" in kinds(s.submit(str(pick)))
@@ -202,3 +205,222 @@ def test_cli_script_runs(capsys):
     run(QuestionSession("missing-value", VALUES["missing-value"]), ["hint", "3 x 40 = 120", "120 / 5 = 24", "24"])
     out = capsys.readouterr().out
     assert "Correct: 24" in out
+
+
+# ---------------------------------------------------------------- the graph's edges, typed
+
+def question_of(key):
+    """A fresh QuestionSession for a problem key; for a word problem, on the correct reading's numbers."""
+    if key in engine.WP:
+        return WordProblemSession(key)._probe()
+    qid, i = key.split(":")
+    return QuestionSession(qid, engine.Q[qid]["examples"][int(i) - 1]["values"])
+
+
+PROBLEMS = list(engine.WP) + [f"{qid}:{i + 1}" for qid, q in engine.Q.items() for i in range(len(q["examples"]))]
+
+
+def graph_edges(q):
+    """The "Which first step?" edges of the question's graph, grouped as question_graph groups them (first steps
+    merged across methods, and a step after one done in the head), each with the "Which next step?" edges under it:
+    [(steps to type, methods on the edge)]."""
+    mental = {engine.key_of({"op": m["op"], "args": m["args"]}) for m in q.q.get("mental_first_steps", [])}
+    groups = {}
+    for v, env, trace, vis in q.routes[:q.expanded]:
+        sig = engine.signatures([t[0] for t in trace], 1)[0]
+        starts = [(0, ())] + ([(1, (engine.expression(*trace[vis[0]]),))] if len(vis) > 1 and engine.key_of(sig) in mental else [])
+        for at, after in starts:
+            g = groups.setdefault((engine.label_key(*trace[vis[at]]), after), {"entry": trace[vis[at]], "methods": set(), "next": {}})
+            g["methods"].add(v["method"])
+            if len(vis) > at + 1:
+                n = g["next"].setdefault(engine.label_key(*trace[vis[at + 1]]), {"entry": trace[vis[at + 1]], "methods": set()})
+                n["methods"].add(v["method"])
+    out = []
+    for g in groups.values():
+        out.append(([g["entry"]], g["methods"]))
+        if len(g["methods"]) > 1:
+            out += [([g["entry"], n["entry"]], n["methods"]) for n in g["next"].values()]
+    return out
+
+
+@pytest.mark.parametrize("key", PROBLEMS)
+def test_every_first_and_next_step_edge_names_the_graphs_methods(key):
+    """Typed into a fresh session, each first-step edge (and each "Which next step?" edge under a shared first step)
+    names exactly the methods on the graph's edge: no method dropped by an exact match beating a wildcard, none
+    added from a route that is only building up."""
+    proto = question_of(key)
+    for steps, methods in graph_edges(proto):
+        q = proto.fresh()
+        for entry in steps:
+            fb = q.submit(typed(entry))
+            assert "correct" in kinds(fb), (key, typed(entry), [f.message for f in fb])
+        named = set(q.named_methods())
+        drawn = named & {q.routes[r][0]["method"] for r in q.live if r < q.expanded}
+        assert drawn == methods, (key, [typed(e) for e in steps], q.named_methods(), methods)
+        # beyond the drawn routes, only a route re-run with the student's own common factor (72 ÷ 6 starts
+        # dividing out factors, as the tree's common_factor wildcard says) may be named
+        assert named - drawn <= {q.routes[r][0]["method"] for r in q.live if r >= q.expanded}
+
+
+@pytest.mark.parametrize("key, steps, named", [
+    ("train-minutes", ["150 / 3 = 50"], {"simplify_then_scale", "unit_rate"}),
+    ("train-minutes", ["150 / 3 = 50", "3 / 3 = 1"], {"simplify_then_scale"}),
+    ("add-fractions:2", ["5 x 2 = 10"], {"bow_tie", "decimal"}),
+    ("add-fractions:2", ["5 x 2 = 10", "1 x 2 = 2"], {"decimal"}),
+    ("add-fractions:2", ["3 x 5 = 15", "2 x 5 = 10"], {"bow_tie", "common_denominator"}),
+    ("common-multiple:2", ["4 x 7 = 28"], {"list_multiples", "product"}),
+])
+def test_a_shared_first_step_keeps_every_method_the_graph_draws(key, steps, named):
+    q = question_of(key)
+    if key in engine.WP:
+        q = q.fresh()
+    for t in steps:
+        assert "correct" in kinds(q.submit(t)), t
+    assert set(q.named_methods()) == named
+
+
+@pytest.mark.parametrize("key, steps", [
+    ("simplify-fraction:2", ["72 / 8 = 9", "96 / 8 = 12", "9 / 3 = 3", "12 / 3 = 4"]),
+    ("simplify-fraction:2", ["72 / 4 = 18", "96 / 4 = 24", "18 / 2 = 9", "24 / 2 = 12", "9 / 3 = 3", "12 / 3 = 4"]),
+    ("simplify-fraction:2", ["72 / 24 = 3", "96 / 24 = 4"]),
+    ("to-decimal:1", ["4 x 250 = 1000", "3 x 250 = 750", "750 / 1000 = 0.75"]),
+    ("proportion-check:1", ["72 / 8 = 9", "96 / 8 = 12"]),
+])
+def test_any_common_factor_and_any_power_of_ten(key, steps):
+    """The tree says any common factor (and the method's idea says any shared factor), and the step says 10, 100
+    or 1000: the session re-runs the route with the student's own choice."""
+    q = question_of(key)
+    for t in steps:
+        fb = q.submit(t)
+        assert "correct" in kinds(fb), (t, [f.message for f in fb])
+    if key != "proportion-check:1":
+        assert q.phase in ("answer", "done")
+    assert kinds(question_of("simplify-fraction:2").submit("72 / 5 = 14.4")) == ["unknown"]  # not a factor
+
+
+def test_mental_step_is_shown_once_and_only_where_declared():
+    q = question_of("percent-of:1")
+    fb = q.submit("0.15 x 80 = 12")
+    assert kinds(fb)[:2] == ["info", "correct"] and "15 ÷ 100 = 0.15 in your head" in fb[0].message
+
+
+# ---------------------------------------------------------------- word problems: the extract frame
+
+def correct_index(s, di):
+    return next(i for i, j in enumerate(s.order[di], 1) if s.wp["extract"][di]["options"][j].get("correct"))
+
+
+@pytest.mark.parametrize("wid, text, step_say", [("train-minutes", "90 / 60 = 1.5", "Convert minutes to hours"),
+                                                  ("pancakes-dozen", "2 x 12 = 24", "A dozen is 12")])
+def test_a_step_on_a_correct_edge_typed_during_extraction(wid, text, step_say):
+    s = WordProblemSession(wid)
+    fb = s.submit(text)
+    assert kinds(fb) == ["info", "correct"] and step_say in fb[1].message, [f.message for f in fb]
+    assert s.phase == "extract" and s.question is None  # read as the conversion, not as a solving step
+    assert s.pre_step() is None
+
+
+@pytest.mark.parametrize("wid", ["train-minutes", "pancakes-dozen"])
+def test_a_correct_pick_asks_for_the_step_on_its_edge(wid):
+    s = WordProblemSession(wid)
+    di = next(di for di, d in enumerate(s.wp["extract"])
+              if any(o.get("correct") and o.get("steps") for o in d["options"]))
+    fb = s.decide(di, correct_index(s, di))
+    assert kinds(fb) == ["correct", "info"] and s.pre_step()
+    st, args, result = s.pre_step()
+    assert s.ask()["text"] == engine.say(st["say"], s.run["env"])
+    assert kinds(s.submit("1 + 1 = 2")) == ["unknown"]
+    assert "correct" in kinds(s.submit(typed(s.pre_step())))
+    assert s.pre_step() is None and di in s.decided
+
+
+@pytest.mark.parametrize("wid, text, concept", [
+    ("lemonade-more-sugar", "18 + 6 = 24", "delta_vs_total"), ("jacket-sale", "80 - 15 = 65", "question_type"),
+    ("walk-to-school", "60 - 10 = 50", "distractor"), ("pizza-shared", "5 + 3 = 8", "question_type"),
+    ("sweeter-lemonade", "plot (6, 4) (14, 10)", "direction"), ("free-throws", "plot (1, 4) (2, 7)", "direction"),
+])
+def test_trap_branch_steps_and_plots_give_the_trap_away(wid, text, concept):
+    s = WordProblemSession(wid)
+    fb = s.submit(text)
+    assert kinds(fb) == ["trap"] and s.phase == "extract", [f.message for f in fb]
+    assert s.wp["extract"][s.di]["concept"] == concept
+
+
+def test_trap_steps_are_in_the_graph_label():
+    traps = {t["option"]["say"]: t for t in WordProblemSession("lemonade-more-sugar").info["traps"]}
+    assert any("6 + 18 = 24" in t["tells"] for t in traps.values())
+    assert "80 − 15 = 65" in next(t for t in WordProblemSession("jacket-sale").info["traps"] if t["decision"] == 0)["tells"]
+
+
+@pytest.mark.parametrize("wid", ["lemonade-more-sugar", "sweeter-lemonade"])
+def test_a_same_answer_trap_says_the_answer_is_the_same(wid):
+    s = WordProblemSession(wid)
+    t = next(t for t in s.info["traps"] if t["same_as_correct"])
+    idx = next(i for i, j in enumerate(s.order[t["decision"]], 1) if s.wp["extract"][t["decision"]]["options"][j] is t["option"])
+    fb = s.decide(t["decision"], idx)
+    assert kinds(fb) == ["trap"]
+    assert "happens to give the same answer" in fb[0].message and "That reading gives" not in fb[0].message
+    assert "gives the same answer" in s.hint()[0].message  # the hint warns too (caught_by_answer: false)
+
+
+@pytest.mark.parametrize("wid", ["free-throws", "sweeter-lemonade"])
+def test_an_equality_only_route_doesnt_name_a_winner(wid):
+    s = WordProblemSession(wid)
+    while s.phase == "extract":
+        s.decide(s.di, correct_index(s, s.di))
+    q = s.question
+    r = next(r for r in q.live if q.routes[r][0]["method"] == "simplify")
+    v, env, trace, vis = q.routes[r]
+    fb = []
+    for t in vis:
+        fb = s.submit(typed(trace[t]))
+        assert "correct" in kinds(fb)
+    text = " ".join(f.message for f in fb)
+    assert "aren't equal" in text and "The question's answer is" not in text
+    assert s.phase == "solve" and s.question.history == []  # try another method
+    r = next(r for r in s.question.live if s.question.routes[r][0]["method"] == "cross_multiply")
+    v, env, trace, vis = s.question.routes[r]
+    for t in vis:
+        fb = s.submit(typed(trace[t]))
+    assert f"The question's answer is {s.run['result']}." in [f.message for f in fb]
+
+
+def test_decisions_in_any_order():
+    s = WordProblemSession("lemonade-more-sugar")
+    first, later = s.open_decisions()[:2]
+    assert [d["decision"] for d in s.ask()["decisions"]] == s.open_decisions()
+    assert kinds(s.decide(later, correct_index(s, later))) == ["correct"]
+    assert later in s.decided and s.di == first
+    letter = s.ask()["decisions"][1]["letter"]  # typed: b2 is option 2 of the second listed decision
+    nxt = s.ask()["decisions"][1]["decision"]
+    assert "correct" in kinds(s.submit(f"{letter}{correct_index(s, nxt)}")) and nxt in s.decided
+    assert kinds(s.decide(later, 1)) == ["error"]  # settled already
+    while s.phase == "extract":
+        assert "correct" in kinds(s.decide(s.di, correct_index(s, s.di)))
+    assert s.phase == "solve"
+
+
+def test_web_stage_is_done_at_the_end():
+    from tutor.web import stage
+    q = question_of("percent-of:1")
+    q.submit("0.15 x 80 = 12")
+    q.submit("12")
+    assert q.phase == "done" and stage(q) == "done"
+
+
+# ---------------------------------------------------------------- typed numbers are bounded
+
+@pytest.mark.parametrize("text", ["1e10000000", "1/0", "3/0.0", "1" * 31, "0x10", "inf", "nan"])
+def test_number_rejects_what_the_parser_never_writes(text):
+    from pydantic import ValidationError
+    from tutor.models import Number
+    with pytest.raises(ValidationError):
+        Number(text=text)
+
+
+def test_number_caches_its_value_and_places():
+    from fractions import Fraction
+    from tutor.models import Number
+    n = Number(text="0.667")
+    assert n.value is n.value and n.places == 3 and Number(text="2/3").places is None
+    assert Number(text="2/3").value == Fraction(2, 3)

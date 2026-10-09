@@ -14,10 +14,12 @@ from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 import build as engine
 
+from .models import StudentInput
 from .session import QuestionSession, WordProblemSession, catalog
 
 SITE = "https://rahuldave.com/ProblemSolving"
@@ -46,16 +48,32 @@ class Entry(BaseModel):
     text: str
 
 
+TYPED = TypeAdapter(StudentInput)
+
+
 def map_url(key: str) -> str:
     if key in engine.WP:
         return f"{SITE}/word-problems/{key}.html"
     return f"{SITE}/questions/{key.split(':')[0]}.html"
 
 
+def stage(s) -> str:
+    """Where the student is: reading the story (extract), finding the method (find_method), or doing its steps."""
+    if s.phase == "done":
+        return "done"
+    if isinstance(s, WordProblemSession):
+        if s.phase == "extract":
+            return "extract"
+        if s.phase != "solve":
+            return "steps"
+        s = s.question
+    return "find_method" if s.phase == "steps" and len(s.named_methods()) > 1 else "steps"
+
+
 def state(sid: str, entry: dict, feedback) -> dict:
     s = entry["session"]
     return {"id": sid, "problem": entry["key"], "feedback": [f.model_dump() for f in feedback],
-            "ask": s.ask(), "phase": s.phase, "done": s.phase == "done"}
+            "ask": s.ask(), "phase": s.phase, "stage": stage(s), "done": s.phase == "done"}
 
 
 def lookup(sid: str) -> dict:
@@ -71,6 +89,9 @@ def lookup(sid: str) -> dict:
 @app.get("/")
 def index():
     return FileResponse(STATIC / "index.html")
+
+
+app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
 
 @app.get("/api/problems")
@@ -116,7 +137,19 @@ def submit(sid: str, body: Entry):
     return state(sid, entry, feedback)
 
 
-@app.post("/api/sessions/{sid}/{command}")
+@app.post("/api/sessions/{sid}/step")
+def submit_typed(sid: str, body: dict):
+    """A typed StudentInput (a step, a choice or a value) from a structured UI: no parsing."""
+    entry = lookup(sid)
+    try:
+        inp = TYPED.validate_python(body)
+    except ValidationError as e:
+        raise HTTPException(422, e.errors()[0]["msg"])
+    with LOCK:
+        feedback = entry["session"].submit_input(inp)
+    return state(sid, entry, feedback)
+
+
 def command(sid: str, command: str):
     entry = lookup(sid)
     s = entry["session"]
@@ -125,11 +158,19 @@ def command(sid: str, command: str):
             feedback = s.hint()
         elif command == "where":
             feedback = s.where()
-        elif command == "done":
-            feedback = s.done_command() if isinstance(s, WordProblemSession) else s.finish_steps()
         else:
-            raise HTTPException(404, f"Unknown command {command!r}.")
+            feedback = s.done_command() if isinstance(s, WordProblemSession) else s.finish_steps()
     return state(sid, entry, feedback)
+
+
+def _command_route(name):
+    def route(sid: str):
+        return command(sid, name)
+    return route
+
+
+for _cmd in ("hint", "where", "done"):  # one route each, so other modes can add /api/sessions/{sid}/<their own>
+    app.post(f"/api/sessions/{{sid}}/{_cmd}", name=_cmd)(_command_route(_cmd))
 
 
 @app.get("/healthz")
@@ -137,3 +178,10 @@ def health():
     return {"ok": True}
 
 
+
+
+# The other input modes add their own routes: boxes for each skill (skills_web) and a model reading free text (ai_web).
+from . import ai_web, skills_web  # noqa: E402
+
+skills_web.register(app)
+ai_web.register(app)

@@ -135,6 +135,13 @@ def _lcm(a, b):
 
 
 def _fmt(v) -> str:
+    try:
+        return _fmt_exact(v)
+    except ValueError:  # a number too long to print exactly (Python's int-to-str digit limit)
+        return f"{float(v):.6g}"
+
+
+def _fmt_exact(v) -> str:
     if isinstance(v, Fraction):
         if v.denominator == 1:
             return str(v.numerator)

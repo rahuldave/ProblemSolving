@@ -66,6 +66,14 @@
   .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   .tools { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
   details { margin-top: 1rem; font-size: .9rem; color: var(--muted); }
+  .selectors { margin-left: auto; display: flex; flex-wrap: wrap; gap: .4rem; }
+  .modes { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px;
+           background: var(--panel); }
+  .modes .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 0 .4rem; }
+  .modes.current { border-color: var(--accent); }
+  .modes button { border: 0; background: none; color: var(--muted); font: inherit; font-size: .9rem; padding: .3rem .7rem;
+                  border-radius: 7px; cursor: pointer; }
+  .modes button[aria-pressed=true] { background: var(--accent); color: var(--accent-ink); }
   details code { font-family: var(--mono); background: var(--chip); padding: 0 .3rem; border-radius: 4px; color: var(--ink); }
   @media (max-width: 760px) {
     .wrap { grid-template-columns: 1fr; }
@@ -77,7 +85,11 @@
 <div class="wrap">
   <header>
     <h1>Problem solving, step by step</h1>
-    <p>Write one step at a time. The tutor works out which method you're using and checks each step.</p>
+    <p>One step at a time. The tutor works out which method you're using and checks each step.</p>
+    <div class="selectors">
+      <div class="modes" id="setup-modes" role="group" aria-label="How you set up the problem"></div>
+      <div class="modes" id="steps-modes" role="group" aria-label="How you do the steps"></div>
+    </div>
   </header>
   <nav id="list" aria-label="Problems"></nav>
   <main>
@@ -93,8 +105,21 @@
   </main>
 </div>
 <script>
+// The page walks one session through two stages, each with its own way of answering:
+//   setup (reading the story, then finding the method): TutorSetup[name] — parse, ai, choices
+//   steps (once the method is known):                   TutorSteps[name] — parse, ai, boxes
+// A way registers {render(s, asker, ctx)}; modes/*.js add theirs. The server's `stage` (extract | find_method | steps | done)
+// says which stage applies. Every way drives the same session, so switching keeps your place in the problem.
 const $ = s => document.querySelector(s);
-let sid = null, current = null;
+window.TutorSetup = window.TutorSetup || {};
+window.TutorSteps = window.TutorSteps || {};
+const WAYS = {
+  setup: {registry: () => TutorSetup, label: "Setup", names: [["choices", "Choices"], ["parse", "Type"], ["ai", "Claude"]]},
+  steps: {registry: () => TutorSteps, label: "Steps", names: [["boxes", "Boxes"], ["parse", "Type"], ["ai", "Claude"]]},
+};
+const params = new URLSearchParams(location.search);
+const way = {setup: params.get("setup") || "choices", steps: params.get("steps") || "boxes"};
+let sid = null, current = null, last = null;
 
 async function api(path, body) {
   const r = await fetch(path, {method: body === undefined ? "GET" : "POST",
@@ -108,6 +133,29 @@ function el(tag, cls, text) {
   if (cls) e.className = cls;
   if (text !== undefined) e.textContent = text;
   return e;
+}
+
+function setUrl() {
+  const q = new URLSearchParams();
+  if (current) q.set("p", current);
+  for (const k of ["setup", "steps"]) if (way[k] !== WAYS[k].names[0][0]) q.set(k, way[k]);
+  history.replaceState(null, "", "?" + q);
+}
+
+function drawModes() {
+  const stageNow = last && last.stage !== "done" ? (last.stage === "steps" ? "steps" : "setup") : null;
+  for (const [k, w] of Object.entries(WAYS)) {
+    const box = $(`#${k}-modes`);
+    box.replaceChildren(el("span", "label", w.label));
+    box.classList.toggle("current", stageNow === k);
+    for (const [name, label] of w.names) {
+      if (!w.registry()[name]) continue;
+      const b = el("button", "", label);
+      b.setAttribute("aria-pressed", String(name === way[k]));
+      b.onclick = () => { way[k] = name; setUrl(); drawModes(); if (last) drawAsker(last); };
+      box.append(b);
+    }
+  }
 }
 
 async function loadList() {
@@ -127,9 +175,9 @@ async function loadList() {
 
 async function start(key) {
   document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.key === key));
-  history.replaceState(null, "", "?p=" + encodeURIComponent(key));
+  current = key; setUrl();
   const s = await api("/api/sessions", {problem: key});
-  sid = s.id; current = key;
+  sid = s.id;
   const panel = $("#panel");
   panel.replaceChildren();
   const head = el("div", "problem");
@@ -146,7 +194,37 @@ async function start(key) {
 function render(s) {
   const thread = $(".thread");
   for (const f of s.feedback) thread.append(el("div", "msg " + f.kind, f.message));
+  last = s;
+  drawModes();
+  drawAsker(s);
+}
+
+const ctx = {
+  el, api,
+  get sid() { return sid; },
+  say: (text, cls = "you") => $(".thread").append(el("div", "msg " + cls, text)),
+  // send typed text (parsed on the server), a typed StudentInput object (no parsing), or a command
+  send: async (text, shown) => post(`/api/sessions/${sid}/input`, {text}, shown || text),
+  sendTyped: async (input, shown) => post(`/api/sessions/${sid}/step`, input, shown),
+  command: async cmd => post(`/api/sessions/${sid}/${cmd}`, {}, null),
+  render,
+};
+
+// A reply is drawn only if the student is still on the problem it was sent for (a switch starts a new session).
+async function post(path, body, shown) {
+  const sent = sid;
+  if (shown) ctx.say(shown);
+  try {
+    const s = await api(path, body);
+    if (sent !== sid) return null;
+    render(s);
+    return s;
+  } catch (e) { if (sent === sid) ctx.say(e.message, "error"); return null; }
+}
+
+function drawAsker(s) {
   const asker = $(".asker");
+  asker.bxToken = null;  // a boxes spec still loading for the old view must not draw over this one
   asker.replaceChildren();
   if (s.done) {
     const again = el("button", "btn", "Try it again with a different method");
@@ -154,12 +232,30 @@ function render(s) {
     asker.append(again);
     return;
   }
+  const k = s.stage === "steps" ? "steps" : "setup";
+  const reg = WAYS[k].registry();
+  (reg[way[k]] || reg.parse).render(s, asker, ctx);
+  asker.scrollIntoView({block: "nearest"});
+}
+
+// The original way, for both stages: type each step as text, parsed on the server.
+const typeWay = {render(s, asker, ctx) {
   if (s.ask.text) asker.append(el("div", "msg ask", s.ask.text));
   if (s.ask.options.length) {
     const box = el("div", "options");
     s.ask.options.forEach((o, i) => {
       const b = el("button", "", o);
-      b.onclick = () => send(String(i + 1), o);
+      b.onclick = () => ctx.send(String(i + 1), o);
+      box.append(b);
+    });
+    asker.append(box);
+  }
+  for (const d of (s.ask.decisions || []).slice(1)) {  // the other open decisions: any order
+    asker.append(el("div", "note", `(${d.letter}) ${d.text}`));
+    const box = el("div", "options");
+    d.options.forEach((o, i) => {
+      const b = el("button", "", o);
+      b.onclick = () => ctx.sendTyped({kind: "choice", index: i + 1, decision: d.decision}, o);
       box.append(b);
     });
     asker.append(box);
@@ -173,31 +269,29 @@ function render(s) {
   const go = el("button", "btn primary", "Check");
   go.type = "submit";
   form.append(input, go);
-  form.onsubmit = e => { e.preventDefault(); if (input.value.trim()) send(input.value.trim()); };
-  asker.append(form);
-  const tools = el("div", "tools");
+  form.onsubmit = e => { e.preventDefault(); if (input.value.trim()) ctx.send(input.value.trim()); };
+  asker.append(form, tools(ctx));
+  input.focus();
+}};
+
+function tools(ctx) {
+  const box = el("div", "tools");
   for (const [cmd, label] of [["hint", "Hint"], ["where", "Where am I?"], ["done", "I'm done"]]) {
     const b = el("button", "btn", label);
-    b.onclick = () => command(cmd, label);
-    tools.append(b);
+    b.onclick = () => ctx.command(cmd);
+    box.append(b);
   }
-  asker.append(tools);
-  input.focus();
-  asker.scrollIntoView({block: "nearest"});
+  return box;
 }
-
-async function send(text, shown) {
-  $(".thread").append(el("div", "msg you", shown || text));
-  try { render(await api(`/api/sessions/${sid}/input`, {text})); }
-  catch (e) { $(".thread").append(el("div", "msg error", e.message)); }
-}
-
-async function command(cmd, label) {
-  try { render(await api(`/api/sessions/${sid}/${cmd}`, {})); }
-  catch (e) { $(".thread").append(el("div", "msg error", e.message)); }
-}
+ctx.tools = () => tools(ctx);
+TutorSetup.parse = TutorSteps.parse = typeWay;
 
 loadList();
 </script>
+<script src="/static/modes/kernels.js"></script>
+<script src="/static/modes/components.js"></script>
+<script src="/static/modes/boxes.js"></script>
+<script src="/static/modes/ai.js"></script>
+<script>drawModes();</script>
 </body>
 </html>

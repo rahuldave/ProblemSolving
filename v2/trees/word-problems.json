@@ -152,7 +152,9 @@
             "trap": "Takes off $15 instead of 15%.",
             "answer": "65",
             "caught_by_answer": true,
-            "first_steps_that_give_it_away": []
+            "first_steps_that_give_it_away": [
+              "80 − 15 = 65"
+            ]
           }
         ]
       },
@@ -251,7 +253,9 @@
             "trap": "Adds instead of scaling: 12 more glasses, so 12 more spoons.",
             "answer": "12",
             "caught_by_answer": true,
-            "first_steps_that_give_it_away": []
+            "first_steps_that_give_it_away": [
+              "18 − 6 = 12"
+            ]
           }
         ]
       }
@@ -327,6 +331,7 @@
             "answer": "16",
             "caught_by_answer": true,
             "first_steps_that_give_it_away": [
+              "6 + 18 = 24",
               "4 × 24 = 96",
               "24 ÷ 6 = 4",
               "6 × 4 = 24"
@@ -392,7 +397,9 @@
             "trap": "Divides the scale by the map distance.",
             "answer": "50/7",
             "caught_by_answer": true,
-            "first_steps_that_give_it_away": []
+            "first_steps_that_give_it_away": [
+              "25 ÷ 3.5 ≈ 7.143"
+            ]
           }
         ]
       },
@@ -572,7 +579,11 @@
             "trap": "Adds tops and bottoms: (5 + 3)/(6 + 4).",
             "answer": "0.8",
             "caught_by_answer": true,
-            "first_steps_that_give_it_away": []
+            "first_steps_that_give_it_away": [
+              "5 + 3 = 8",
+              "6 + 4 = 10",
+              "8 ÷ 10 = 0.8"
+            ]
           }
         ]
       },
@@ -788,6 +799,7 @@
             "answer": "17.5",
             "caught_by_answer": true,
             "first_steps_that_give_it_away": [
+              "60 − 10 = 50",
               "50 ÷ 100 = 0.5",
               "35 × 50 = 1750",
               "50 ÷ 10 = 5"

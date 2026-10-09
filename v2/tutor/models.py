@@ -5,32 +5,46 @@ concrete, validated data. Today the models come from a small text parser (parse.
 same models from free-form input, or replace the classifier that consumes them.
 """
 
+import re
 from fractions import Fraction
 from typing import Annotated, Any, Literal, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
+
+
+NUMBER = re.compile(r"-?(?:\d+(?:\.\d*)?|\.\d+)(?:/(?:\d+(?:\.\d*)?|\.\d+))?")
+MAX_NUMBER_TEXT = 30
 
 
 class Number(BaseModel):
-    """A number as the student wrote it: 12, 0.75, 2/3. Keeping the text lets us accept 0.667 for 2/3."""
+    """A number as the student wrote it: 12, 0.75, 2/3. Keeping the text lets us accept 0.667 for 2/3.
+
+    Only the parser's notation is allowed: digits, an optional decimal point, an optional `/` denominator, an
+    optional leading minus. No exponents, at most 30 characters, and never a zero denominator."""
 
     text: str
+    _value: Fraction | None = PrivateAttr(default=None)
 
     @field_validator("text")
     @classmethod
     def parses(cls, v: str) -> str:
         v = v.strip().replace("$", "").replace(",", "")
-        Fraction(v)  # raises ValueError for anything that isn't a number
+        if len(v) > MAX_NUMBER_TEXT or not NUMBER.fullmatch(v):
+            raise ValueError("not a number like 12, 0.75 or 2/3")
+        if "/" in v and Fraction(v.split("/")[1]) == 0:
+            raise ValueError("a fraction can't have 0 on the bottom")
         return v
 
     @property
     def value(self) -> Fraction:
-        return Fraction(self.text)
+        if self._value is None:
+            self._value = Fraction(self.text)
+        return self._value
 
     @property
     def places(self) -> Optional[int]:
         """Decimal places typed, if the student wrote a decimal (used as a rounding tolerance)."""
-        return len(self.text.split(".")[1]) if "." in self.text else None
+        return len(self.text.split(".")[1]) if "." in self.text and "/" not in self.text else None
 
     def close_to(self, exact: Fraction) -> bool:
         if self.value == exact:
@@ -90,6 +104,7 @@ class ChoiceAnswer(BaseModel):
 
     kind: Literal["choice"] = "choice"
     index: int = Field(ge=1)
+    decision: Optional[int] = Field(default=None, ge=0)  # which extraction decision (its index); None: the current one
 
 
 class ValueAnswer(BaseModel):

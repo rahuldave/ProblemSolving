@@ -19,7 +19,11 @@ uv run pytest                        # from the repo root (pytest config puts v2
 uv run pytest v2/tests/test_tutor.py -k <name>   # a single test
 cd v2 && uv run python -m tutor [<word-problem-id> | <question-id>:<example#> | --list]   # terminal tutor
 cd v2 && uv run uvicorn tutor.web:app --reload   # web tutor at http://127.0.0.1:8000
+cd v2 && uv run python -m tutor.evals.run [--category X] [--limit N] [--dry]   # eval the Claude reader (real API calls, ~$0.6 a full run)
 ```
+
+The Claude way reads `ANTHROPIC_API_KEY` (or `ANTHROPIC_KEY`) from the environment or a git-ignored `.env` at the repo
+root. pytest never calls the API; the eval runner does, so ask before running it.
 
 `build.py` uses only the standard library and exits non-zero when any check fails ("SOME CHECKS FAILED"). Graph
 images need the mermaid CLI (`mmdc`) and the website needs Quarto. Without them the build still validates and writes
@@ -46,17 +50,33 @@ site, served by GitHub Pages) and `site/` (git-ignored Quarto sources). Don't ha
 - **The tutor imports the engine** (`import build as engine` in `tutor/session.py`, `tutor/web.py` and the tests). It
   expands routes the same way the diagrams do, so the two always agree. At runtime it also reads the generated
   `trees/<question>.json` and `trees/word-problems.json`, so rebuild after changing the question data.
-- **Tutor pipeline:** text → `tutor/parse.py` → typed pydantic steps (`tutor/models.py`; ambiguous notation returns
-  every reading) → `tutor/classifier.py` (`RuleClassifier.classify(step, candidates)`; exact matches beat wildcards,
-  and any object with this interface can replace it) → `tutor/session.py`. The session classifies the first one or
+- **Tutor pipeline:** input → typed pydantic `StudentInput` (`tutor/models.py`) → `session.submit_input` →
+  `tutor/classifier.py` (`RuleClassifier.classify(step, candidates)`; any object with this interface can replace it).
+  A step counts for every first-step tree entry it fits, exact or wildcard, and the routes then filter on the actual
+  numbers. The exact match only decides the arithmetic feedback. `named_methods()` leaves out routes that are only
+  building up toward their step. The session classifies the first one or
   two steps against the tree, then against the next step of each route still alive. Each route keeps its own
   position, so build-up steps and steps done in the head don't lose the other routes. Word-problem sessions start
   with the extraction decisions. A student who skips them is classified against the correct reading and against
   each trap's giveaway steps.
-- **`tutor/web.py`** is a FastAPI JSON API (`/api/problems`, `/api/sessions`, `/api/sessions/{id}/input|hint|where|done`)
-  plus one page, `tutor/static/index.html`. Sessions are kept in memory.
+- **Three ways in, one session** (`tutor/MODES.md` is the design). The page has two selectors: Setup (reading the
+  story, then finding the method) is Choices, Type or Claude; Steps is Boxes, Type or Claude. Every way produces
+  `StudentInput`s for the same session, so the graph logic lives only in `session.py`:
+  - Type: `tutor/parse.py` turns text into inputs (`/input`).
+  - Choices and Boxes: `tutor/skills.py` turns session state into specs (`/boxes`, `/method`), and the page posts
+    typed inputs (`/step`). Specs never carry expected values. Boxes has two levels of component: kernels, one per
+    step op (`static/modes/kernels.js`), and components registered by (question, method) for the skills, the green
+    call nodes, and for method layouts like ratio_table (`components.js`, mirrored in `skills.py`). The same
+    component is used wherever its skill is called.
+  - Claude: `tutor/ai.py` only *reads* free text into inputs (structured output, `claude-opus-5-5` at low effort).
+    It never judges; the session does (`/say`, rate-limited). `tutor/evals/` holds its eval set and runner.
+- **`tutor/web.py`** is the FastAPI app: `/api/problems`, `/api/sessions`, `/api/sessions/{id}/input|step|hint|where|done`,
+  plus routes registered by `skills_web.py` and `ai_web.py`, and one page, `tutor/static/index.html`. Sessions are
+  kept in memory.
 - **Tests:** `v2/tests/test_tutor.py` includes an "automatic student" that types every route of every example and
-  word problem and expects the tutor to reach the right answer. A data change that breaks a route shows up there.
+  word problem and expects the tutor to reach the right answer, and `test_boxes.py` checks that Type and Boxes hold
+  the same routes after every step of all ~11.5k routes (about a minute). A data change that breaks a route shows up
+  in both.
 
 ## Pull requests
 

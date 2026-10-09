@@ -72,7 +72,7 @@
       "simplify_then_scale": {
         "id": "fraction",
         "name": "Use a simplified fraction",
-        "idea": "{p}/100 simplifies (15/100 = 3/20); take that fraction of {n}."
+        "idea": "Simplify {p}/100 to lowest terms, then take that fraction of {n}."
       },
       "ratio_table": {
         "id": "ratio_table",

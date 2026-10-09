@@ -1,0 +1,66 @@
+{
+ "label": "hard block, round1 prompt",
+ "model": "claude-opus-5-5",
+ "categories": [
+  "hard"
+ ],
+ "limit": null,
+ "table": "category  pass   n   %\nhard        20  21  95\nTOTAL       20  21  95",
+ "totals": {
+  "input_tokens": 7103.0,
+  "output_tokens": 977.0,
+  "cache_creation_input_tokens": 0.0,
+  "cache_read_input_tokens": 79359.0,
+  "cost_usd": 0.06382380000000001,
+  "calls": 21,
+  "median_seconds": 1.85,
+  "p90_seconds": 2.57
+ },
+ "failures": [
+  {
+   "id": "hard-17",
+   "category": "hard",
+   "problem": "percent-of:1",
+   "say": "move the decimal point, 80 becomes 8",
+   "ok": false,
+   "expected": [
+    "divide (80, 10) 8"
+   ],
+   "got": [],
+   "raw": [],
+   "note": "Moving the decimal point one place in 80 gives 8. Which calculation is that? For example, are you dividing 80 by 10?",
+   "error": null,
+   "usage": {
+    "input_tokens": 168,
+    "output_tokens": 58,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 3779,
+    "cost_usd": 0.0025878000000000003
+   },
+   "seconds": 2.0,
+   "context": "Question: What is 15% of 80?\nPhase: calculating.\nThe question being solved: What is 15% of 80?\nSteps so far: none yet\nMethods still possible: Build from 10% and 5%, Convert to a decimal and multiply, Use a simplified fraction, Multiply, then divide by 100, Find 1% first\nWhen the steps are done the tutor asks \"What's your answer?\" for a number."
+  }
+ ],
+ "passed": [
+  "hard-01",
+  "hard-02",
+  "hard-03",
+  "hard-04",
+  "hard-05",
+  "hard-06",
+  "hard-07",
+  "hard-08",
+  "hard-09",
+  "hard-10",
+  "hard-11",
+  "hard-12",
+  "hard-13",
+  "hard-14",
+  "hard-15",
+  "hard-16",
+  "hard-18",
+  "hard-19",
+  "hard-20",
+  "hard-21"
+ ]
+}

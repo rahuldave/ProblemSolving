@@ -1,0 +1,50 @@
+{
+ "label": "",
+ "model": "claude-opus-5-5",
+ "categories": [
+  "in_head",
+  "several_decisions",
+  "off_topic",
+  "compute_in_extraction"
+ ],
+ "limit": null,
+ "table": "category               pass   n    %\nseveral_decisions         4   4  100\ncompute_in_extraction     8   8  100\nin_head                   5   5  100\noff_topic                 8   8  100\nTOTAL                    25  25  100",
+ "totals": {
+  "input_tokens": 9153.0,
+  "output_tokens": 1345.0,
+  "cache_creation_input_tokens": 24852.0,
+  "cache_read_input_tokens": 78698.0,
+  "cost_usd": 0.20351159999999996,
+  "calls": 25,
+  "median_seconds": 2.48,
+  "p90_seconds": 3.54
+ },
+ "failures": [],
+ "passed": [
+  "multi-pick-01",
+  "multi-pick-02",
+  "multi-pick-03",
+  "multi-pick-04",
+  "jump-01",
+  "jump-02",
+  "jump-03",
+  "jump-04",
+  "jump-05",
+  "jump-06",
+  "jump-07",
+  "jump-08",
+  "head-01",
+  "head-02",
+  "head-03",
+  "head-04",
+  "head-05",
+  "off-01",
+  "off-02",
+  "off-03",
+  "off-04",
+  "off-05",
+  "off-06",
+  "off-07",
+  "off-08"
+ ]
+}
