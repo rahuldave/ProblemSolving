@@ -692,9 +692,34 @@ def test_done_after_done_stays_done():
     assert s.phase == "done"
 
 
-def test_a_rounded_step_onto_a_traps_exact_answer_names_it():
+def test_a_rounded_step_is_a_rounding_not_a_trap():
+    """3 ÷ 4 = 0.8 rounds 0.75 to one place. 0.8 is also the add-tops-and-bottoms reading's 4/5, but that reading
+    never divides 3 by 4: the step is taken as rounded (the rounding policy is a decision left open)."""
     s = WordProblemSession("pizza-shared")
-    assert kinds(s.submit("3 / 4 = 0.8")) == ["trap"]
+    assert "trap" not in kinds(s.submit("3 / 4 = 0.8"))
+
+
+@pytest.mark.parametrize("seq", [["gcf(8,3)=1", "3/1=3", "gcf(3,2)=1"]])
+def test_an_owed_step_is_not_used_up_by_a_repeat_of_its_value(seq):
+    """3 ÷ 1 = 3 is on the route twice: after GCF(3, 2), not written, and after GCF(8, 3), written. It is the
+    second, so GCF(3, 2) stays to write and is taken."""
+    s = session("compare-fractions", 1)
+    run_all(s, seq)
+
+
+@pytest.mark.parametrize("wid, text", [("walk-to-school", "60/100=1"), ("walk-to-school", "18+3=1"),
+                                       ("pancakes-dozen", "12/2=3"), ("train-minutes", "150/3=4.5")])
+def test_a_slip_onto_a_number_of_a_traps_working_is_still_a_slip(wid, text):
+    """Only a slip onto a trap's answer names the trap; a wrong result that is some number on its working isn't."""
+    s = WordProblemSession(wid)
+    assert "trap" not in kinds(s.submit(text))
+
+
+def test_a_step_done_in_the_head_can_be_written_after():
+    q = WordProblemSession("walk-to-school")._probe()
+    assert "correct" in kinds(q.submit("6 x 3 = 18"))
+    fb = q.submit("60 / 10 = 6")
+    assert "correct" in kinds(fb), messages(fb)
 
 
 def topological(route, ix, rnd):
@@ -715,7 +740,9 @@ def test_a_student_who_writes_the_steps_in_any_order_that_works_reaches_the_answ
     steps finish."""
     import random
     proto = session(qid, i)
-    for r in one_route_per_method(proto):
+    rnd = random.Random(f"{qid}:{i}")  # one route per method, and six more at random (any expansion of a method)
+    routes = one_route_per_method(proto) + rnd.sample(range(proto.expanded), min(6, proto.expanded))
+    for r in routes:
         v, env, trace, vis = proto.routes[r]
         for seed in range(3):
             s = proto.fresh()
