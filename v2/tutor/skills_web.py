@@ -26,10 +26,14 @@ def register(app):
 
     @app.post("/api/sessions/{sid}/method")
     def choose_method(sid: str, body: Choose):
+        from . import log
         from .web import LOCK, lookup, state
         entry = lookup(sid)
         with LOCK:
+            before = log.state(entry["session"])
             feedback = entry["session"].choose_method(body.method)
+            after = log.state(entry["session"])
+        log.write(sid, entry["key"], "method", before, after, feedback, method=body.method)
         if feedback and feedback[0].kind == "error":
             raise HTTPException(422, feedback[0].message)
         return state(sid, entry, feedback)

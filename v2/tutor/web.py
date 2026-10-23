@@ -19,6 +19,7 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 
 import build as engine
 
+from . import log
 from .models import StudentInput
 from .session import QuestionSession, WordProblemSession, catalog
 
@@ -122,6 +123,7 @@ def start(body: Start):
         SESSIONS[sid] = entry
         while len(SESSIONS) > MAX_SESSIONS:
             SESSIONS.popitem(last=False)
+    log.write(sid, body.problem, "start", {}, log.state(session), getattr(session, "pending", []))
     if isinstance(session, WordProblemSession):
         head = {"title": session.wp["title"], "story": session.wp["text"]}
     else:
@@ -132,8 +134,12 @@ def start(body: Start):
 @app.post("/api/sessions/{sid}/input")
 def submit(sid: str, body: Entry):
     entry = lookup(sid)
+    s = entry["session"]
     with LOCK:
-        feedback = entry["session"].submit(body.text)
+        before, parsed = log.state(s), log.parsed(s, body.text)
+        feedback = s.submit(body.text)
+        after = log.state(s)
+    log.write(sid, entry["key"], "input", before, after, feedback, text=body.text, parsed=parsed)
     return state(sid, entry, feedback)
 
 
@@ -145,8 +151,12 @@ def submit_typed(sid: str, body: dict):
         inp = TYPED.validate_python(body)
     except ValidationError as e:
         raise HTTPException(422, e.errors()[0]["msg"])
+    s = entry["session"]
     with LOCK:
-        feedback = entry["session"].submit_input(inp)
+        before = log.state(s)
+        feedback = s.submit_input(inp)
+        after = log.state(s)
+    log.write(sid, entry["key"], "step", before, after, feedback, input=inp.model_dump(mode="json"))
     return state(sid, entry, feedback)
 
 
@@ -154,12 +164,16 @@ def command(sid: str, command: str):
     entry = lookup(sid)
     s = entry["session"]
     with LOCK:
+        before = log.state(s)
         if command == "hint":
             feedback = s.hint()
         elif command == "where":
             feedback = s.where()
         else:
             feedback = s.done_command() if isinstance(s, WordProblemSession) else s.finish_steps()
+        after = log.state(s)
+    if command != "where":  # where only shows the steps back
+        log.write(sid, entry["key"], command, before, after, feedback)
     return state(sid, entry, feedback)
 
 

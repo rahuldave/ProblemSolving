@@ -5,3 +5,4 @@ site/
 .cache/
 .venv/
 .env
+v2/logs/

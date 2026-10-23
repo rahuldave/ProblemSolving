@@ -40,6 +40,19 @@ and continues); and each trap's giveaways, which are the trap's own steps on its
 (`6 x 18 = 108` matches the flipped-ratio trap, so the session moves to that decision). The trap's own steps are in
 the graph's "gives itself away" label too.
 
+A step further along a path, or a bare number, works the same way (`tutor/PATHS.md`, steps 2 and 3). The word
+problem's index (`paths.WordProblemIndex`) holds every quantity of every reading, so the session can tell which
+reading a statement fits:
+
+- `12`, the story's answer, settles the decisions and ends the story, with the working done in the head.
+- `27`, `16`, `8` and `18` are trap answers, so the session names the trap. So is a quantity only a trap's paths
+  have, like `4.5` or `108 ÷ 4 = 27`.
+- `72 ÷ 6 = 12` fits the correct reading with `4 × 18 = 72` done in the head, so it settles the decisions.
+- A statement can fit the correct reading and a trap's too, like the jacket's `12`, which is the discount and also
+  the savings reading's answer. The session takes it as right so far, warns about the trap, and keeps that trap in
+  `open_readings()`.
+- A number is read as an option number only when it is within the list.
+
 **2. Bind.** The decisions fix the question (`missing-value`) and its inputs: a = 4 spoons, b = 6 glasses,
 d = 18 more glasses. The session says so ("So the story gives: …") and starts a `QuestionSession` on
 `Solve 4/6 = x/18`.
@@ -67,6 +80,11 @@ choose (any common factor when dividing out factors, as the tree's `common_facto
 scaling to 10, 100 or 1000), the route is re-run with the student's own choice (`72 ÷ 8 = 9`, `4 × 250 = 1000`). Right
 step with wrong arithmetic is a slip: the student gets one retry, then the tutor gives the value and carries on.
 
+A step that is no live route's next step is matched further along each route, against the quantity index
+(`paths.QuestionIndex`). The steps it skips become done in the head, as `18 ÷ 6 = 3` is for `4 × 3 = 12`. A bare
+number is a statement too. The answer finishes the question, and a working quantity such as `120` stands for the
+step that makes it.
+
 **4. Answer.** For a word problem the session reports the answer of the route the student walked (12), runs any
 follow-up steps from the chosen reading (none for the correct one), and asks for the answer in the story's terms. An
 equality-only route (simplify → `3:4 ≠ 5:7`) can't say which is better, so the question starts again for another
@@ -76,7 +94,7 @@ method.
 
 - Once the first step has fixed a method, the student can't switch. `4 x 18 = 72` then `6 x 3 = 18` is "not
   recognized".
-- A bare `12` mid-route is refused as "looks like an answer".
+- Two steps in one expression, like `4/6 × 18 = 12`, are not read yet (`PATHS.md`, step 4).
 - Every entry has to be in the parser's notation.
 
 ## Mode 1: type steps (existing)
@@ -166,7 +184,7 @@ text; it never judges it. The deterministic session still decides what is right.
   is just left out. Claude returns `none` when nothing can be read.
 - **Answer:** a `ValueAnswer` or a `ChoiceAnswer`.
 - **What Claude returns matches what the graph accepts:** only the steps the student states. "Two thirds of 18 is
-  12" is just `2/3 × 18 = 12` (missing-value has no in-the-head step in the graph, so the tutor doesn't recognize it);
+  12" is just `2/3 × 18 = 12`, unit rate's last step, with `4 ÷ 6` done in the head;
   "15% of 80 is 12" is `0.15 × 80 = 12`, which percent-of's graph allows with `15 ÷ 100` done in the head. A quantity
   named with its value ("it's 3 times as many glasses") is the calculation it states, `18 ÷ 6 = 3`.
 - **Fidelity is measured, not assumed:** an eval set (`tutor/evals/`) pairs a context and a student utterance with

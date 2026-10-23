@@ -67,8 +67,8 @@ class RuleClassifier:
             return want == got
         if step.kind == "ratio_compare" or any(isinstance(x, tuple) and len(x) == 2 and not isinstance(x[0], str)
                                                for x in c.operands):
-            if step.kind != "ratio_compare":
-                return False
+            if step.kind != "ratio_compare" or not all(isinstance(x, tuple) and len(x) == 2 for x in c.operands):
+                return False  # a ratio comparison only fits a comparison of two ratios (not 21 > 20)
             pairs = [tuple(x) for x in c.operands]
             got = [(n.value, d.value) for n, d in (step.left, step.right)]
             return sorted(pairs) == sorted(got)
