@@ -644,3 +644,86 @@ def test_a_traps_answer_in_the_follow_up_phase_is_named(wid, phase_steps, wrong)
         s.submit(t)
     assert s.phase == "then"
     assert kinds(s.submit(wrong)) == ["trap"]
+
+
+# ---------------------------------------------------------------- the fifth review's findings
+
+def run_all(s, steps):
+    for t in steps:
+        fb = s.submit(t)
+        assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), (t, messages(fb))
+    return s
+
+
+@pytest.mark.parametrize("key, steps", [
+    ("walk-to-school", ["60/10=6", "6x3=18", "18+3=21"]),
+    ("simplify-fraction:2", ["96/2=48", "48/2=24", "24/2=12", "12/3=4", "9/3=3"]),
+    ("compare-fractions:2", ["5x2=10", "2x2=4", "4/10=0.4", "8x5=40", "3x40=120", "120/8=15", "0.4x40=16", "15<16"]),
+    ("compare-fractions:1", ["7/5=1.4", "lcm(4,7)=28", "28/4=7", "28/1.4=20", "3x7=21", "21>20"]),
+    ("add-fractions:2", ["2/3=2/3", "3x5=15", "5/1=5", "2/3x15=10", "15/5=3", "10+3=13", "gcf(13,15)=1", "15/1=15",
+                         "13/1=13"]),
+])
+def test_owed_steps_a_later_step_needs_dont_block_the_finish(key, steps):
+    """A step skipped out of order is owed; a later step that needs it shows it was done in the head, and a route
+    that ends with nothing owed finishes the steps even while a sibling expansion still owes some."""
+    s = WordProblemSession(key) if key in engine.WP else session(key.split(":")[0], int(key.split(":")[1]) - 1)
+    run_all(s, steps)
+    q = s.question if key in engine.WP else s
+    assert q.phase in ("answer", "done"), (q.phase, q.ambiguity())
+
+
+def test_boxes_draw_an_owed_step():
+    from tutor import skills
+    s = session("simplify-fraction", 1)
+    run_all(s, ["96/2=48"])
+    owed = [x for h in s.ambiguity()["owed"] for x in h["steps"]]
+    assert "72 ÷ 2 = 36" in owed
+    spec = skills.spec(s)
+    done = [d["text"] for f in spec.get("frames", []) for d in f["done"]]
+    assert "72 ÷ 2 = 36" not in done
+    assert any(k["kernel"] == "divide" for f in spec.get("frames", []) for k in f["kernels"])
+
+
+def test_done_after_done_stays_done():
+    s = session("missing-value", 0)
+    s.submit("24")
+    assert s.phase == "done"
+    s.finish_steps()
+    assert s.phase == "done"
+
+
+def test_a_rounded_step_onto_a_traps_exact_answer_names_it():
+    s = WordProblemSession("pizza-shared")
+    assert kinds(s.submit("3 / 4 = 0.8")) == ["trap"]
+
+
+def topological(route, ix, rnd):
+    """The route's visible steps in a random order that writes each step after the steps it needs."""
+    steps = ix.path(route)
+    left, out = list(range(len(steps))), []
+    while left:
+        ready = [j for j in left if not any(steps[k] in ix.index.ancestors(steps[j]) for k in left if k != j)]
+        j = rnd.choice(ready)
+        out.append(j)
+        left.remove(j)
+    return out
+
+
+@pytest.mark.parametrize("qid, i", EXAMPLES, ids=[f"{q}:{i + 1}" for q, i in EXAMPLES])
+def test_a_student_who_writes_the_steps_in_any_order_that_works_reaches_the_answer(qid, i):
+    """Each route's steps in three random orders that respect what each step needs: every step is taken and the
+    steps finish."""
+    import random
+    proto = session(qid, i)
+    for r in one_route_per_method(proto):
+        v, env, trace, vis = proto.routes[r]
+        for seed in range(3):
+            s = proto.fresh()
+            order = topological(proto.routes[r], proto.paths, random.Random(f"{qid}:{i}:{r}:{seed}"))
+            for j in order:
+                if s.phase != "steps":
+                    break
+                fb = s.submit(typed(trace[vis[j]]))
+                assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), \
+                    (v["method"], [typed(trace[vis[x]]) for x in order], typed(trace[vis[j]]), messages(fb))
+            assert finish(s, qid), (v["method"], [typed(trace[vis[x]]) for x in order], s.phase, s.ambiguity())

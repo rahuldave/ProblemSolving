@@ -81,7 +81,8 @@ scaling to 10, 100 or 1000), the route is re-run with the student's own choice (
 step with wrong arithmetic is a slip: the student gets one retry, then the tutor gives the value and carries on.
 
 A step that is no live route's next step is matched further along each route, against the quantity index
-(`paths.QuestionIndex`). The steps it skips become done in the head, as `18 ÷ 6 = 3` is for `4 × 3 = 12`. A bare
+(`paths.QuestionIndex`). The steps it skips that it needs become done in the head, as `18 ÷ 6 = 3` is for
+`4 × 3 = 12`. A step it skips but doesn't need is owed. It is still to write, and the tutor takes it when it comes. A bare
 number is a statement too. The answer finishes the question, and a working quantity such as `120` stands for the
 step that makes it.
 

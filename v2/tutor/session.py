@@ -415,9 +415,20 @@ class QuestionSession:
         done in the head). An owed step written leaves the position. Of the steps p skips, the ones p needs were done
         in the head, and the others are still to write (6 ÷ 2 = 3 before 6 × 3 = 18 in walk-to-school)."""
         if p < at:
-            return at, owed - {p}, set()
-        loose = set(self.paths.head(self.routes[r], at, p))
-        return p + 1, frozenset(owed | loose), set(range(at, p)) - loose
+            at2, owed2, head = at, owed - {p}, set()
+        else:
+            loose = set(self.paths.head(self.routes[r], at, p))
+            at2, owed2, head = p + 1, frozenset(owed | loose), set(range(at, p)) - loose
+        used = self._needed_owed(r, p, owed2)  # owed steps the written step needs were done in the head after all
+        return at2, frozenset(owed2 - used), head | used
+
+    def _needed_owed(self, r, p, owed):
+        """The owed steps of route r that its step p is computed from."""
+        if not owed:
+            return set()
+        steps = self.paths.path(self.routes[r])
+        need = self.paths.index.ancestors(steps[p])
+        return {j for j in owed if steps[j] in need}
 
     def _apply(self, far):
         """Move the routes in `far` (route → the position of the step the statement fits): {route: new position}."""
@@ -436,6 +447,12 @@ class QuestionSession:
         (route → position) is where the step was found, when that isn't just before the new position (an owed step)."""
         done = step_candidate("x", self.routes[r0], pos[r0] if pos else advanced[r0] - 1)
         alive_methods = {self.routes[r][0]["method"] for r in advanced}
+        if not pos:  # a next step: the owed steps it needs were done in the head
+            for r, at in advanced.items():
+                used = self._needed_owed(r, at - 1, self.owed.get(r, frozenset()))
+                if used:
+                    self.owed[r] = frozenset(self.owed[r] - used)
+                    self.inhead.setdefault(r, set()).update(used)
         self.said.append(self._current)
         self.shadow = {}
         self.live = {**others, **advanced}
@@ -448,7 +465,7 @@ class QuestionSession:
             mid = next(iter(after))
             m = self.methods[mid]
             idea = method_text(self.qid, mid, 'idea', self.values)
-            if set(self.live_methods()) - after and not all(self._ended(r) for r in advanced):
+            if set(self.live_methods()) - after and not any(self._ended(r) for r in advanced):
                 # another method is still building up toward its step (and this one isn't finished)
                 out.append(Feedback(kind="method", message=f"That's {m['name']} so far. {idea}"))
                 self.so_far = mid
@@ -460,12 +477,12 @@ class QuestionSession:
             out.append(Feedback(kind="method", message=f"You're using: {m['name']}."))
             self.announced = next(iter(after))
         elif len(after) > 1 and after != before:
-            finishing = any(self._ended(r) for r in advanced) if skipped_to else all(self._ended(r) for r in advanced)
+            finishing = any(self._ended(r) for r in advanced)
             out.append(Feedback(kind="method", message=f"That step fits {self.names(after)}." if finishing or skipped_to
                                 else f"That step starts {self.names(after)}. Your next step will tell which."))
-        # every route the step moved has ended; after a skip, one ended route is enough (4/3 < 1.4 ends unit rate,
-        # while the graph route still owes its plot)
-        if all(self._ended(r) for r in advanced) or (skipped_to and any(self._ended(r) for r in advanced)):
+        # one route the step moved has ended with nothing owed: the student's route is done (4/3 < 1.4 ends unit
+        # rate while the graph route still owes its plot; a sibling expansion may still owe GCF(3, 4) = 1)
+        if any(self._ended(r) for r in advanced):
             out += self.finish_steps()
         return out
 
@@ -713,6 +730,9 @@ class QuestionSession:
         return (v, env2, trace2, vis2), choices
 
     def finish_steps(self):
+        if self.phase != "steps":
+            return [Feedback(kind="info", message="This one is finished." if self.phase == "done" else
+                             "That's all the steps.")]
         finished = [r for r in self.live if self._ended(r)]
         if not finished:
             return [Feedback(kind="info", message="There's at least one more step. Type `hint` if you're stuck.")]
@@ -800,12 +820,13 @@ class QuestionSession:
         return [Feedback(kind="method", message=f"You're using: {m['name']}. {method_text(self.qid, mid, 'idea', self.values)}")]
 
     def next_steps(self):
-        """The next visible step of every live route: [(route index, step dict, Candidate)]."""
+        """The steps each live route can take now: its owed steps, then its next visible step.
+        [(route index, step dict, Candidate)]."""
         out = []
         for r, at in self.live.items():
             v, env, trace, vis = self.routes[r]
-            if at < len(vis):
-                out.append((r, trace[vis[at]][0], step_candidate("x", self.routes[r], at)))
+            for p in sorted(self.owed.get(r, ())) + ([at] if at < len(vis) else []):
+                out.append((r, trace[vis[p]][0], step_candidate("x", self.routes[r], p)))
         return out
 
 
@@ -1146,6 +1167,10 @@ class WordProblemSession:
         if took and any(f.kind == "slip" for f in fb) and getattr(step, "result", None) is not None:
             said = ValueAnswer(value=step.result)  # 0.35 × 60 = 17.5: 17.5 is the take-them-out reading's answer
             t = next(iter(self._traps_of_answer(said)), None) or self._trap_quantity(said)
+            if t:
+                return self._name_trap(t, written(step))
+        if took and getattr(step, "result", None) is not None:  # 3/4 = 0.8: rounded right, but 0.8 is the trap's 4/5
+            t = self._exact_trap(ValueAnswer(value=step.result))
             if t:
                 return self._name_trap(t, written(step))
         if took and (probe.last_match != "wildcard" or not trap):
