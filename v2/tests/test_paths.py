@@ -425,12 +425,14 @@ def test_the_shadow_replays_without_pruning():
 @pytest.mark.parametrize("key, first, then", [("simplify-fraction:2", "96 / 2 = 48", "72 / 2 = 36"),
                                               ("percent-of:1", "8 x 1 = 8", "8 / 2 = 4")])
 def test_only_a_step_the_statement_needs_is_done_in_the_head(key, first, then):
-    """96 ÷ 2 = 48 doesn't need 72 ÷ 2 = 36: that step isn't taken as done in the head (it would then be refused
-    when written). The step that comes first is still accepted after it."""
+    """96 ÷ 2 = 48 doesn't need 72 ÷ 2 = 36: that step isn't done in the head, it is still to write, and it is
+    accepted when written after."""
     qid, i = key.split(":")
     s = session(qid, int(i) - 1)
     fb = s.submit(first)
-    assert not any("in your head" in f.message for f in fb), messages(fb)
+    shown = then.split(" =")[0].replace("/", "÷").replace(" x ", " × ")
+    assert "correct" in kinds(fb) and not any("in your head" in f.message and shown in f.message for f in fb)
+    assert any(shown in step for h in s.ambiguity()["owed"] for step in h["steps"])  # still to write
     assert "correct" in kinds(s.submit(then))
 
 
@@ -603,6 +605,36 @@ def test_a_tie_isnt_a_rounding(text):
     s = session("to-decimal", 0)
     fb = s.submit(text)
     assert ("done" in kinds(fb)) == (text == "0.8"), messages(fb)
+
+
+# ---------------------------------------------------------------- the fourth review's findings
+
+def test_a_step_out_of_order_leaves_the_skipped_step_to_write():
+    """walk-to-school's route takes 5% (6 ÷ 2 = 3) before 30% (6 × 3 = 18). 6 × 3 = 18 doesn't need 6 ÷ 2 = 3: it
+    is taken, 6 ÷ 2 = 3 stays to write, and the sum is taken after both. No step is refused and then credited."""
+    s = WordProblemSession("walk-to-school")
+    fb = []
+    for t in ["60 / 10 = 6", "6 x 3 = 18", "6 / 2 = 3", "18 + 3 = 21"]:
+        fb = s.submit(t)
+        assert "correct" in kinds(fb), (t, messages(fb))
+        assert "6 × 3 = 18" not in " ".join(f.message for f in fb if "in your head" in f.message)
+    assert s.phase in ("answer", "done")
+
+
+def test_a_bare_number_the_reading_has_is_taken_by_the_question_too():
+    s = WordProblemSession("walk-to-school")
+    fb = s.submit_input(ValueAnswer(value=Number(text="18")))
+    assert "I don't see where" not in messages(fb), messages(fb)
+
+
+@pytest.mark.parametrize("pre", [[], ["12"]])
+def test_a_follow_up_slip_onto_a_traps_answer_names_it(pre):
+    """80 − 12 = 65: the right follow-up step with the $15-off reading's answer."""
+    s = WordProblemSession("jacket-sale")
+    for t in pre:
+        s.submit(t)
+    fb = s.submit("80 - 12 = 65")
+    assert kinds(fb) == ["trap"] and "read the story right" not in messages(fb), messages(fb)
 
 
 @pytest.mark.parametrize("wid, phase_steps, wrong", [("jacket-sale", ["12"], "65")])
