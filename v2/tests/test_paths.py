@@ -811,6 +811,18 @@ def test_a_repeated_line_doesnt_switch_the_method():
     assert "bow_tie" in s.named_methods()
 
 
+def test_a_route_with_an_expression_twice_takes_it_twice():
+    """add-fractions 2/3 + 1/5, a common-denominator route writes 3 × 5 = 15 twice (the LCM, then the bottom)."""
+    s = session("add-fractions", 1)
+    route = next(r for r in s.routes if r[0]["method"] == "common_denominator"
+                 and [engine.expression(*r[2][i]) for i in r[3]][:2] == ["3 × 5 = 15", "5 × 3 = 15"])
+    v, env, trace, vis = route
+    for t in vis:
+        fb = s.submit(typed(trace[t]))
+        assert any(k in kinds(fb) for k in ("correct", "done")), (typed(trace[t]), messages(fb))
+    assert finish(s, "add-fractions")
+
+
 def test_a_head_step_written_out_that_ends_a_route_finishes():
     s = QuestionSession("missing-value", {"a": "25", "b": "1", "d": "3.5"})
     run_all(s, ["25x3.5=87.5", "25/1=25"])

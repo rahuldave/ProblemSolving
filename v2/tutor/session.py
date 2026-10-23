@@ -336,13 +336,18 @@ class QuestionSession:
             out = self._written_after(step, self.live, with_shadow=True)
             if out is not None:
                 return out
-        if not advanced and not waiting and not far:  # a step the student wrote already on a live route
+        if not advanced and not waiting and not far:  # a step the student wrote already on a live route: that,
+            named = set(self.named_methods())  # unless a route of the same method has it again (3 × 5 = 15 twice)
             for r, at in self.live.items():
                 done = set(range(at)) - self.inhead.get(r, set()) - set(self.owed.get(r, ()))
                 j = next((j for j in sorted(done) if self._fits(step, self.routes[r][2][self.routes[r][3][j]])), None)
                 if j is not None:
-                    return [Feedback(kind="info", message=f"You have {step_candidate('x', self.routes[r], j).expression} "
-                                                          "already. What's your next step?")]
+                    far = {q: p for q, p in self._reach(step, self._shadow()).items()
+                           if self.routes[q][0]["method"] in named}
+                    if not far:
+                        return [Feedback(kind="info", message=f"You have {step_candidate('x', self.routes[r], j).expression} "
+                                                              "already. What's your next step?")]
+                    break
         if not advanced and not waiting and not far:
             far = self._reach(step, self._shadow())
             if not far:  # or written out on a route of the shadow (GCF(12, 20) = 4 after 3 × 20 = 60)
