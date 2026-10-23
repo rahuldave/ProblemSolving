@@ -203,7 +203,7 @@ class WordProblemIndex:
     def _reading(self, name, trap, plan, run):
         ix = self.index
         keyof = dict(self.story)
-        pre = ix.walk(run["before"], keyof, env=run["env"])
+        pre = ix.walk(used_before(plan, run), keyof, env=run["env"])
         paths = [pre] if pre else []
         if plan["answer"]:
             answer = keyof[plan["answer"]]
@@ -233,6 +233,19 @@ class WordProblemIndex:
     def values(self, reading):
         out = [self.index.q[q].value for q in reading.quantities()]
         return [v for v in out if isinstance(v, Fraction)]
+
+
+def used_before(plan, run):
+    """The steps on the decisions' edges that this reading uses. A trap's plan keeps the correct options' steps
+    (90 ÷ 60 = 1.5) even when its own option binds the number they make away (use 90 as it is)."""
+    need = {v for v in plan["binds"].values() if isinstance(v, str)} | {plan["answer"]} | \
+        {a for st in plan["then"] for a in st["args"] if isinstance(a, str)}
+    kept = []
+    for entry in reversed(run["before"]):
+        if entry[0]["out"] in need:
+            kept.append(entry)
+            need |= {a for a in entry[0]["args"] if isinstance(a, str)}
+    return kept[::-1]
 
 
 _wp_indexes = {}

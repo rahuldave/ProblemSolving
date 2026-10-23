@@ -1044,11 +1044,17 @@ class WordProblemSession:
     def _settle_pre(self, inp, pre):
         di, i = pre
         o = next(o for o in self.wp["extract"][di]["options"] if o.get("correct"))
+        also = [t for t in self._also_fit(inp) if t["decision"] == di]  # a trap of this decision computes it too
         self.decided.add(di)
         self.pre_todo = [i] + [j for j in self._pre_steps(di) if j != i]
         self.di = di
         dec = self.wp["extract"][di]
-        return [Feedback(kind="info", message=f"That step settles it: {dec['say']} {o['say']}.")] + self._pre(inp)
+        self.open_traps += [t for t in also if not any(t is u for u in self.open_traps)]
+        out = [Feedback(kind="info", message=f"That {'fits' if also else 'settles it'}: {dec['say']} {o['say']}.")]
+        out += self._pre(inp)
+        out += [Feedback(kind="info", message=f"Careful: “{_shown(inp)}” is also in this reading: {t['option']['trap']}")
+                for t in also]
+        return out
 
     def _settle(self, what="step", probe=None, still_open=()):
         """The student's statement fits the correct reading: every open decision is settled (the steps on their ✓
@@ -1206,8 +1212,9 @@ class WordProblemSession:
         """The traps the statements so far haven't ruled out, for a later question back (PATHS.md, step 6): the
         traps of the decisions still open, and once the story is settled by the work, the traps with the correct
         reading's numbers (sugar with the 6 cups of water instead of the 6 glasses), which no number can show."""
-        if self.phase == "done":
-            return []
+        if self.phase == "done":  # the answer is in: only the traps with that answer, which it can't rule out
+            return [t for t in self.info["traps"] if any(t is u for u in self.open_traps)
+                    or (self.settled_by_work and t["decision"] in self.settled_by_work and self._same_numbers(t))]
         by_work = self.question is not None and self.settled_by_work
         return [t for t in self.info["traps"] if t["decision"] not in self.decided or t in self.open_traps
                 or (by_work and t["decision"] in self.settled_by_work and self._same_numbers(t))]
@@ -1254,8 +1261,19 @@ class WordProblemSession:
 
     def _story_answer(self, inp):
         """The student gave the story's answer: whatever is left (the decisions, the question, the follow-up steps)
-        was done in the head."""
-        out = self._settle("answer") if self.phase == "extract" else []
+        was done in the head. A trap with the same answer (sugar with the 6 cups of water) can't be ruled out by it:
+        its decision isn't said to be read right, and it stays in open_readings() for a question back."""
+        same = [t for t in self.info["traps"] if t["same_as_correct"]
+                and (t["decision"] not in self.decided or t["decision"] in self.settled_by_work)]
+        if self.phase == "extract":
+            still = same + [t for t in self._also_fit(inp, *same)  # a trap with another answer is ruled out by it
+                            if engine.same_answer(t["run"]["final"], self.run["final"])]
+            out = self._settle("answer", still_open=still)
+        else:
+            out = []
+        # the story's answer rules out every trap with another answer; the same-answer ones stay open
+        self.open_traps = [t for t in self.open_traps + same if engine.same_answer(t["run"]["final"], self.run["final"])]
+        self.open_traps = [t for i, t in enumerate(self.open_traps) if not any(t is u for u in self.open_traps[:i])]
         q = self.question
         if q.phase != "done":
             res = self.run["result"]
@@ -1267,6 +1285,10 @@ class WordProblemSession:
         self.phase = "done"
         named = q.named_methods()
         how = f". You used {q.names(named)}." if len(named) == 1 and len(q.history) > 1 else ""
+        for t in same:
+            out.append(Feedback(kind="info", message=f"Careful: {inp.value} is also the answer if the story is read "
+                                                     f"this way: {t['option']['trap']} The answer alone can't show "
+                                                     "which way you read it."))
         return out + [Feedback(kind="done", message=f"✓ {self.wp['answer_text']}{how}")]
 
     def _after_question(self):

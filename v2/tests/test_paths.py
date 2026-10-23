@@ -7,6 +7,8 @@ import pytest
 
 import build as engine
 from tutor.models import Number, ValueAnswer
+from tutor.parse import parse
+from tutor.paths import used_before
 
 from tutor.session import QuestionSession, WordProblemSession, answer_options
 
@@ -89,7 +91,7 @@ def test_every_reading_of_a_word_problem_is_in_its_index(wid):
         run = t["run"] if t else s.run
         plan = t["plan"] if t else s.plan
         labels = ix.labels(rd)
-        for e in run["before"] + run["after"]:
+        for e in used_before(plan, run) + run["after"]:  # the edge steps this reading uses
             assert engine.label_key(*e) in labels
         if not plan["answer"] and all(isinstance(v, str) for v in plan["binds"].values()):
             routes, _ = engine.routes_for(plan["question"], run["inputs"])
@@ -134,8 +136,8 @@ def test_replay_a_step_then_the_answer():
     s = WordProblemSession("lemonade-more-sugar")
     assert "correct" in kinds(s.submit("18/6=3"))
     fb = s.submit("12")
-    assert kinds(fb) == ["done"] and "looks like an answer" not in messages(fb) and s.phase == "done"
-    assert "Scale factor" in fb[0].message
+    assert kinds(fb)[-1] == "done" and "looks like an answer" not in messages(fb) and s.phase == "done"
+    assert "Scale factor" in fb[-1].message and "water" in messages(fb)  # 12 is the water reading's answer too
 
 
 def test_replay_the_last_step_of_scale_factor_is_not_inverse_rate():
@@ -445,3 +447,63 @@ def test_the_follow_up_step_written_first(wid, step, answer):
         s.decide(s.di, next(i for i, j in enumerate(s.order[s.di], 1)
                             if s.wp["extract"][s.di]["options"][j].get("correct")))
     assert "correct" in kinds(s.submit(step)) and s.phase == "answer"
+
+
+# ---------------------------------------------------------------- statements a trap's reading makes too
+
+TYPED_OPS = {"add", "subtract", "multiply", "divide", "gcf", "lcm"}
+
+
+def shared_statements():
+    """(word problem, trap index, statement) for every number and every step that the correct reading and a trap's
+    reading both compute (numbers from the story left out: they are refused as givens)."""
+    out = []
+    for wid in engine.WP:
+        s = WordProblemSession(wid)
+        ix = s.paths()
+        correct = ix.readings[0]
+        givens = {engine.num(q["value"]) for q in s.wp["quantities"]}
+        labels = ix.labels(correct)
+        for n in range(len(s.info["traps"])):
+            rd = ix.readings[1 + n]
+            for v in sorted(set(ix.values(correct)) & set(ix.values(rd)) - givens):
+                out.append((wid, n, ("value", engine.fmt(v))))
+            steps = {ix.index.q[q].label: ix.index.q[q] for q in rd.quantities()
+                     if ix.index.q[q].label in labels and ix.index.q[q].op in TYPED_OPS}
+            for label in sorted(steps):
+                q = steps[label]
+                out.append((wid, n, ("step", typed(({"op": q.op}, q.operands, q.value)))))
+    return out
+
+
+SHARED = shared_statements()
+
+
+@pytest.mark.parametrize("wid, n, statement", SHARED, ids=[f"{w}:{n}:{s[1]}" for w, n, s in SHARED])
+def test_a_statement_a_trap_makes_too_never_rules_the_trap_out(wid, n, statement):
+    """Written first, a number or step that a trap's reading computes as well is no proof the story was read right:
+    the trap stays in open_readings() (or is named), unless the statement is the story's answer and the trap has
+    another answer."""
+    s = WordProblemSession(wid)
+    t = s.info["traps"][n]
+    kind, text = statement
+    inp = ValueAnswer(value=Number(text=text)) if kind == "value" else parse(text)
+    fb = s.submit_input(inp)
+    final = s.run["final"]
+    ruled_out = (kind == "value" and not isinstance(final, str) and Number(text=text).close_to(engine.num(final))
+                 and not engine.same_answer(t["run"]["final"], final))
+    kept = any(t is u for u in s.open_readings())
+    assert kept or ruled_out or any(f.kind == "trap" for f in fb), messages(fb)
+    if kept and t["decision"] in s.decided:  # accepted: its decision isn't claimed as read right
+        right = next(o["say"] for o in s.wp["extract"][t["decision"]]["options"] if o.get("correct"))
+        for f in fb:
+            if "read the story right: " in f.message:
+                assert right not in f.message.split("read the story right: ", 1)[1].rstrip(".").split("; ")
+
+
+def test_a_bare_answer_a_same_answer_trap_gives_too():
+    s = WordProblemSession("lemonade-more-sugar")
+    fb = s.submit_input(ValueAnswer(value=Number(text="12")))
+    assert s.phase == "done" and "4 spoons of sugar with 6 glasses" not in fb[0].message
+    assert [t["option"]["say"] for t in s.open_readings()] == ["4 spoons of sugar with 6 cups of water"]
+    assert any(f.message.startswith("Careful") and "water" in f.message for f in fb)
