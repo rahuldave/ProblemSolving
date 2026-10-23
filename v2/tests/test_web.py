@@ -85,6 +85,14 @@ def test_what_claude_read_is_logged(monkeypatch):
     assert line["inputs"][0]["op"] == "multiply" and line["checked"] == [True]
 
 
+def test_a_long_text_is_cut_in_the_log():
+    from tutor import log
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/input", json={"text": "x" * 100_000})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "input"]
+    assert len(line["text"]) == log.MAX_TEXT
+
+
 def test_a_log_that_cant_be_written_doesnt_stop_the_student(monkeypatch, tmp_path):
     monkeypatch.setenv("TUTOR_LOG", str(tmp_path))  # a directory: opening it to append fails
     sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]

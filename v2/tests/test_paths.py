@@ -233,7 +233,8 @@ def test_a_number_that_is_both_right_so_far_and_a_traps_answer():
 def test_a_same_numbers_trap_stays_open_after_the_work_settles_the_story():
     s = WordProblemSession("lemonade-more-sugar")
     s.submit("72/6=12")
-    assert [t["option"]["say"] for t in s.open_readings()] == ["4 spoons of sugar with 6 cups of water"]
+    assert [t["option"]["say"] for t in s.open_readings()] == ["4 spoons of sugar with 6 cups of water",
+                                                               "18 is the total, so subtract the sugar used"]
 
 
 def test_the_story_answer_in_the_solve_phase_does_the_follow_up_in_the_head():
@@ -291,7 +292,7 @@ def walk_skipping(s, qid, vis, trace, skip):
         if k == skip:
             continue
         fb = s.submit(typed(trace[t]))
-        assert any(x in kinds(fb) for x in ("correct", "done")), (qid, skip, typed(trace[t]), messages(fb))
+        assert any(x in kinds(fb) for x in ("correct", "done", "on_track")), (qid, skip, typed(trace[t]), messages(fb))
         if s.phase != "steps":
             break
 
@@ -376,7 +377,7 @@ def test_a_student_who_skips_the_decisions_and_one_step_reaches_the_story_answer
                 if k == skip:
                     continue
                 fb = s.submit(typed(trace[t]))
-                assert any(x in kinds(fb) for x in ("correct", "done")), (wid, v["method"], skip, typed(trace[t]),
+                assert any(x in kinds(fb) for x in ("correct", "done", "on_track")), (wid, v["method"], skip, typed(trace[t]),
                                                                           messages(fb))
             if s.phase == "solve" and s.question.history and not isinstance(final, str):
                 assert kinds(s.submit(engine.fmt(final)))[-1] == "done", (wid, v["method"], skip)
@@ -389,3 +390,58 @@ def test_a_student_who_skips_the_decisions_and_one_step_reaches_the_story_answer
                 assert kinds(s.submit(answer)) == ["done"]
             # an equality-only route (simplify: 3:4 ≠ 5:7) can't say which is better: the student tries another
             assert s.phase == "done" or (s.phase == "solve" and not s.question.history), (wid, v["method"], skip)
+
+
+# ---------------------------------------------------------------- the first review's findings
+
+def test_a_build_up_stays_a_build_up():
+    """4 × 2 = 8 builds multiples of 4 toward 28. It is also distance from 1's 2 × 4 = 8 further along, but it isn't
+    that route's answer: the build-up is what the tutor says, and the other route stays live beside it."""
+    s = session("compare-fractions", 0)
+    fb = s.submit("4 x 2 = 8")
+    assert kinds(fb) == ["on_track"] and "in your head" not in messages(fb)
+    assert "distance_from_one" not in s.named_methods()
+
+
+def test_an_exact_number_beats_a_rounded_one():
+    """6 ÷ 0.4 = 15 (2 ÷ 5 = 0.4 in the head) isn't 6 ÷ 0.375 with 0.4 read as a rounded 0.375."""
+    s = session("compare-fractions", 1)
+    assert "correct" in kinds(s.submit("3 x 2 = 6"))
+    fb = s.submit("6 / 0.4 = 15")
+    assert "slip" not in kinds(fb) and "6 ÷ 0.4 = 15" in messages(fb), messages(fb)
+
+
+@pytest.mark.parametrize("key, steps", [
+    ("add-fractions:2", ["2 x 5 = 10", "3 x 5 = 15", "15 / 10 = 1.5"]),
+    ("better-buy:1", ["12 x 5 = 60", "4.5 / 20 = 0.225", "0.225 x 60 = 13.5", "12 / 3 = 4", "60 / 4 = 15",
+                      "1 x 15 = 15"]),
+])
+def test_the_shadow_keeps_every_route_that_fits(key, steps):
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), (t, messages(fb))
+
+
+def test_a_number_a_trap_computes_too_leaves_its_decision_open():
+    """50 is 150 ÷ 3 whether or not the 90 minutes are converted first."""
+    s = WordProblemSession("train-minutes")
+    fb = s.submit("50")
+    assert "correct" in kinds(fb)
+    assert "Use 90 as it is" in [t["option"]["say"] for t in s.open_readings()]
+    assert "read the story right" not in messages(fb) or "Use 90" not in messages(fb)
+
+
+@pytest.mark.parametrize("wid, step, answer", [("jacket-sale", "80 - 12 = 68", "68"),
+                                               ("lemonade-in-all", "12 - 4 = 8", "8")])
+def test_the_follow_up_step_written_first(wid, step, answer):
+    s = WordProblemSession(wid)
+    fb = s.submit(step)
+    assert "correct" in kinds(fb) and "in your head" in messages(fb), messages(fb)
+    assert kinds(s.submit(answer)) == ["done"]
+    s = WordProblemSession(wid)
+    while s.phase == "extract":
+        s.decide(s.di, next(i for i, j in enumerate(s.order[s.di], 1)
+                            if s.wp["extract"][s.di]["options"][j].get("correct")))
+    assert "correct" in kinds(s.submit(step)) and s.phase == "answer"

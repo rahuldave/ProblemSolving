@@ -136,7 +136,7 @@ def submit(sid: str, body: Entry):
     entry = lookup(sid)
     s = entry["session"]
     with LOCK:
-        before, parsed = log.state(s), log.parsed(s, body.text)
+        before, parsed = log.state(s), log.parsed(s, body.text[:log.MAX_TEXT])
         feedback = s.submit(body.text)
         after = log.state(s)
     log.write(sid, entry["key"], "input", before, after, feedback, text=body.text, parsed=parsed)

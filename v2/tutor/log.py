@@ -2,7 +2,8 @@
 
 A line holds the session id, the problem, the endpoint, the phase, the text or the typed input, how the text parses,
 the consistent set (the live routes and the methods they name, the story's settled decisions) before and after, the
-feedback, and the time. It holds nothing about the student: the session id is a random number.
+feedback, and the time. The session id is a random number, and no name, address or account is logged. The student's
+own text is kept as typed (cut to MAX_TEXT characters), so whatever she types is in the log.
 
 The file is $TUTOR_LOG, or v2/logs/statements.jsonl (git-ignored). On the dokku server the container's files go when
 it restarts, so keeping the log needs a storage mount. Writing a line never fails a request.
@@ -22,6 +23,7 @@ from .session import QuestionSession, WordProblemSession
 
 DEFAULT = engine.ROOT / "logs" / "statements.jsonl"
 _lock = threading.Lock()
+MAX_TEXT = 2000  # characters of a student's text kept in a line
 
 
 def path() -> Path:
@@ -59,6 +61,7 @@ def write(sid: str, problem: str, endpoint: str, before: dict, after: dict, feed
     """Append one line. `before` and `after` are state() snapshots taken under the session lock; `extra` holds what
     the endpoint had: text, input, parsed, method, interpreted, …"""
     try:
+        extra = {k: v[:MAX_TEXT] if isinstance(v, str) else v for k, v in extra.items()}  # a pasted essay stays short
         line = {"time": datetime.now(timezone.utc).isoformat(timespec="milliseconds"), "session": sid,
                 "problem": problem, "endpoint": endpoint, **extra, "before": before, "after": after,
                 "feedback": [{"kind": f.kind, "message": f.message} for f in feedback]}
