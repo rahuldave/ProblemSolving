@@ -336,6 +336,13 @@ class QuestionSession:
             out = self._written_after(step, self.live, with_shadow=True)
             if out is not None:
                 return out
+        if not advanced and not waiting and not far:  # a step the student wrote already on a live route
+            for r, at in self.live.items():
+                done = set(range(at)) - self.inhead.get(r, set()) - set(self.owed.get(r, ()))
+                j = next((j for j in sorted(done) if self._fits(step, self.routes[r][2][self.routes[r][3][j]])), None)
+                if j is not None:
+                    return [Feedback(kind="info", message=f"You have {step_candidate('x', self.routes[r], j).expression} "
+                                                          "already. What's your next step?")]
         if not advanced and not waiting and not far:
             far = self._reach(step, self._shadow())
             if not far:  # or written out on a route of the shadow (GCF(12, 20) = 4 after 3 × 20 = 60)
@@ -457,12 +464,17 @@ class QuestionSession:
         if len(after) == 1 and after != before:  # the routes that stay are another method's (GCF(12, 20) = 4)
             note.append(Feedback(kind="method", message=f"You're using: {self.names(after)}."))
             self.announced = next(iter(after))
+        elif after != before:
+            note.append(Feedback(kind="method", message=f"That step fits {self.names(after)}."))
         self.shadow = {}
         self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
         self.slips = 0
         self.history.append(c.expression)
-        return [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
+        out = [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
             + [f for f in note if f.kind == "method"]
+        if any(self._ended(r) for r in self.live):  # a route that stays has ended (25 ÷ 1 = 25 after 25 × 3.5 = 87.5)
+            out += self.finish_steps()
+        return out
 
     def _ended(self, r):
         """A route is finished when its last step is done and no skipped step is still to write."""

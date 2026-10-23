@@ -800,6 +800,23 @@ def test_a_head_step_written_out_names_the_method_it_leaves():
         messages(fb)
 
 
+# ---------------------------------------------------------------- the ninth review's findings
+
+def test_a_repeated_line_doesnt_switch_the_method():
+    s = session("add-fractions", 0)
+    run_all(s, ["5x4=20", "3x6=18", "20+18=38", "gcf(38,24)=2", "6x4=24"])
+    fb = s.submit("6x4=24")
+    assert "correct" not in kinds(fb) and "already" in messages(fb)
+    run_all(s, ["38/2=19", "24/2=12"])
+    assert "bow_tie" in s.named_methods()
+
+
+def test_a_head_step_written_out_that_ends_a_route_finishes():
+    s = QuestionSession("missing-value", {"a": "25", "b": "1", "d": "3.5"})
+    run_all(s, ["25x3.5=87.5", "25/1=25"])
+    assert s.phase in ("answer", "done")
+
+
 def test_a_head_step_written_out_counts_once():
     s = session("add-fractions", 0)
     run_all(s, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19", "60/6=10"])
