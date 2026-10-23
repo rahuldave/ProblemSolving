@@ -300,12 +300,11 @@ def walk_skipping(s, qid, vis, trace, skip):
 
 
 def needed(proto, route):
-    """The visible positions of a route that a later step of it is computed from: the steps a student can do in
-    her head and still write what comes after. (A step nothing later needs, like one of simplify's two outputs,
-    has to be written.)"""
+    """The visible positions of a route that the next step is computed from: the steps a student can do in her head
+    and still write what comes after (PATHS.md: done in the head is what the statement needs). A step the next one
+    doesn't need, like one of simplify's two outputs, has to be written."""
     steps = proto.paths.path(route)
-    return {j for j in range(len(steps)) for k in range(j + 1, len(steps))
-            if steps[j] in proto.paths.index.ancestors(steps[k])}
+    return {j for j in range(len(steps) - 1) if steps[j] in proto.paths.index.ancestors(steps[j + 1])}
 
 
 @pytest.mark.parametrize("qid, i", EXAMPLES, ids=[f"{q}:{i + 1}" for q, i in EXAMPLES])
@@ -413,17 +412,26 @@ def test_an_exact_number_beats_a_rounded_one():
     assert "slip" not in kinds(fb) and "6 ÷ 0.4 = 15" in messages(fb), messages(fb)
 
 
-@pytest.mark.parametrize("key, steps", [
-    ("add-fractions:2", ["2 x 5 = 10", "3 x 5 = 15", "15 / 10 = 1.5"]),
-    ("better-buy:1", ["12 x 5 = 60", "4.5 / 20 = 0.225", "0.225 x 60 = 13.5", "12 / 3 = 4", "60 / 4 = 15",
-                      "1 x 15 = 15"]),
-])
-def test_the_shadow_keeps_every_route_that_fits(key, steps):
+def test_the_shadow_replays_without_pruning():
+    """The shadow keeps every route that fits the statements so far; proportion-check's common denominator comes
+    back after two cross-multiply steps (test_a_route_left_out_by_a_next_step_comes_back), and a third statement
+    still finds it."""
+    q = session("proportion-check", 0)
+    for t in ["6 x 96 = 576", "576 / 8 = 72", "72 x 96 = 6912", "6912 / 96 = 72", "72 = 72"]:
+        assert "correct" in kinds(q.submit(t)), t
+    assert q.phase == "answer"
+
+
+@pytest.mark.parametrize("key, first, then", [("simplify-fraction:2", "96 / 2 = 48", "72 / 2 = 36"),
+                                              ("percent-of:1", "8 x 1 = 8", "8 / 2 = 4")])
+def test_only_a_step_the_statement_needs_is_done_in_the_head(key, first, then):
+    """96 ÷ 2 = 48 doesn't need 72 ÷ 2 = 36: that step isn't taken as done in the head (it would then be refused
+    when written). The step that comes first is still accepted after it."""
     qid, i = key.split(":")
     s = session(qid, int(i) - 1)
-    for t in steps:
-        fb = s.submit(t)
-        assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), (t, messages(fb))
+    fb = s.submit(first)
+    assert not any("in your head" in f.message for f in fb), messages(fb)
+    assert "correct" in kinds(s.submit(then))
 
 
 def test_a_number_a_trap_computes_too_leaves_its_decision_open():
@@ -507,3 +515,100 @@ def test_a_bare_answer_a_same_answer_trap_gives_too():
     assert s.phase == "done" and "4 spoons of sugar with 6 glasses" not in fb[0].message
     assert [t["option"]["say"] for t in s.open_readings()] == ["4 spoons of sugar with 6 cups of water"]
     assert any(f.message.startswith("Careful") and "water" in f.message for f in fb)
+
+
+# ---------------------------------------------------------------- the third review's findings
+
+@pytest.mark.parametrize("key", ["missing-value", "lemonade-more-sugar", "lemonade-in-all"])
+@pytest.mark.parametrize("text", ["6 x 2 = 12", "2 x 6 = 12"])
+def test_a_ratio_table_build_up_isnt_taken_as_an_answer(key, text):
+    """6 × 2 = 12 builds 6 toward 18. It is also simplify-then-scale's last step (2 × 6 = 12), but a build-up toward
+    a number of the question stays one, and the next build-up step is still taken."""
+    if key in engine.WP:
+        s = WordProblemSession(key)
+        while s.phase == "extract":
+            s.decide(s.di, next(i for i, j in enumerate(s.order[s.di], 1)
+                                if s.wp["extract"][s.di]["options"][j].get("correct")))
+        q = s.question
+    else:
+        s = q = QuestionSession("missing-value", {"a": 4, "b": 6, "d": 18})
+    assert kinds(s.submit(text)) == ["on_track"]
+    assert q.phase == "steps"
+    assert "correct" in kinds(s.submit("6 x 3 = 18"))
+
+
+def test_a_fraction_isnt_the_decimal_methods_step():
+    """5/6 + 3/4 = 19/12 adds the fractions directly: no route does that (the decimal route adds 5/6 + 0.75)."""
+    s = session("add-fractions", 0)
+    fb = s.submit("5/6 + 3/4 = 19/12")
+    assert kinds(fb) == ["unknown"] and "Convert to decimals" not in messages(fb)
+    p = WordProblemSession("pizza-shared")
+    fb = p.submit("5/6 + 3/4 = 8/10")
+    assert "read the story right" not in messages(fb)
+
+
+def test_a_slip_onto_a_traps_answer_names_the_trap():
+    """0.35 × 60 = 17.5 is the right step with the take-them-out reading's answer as its result."""
+    s = WordProblemSession("walk-to-school")
+    fb = s.submit("0.35 x 60 = 17.5")
+    assert kinds(fb) == ["trap"] and "read the story right" not in messages(fb), messages(fb)
+
+
+@pytest.mark.parametrize("pick", [False, True])
+def test_a_traps_exact_answer_isnt_a_rounding_of_the_right_one(pick):
+    """0.8 is the add-tops-and-bottoms reading's 4/5 exactly; the correct reading has 0.75 and 0.833 only."""
+    s = WordProblemSession("pizza-shared")
+    if pick:
+        while s.phase == "extract":
+            s.decide(s.di, next(i for i, j in enumerate(s.order[s.di], 1)
+                                if s.wp["extract"][s.di]["options"][j].get("correct")))
+    fb = s.submit_input(ValueAnswer(value=Number(text="0.8")))
+    assert kinds(fb) == ["trap"], messages(fb)
+
+
+@pytest.mark.parametrize("wid, steps, gone", [
+    ("lemonade-more-sugar", ["18/6=3", "4*3=12", "12"], "18 is the total, so subtract the sugar used"),
+    ("train-minutes", ["150/3=50", "50*1.5=75", "75"], "Use 90 as it is"),
+])
+def test_the_answer_rules_out_traps_with_other_answers(wid, steps, gone):
+    s = WordProblemSession(wid)
+    for t in steps:
+        s.submit(t)
+    assert s.phase == "done"
+    assert gone not in [t["option"]["say"] for t in s.open_readings()]
+
+
+def test_the_work_narrows_the_open_traps():
+    """50 × 1.5 = 75 uses the converted 1.5: "use 90 as it is" is ruled out before the answer."""
+    s = WordProblemSession("train-minutes")
+    s.submit("50")
+    assert "Use 90 as it is" in [t["option"]["say"] for t in s.open_readings()]
+    s.submit("50 x 1.5 = 75")
+    assert "Use 90 as it is" not in [t["option"]["say"] for t in s.open_readings()]
+
+
+def test_the_students_own_factor_after_a_step_she_must_write():
+    """36 ÷ 12 = 3 right after 72 ÷ 2 = 36 skips 96 ÷ 2 = 48, which it doesn't need: that step is still to write, so
+    the statement is refused, as on main. After 96 ÷ 2 = 48 her own factor 12 is taken."""
+    s = session("simplify-fraction", 1)
+    assert "correct" in kinds(s.submit("72 / 2 = 36"))
+    assert kinds(s.submit("36 / 12 = 3")) == ["unknown"]
+    assert "correct" in kinds(s.submit("96 / 2 = 48"))
+    assert "correct" in kinds(s.submit("36 / 12 = 3"))
+
+
+@pytest.mark.parametrize("text", ["0.7", "0.8"])
+def test_a_tie_isnt_a_rounding(text):
+    """0.75 rounds to 0.8, never to 0.7; 0.8 is right only as that rounding."""
+    s = session("to-decimal", 0)
+    fb = s.submit(text)
+    assert ("done" in kinds(fb)) == (text == "0.8"), messages(fb)
+
+
+@pytest.mark.parametrize("wid, phase_steps, wrong", [("jacket-sale", ["12"], "65")])
+def test_a_traps_answer_in_the_follow_up_phase_is_named(wid, phase_steps, wrong):
+    s = WordProblemSession(wid)
+    for t in phase_steps:
+        s.submit(t)
+    assert s.phase == "then"
+    assert kinds(s.submit(wrong)) == ["trap"]

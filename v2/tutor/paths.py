@@ -105,6 +105,10 @@ class Index:
                                                               list(args), parents, say, text, label))
             if "out" in st:
                 keyof[st["out"]] = qid
+            if "search" in st:  # the multiplier found by the build-up comes from it (5 × 8 = 40 gives 3 × 8 its 8)
+                var, k = st["search"]["var"], keyof[st["search"]["var"]]
+                keyof[var] = self._intern(("found", qid), lambda i: Quantity(i, _short(var), self.q[k].value, "working",
+                                                                             parents=(qid,)))
             if engine.visible(st):
                 if pid is not None:
                     self.q[qid].made.append((pid, len(steps)))

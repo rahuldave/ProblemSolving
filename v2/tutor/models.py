@@ -62,8 +62,10 @@ class Number(BaseModel):
     def close_to(self, exact: Fraction) -> bool:
         if self.value == exact:
             return True
-        if self.places:  # a rounded decimal: accept it if it rounds the exact value
-            return abs(self.value - exact) <= Fraction(1, 2 * 10 ** self.places)
+        if self.places:  # a rounded decimal: accept it if it rounds the exact value (a half rounds away from 0, so
+            half = Fraction(1, 2 * 10 ** self.places)  # 0.75 is 0.8, not 0.7)
+            gap = self.value - exact
+            return abs(gap) < half or (abs(gap) == half and (gap > 0) == (exact > 0))
         return False
 
     def __str__(self) -> str:
