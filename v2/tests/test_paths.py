@@ -754,3 +754,26 @@ def test_a_student_who_writes_the_steps_in_any_order_that_works_reaches_the_answ
                 assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), \
                     (v["method"], [typed(trace[vis[x]]) for x in order], typed(trace[vis[j]]), messages(fb))
             assert finish(s, qid), (v["method"], [typed(trace[vis[x]]) for x in order], s.phase, s.ambiguity())
+
+
+# ---------------------------------------------------------------- the seventh review's findings
+
+@pytest.mark.parametrize("key, steps", [
+    ("add-fractions:1", ["gcf(6,4)=2", "3x4=12", "6/2=3", "3/4=0.75", "0.75x12=9"]),
+    ("better-buy:2", ["gcf(6,10)=2", "3x10=30", "6/2=3", "4.2/6=0.7", "0.7x30=21", "10/7.5=4/3"]),
+    ("compare-fractions:1", ["gcf(4,7)=1", "4x7=28", "7x4=28", "5x4=20", "28/4=7", "3x7=21", "21>20"]),
+    ("better-buy:1", ["20x3=60", "gcf(12,20)=4", "12/4=3", "3x20=60"]),
+])
+def test_head_steps_written_out_and_repeated_steps_keep_the_route(key, steps):
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert "correct" in kinds(fb) or "done" in kinds(fb), (t, messages(fb))
+
+
+def test_a_head_step_written_out_counts_once():
+    s = session("add-fractions", 0)
+    run_all(s, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19", "60/6=10"])
+    assert "correct" not in kinds(s.submit("60/6=10"))
+    assert s.history.count("60 ÷ 6 = 10") == 1

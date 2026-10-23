@@ -332,20 +332,16 @@ class QuestionSession:
                          for r, at in waiting.items())
             beside = {r: p for r, p in far.items() if not toward or p < len(self.routes[r][3]) - 1}
             far = {r: p for r, p in far.items() if r not in beside}
+        if not advanced and not waiting and not far:  # a step taken as done in the head, written out after all
+            out = self._written_after(step, self.live)
+            if out is not None:
+                return out
         if not advanced and not waiting and not far:
             far = self._reach(step, self._shadow())
-        if not advanced and not waiting and not far:  # a step taken as done in the head, written out after all
-            for r in self.live:
-                j = next((j for j in sorted(self.inhead.get(r, ())) if self._fits(step, self.routes[r][2][self.routes[r][3][j]])),
-                         None)
-                if j is not None:
-                    c = step_candidate("x", self.routes[r], j)
-                    if self.classifier.classify(step, [c]).arithmetic_ok is False:
-                        return [Feedback(kind="slip", message=f"Check the arithmetic in “{written(step)}”: "
-                                                              f"it's {engine.fmt(c.result)}.")]
-                    self.inhead[r] = self.inhead[r] - {j}
-                    self.history.append(c.expression)
-                    return [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")]
+            if not far:  # or written out on a route of the shadow (GCF(12, 20) = 4 after 3 × 20 = 60)
+                out = self._written_after(step, self.shadow)
+                if out is not None:
+                    return out
         if not advanced and far:
             for r, at in waiting.items():
                 self.tries[(r, at)] = self.tries.get((r, at), []) + [written(step)]
@@ -417,6 +413,35 @@ class QuestionSession:
         for r in self.shadow:
             self.inhead[r], self.owed[r] = head[r], owed.get(r, frozenset())
         return self.shadow
+
+    def _written_after(self, step, pool):
+        """A step some routes of `pool` (route → position) took as done in the head, written out after all: those
+        routes stay (the others don't fit it), and the step leaves their head steps. None when no route has it."""
+        hit = {}
+        for r in pool:
+            j = next((j for j in sorted(self.inhead.get(r, ()))
+                      if self._fits(step, self.routes[r][2][self.routes[r][3][j]])), None)
+            if j is not None:
+                hit[r] = j
+        if not hit:
+            return None
+        r0 = min(hit)
+        c = step_candidate("x", self.routes[r0], hit[r0])
+        if self.classifier.classify(step, [c]).arithmetic_ok is False:
+            self.slips += 1
+            if self.slips < 2:
+                return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”. Try it again.")]
+            note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
+        else:
+            note = []
+        for r, j in hit.items():
+            self.inhead[r] = self.inhead[r] - {j}
+        self.live = {r: pool[r] for r in hit}
+        self.shadow = {}
+        self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
+        self.slips = 0
+        self.history.append(c.expression)
+        return note + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")]
 
     def _ended(self, r):
         """A route is finished when its last step is done and no skipped step is still to write."""
@@ -547,19 +572,14 @@ class QuestionSession:
             v, env, trace, vis = route
             steps = self.paths.path(route)
             mine = owed.get(r, frozenset())
-            ahead = []  # every step further on that fits, with (steps done in the head, steps left owed)
+            ahead = []  # the earliest step further on that fits, with the steps it leaves owed
             for j in range(at, len(vis)):
                 q = steps[j]  # routes share most of their quantities: test each one once
                 if q not in memo:
                     memo[q] = fits(trace[vis[j]])
                 if memo[q]:
-                    loose = len(self.paths.head(route, at, j))
-                    ahead.append((j, loose, j - at - loose))
-                    if j - at - loose == 0:
-                        break  # nothing done in the head: no later fit can beat it
-            # the fit that claims the fewest steps done in the head (20 × 3 = 60 is the step that needs nothing, not
-            # the later 3 × 20 = 60 after GCF(12, 20) = 4), then the fewest left owed
-            ahead = [(j, loose) for j, loose, head in sorted(ahead, key=lambda a: (a[2], a[1], a[0]))[:1]]
+                    ahead = [(j, len(self.paths.head(route, at, j)))]
+                    break
             # an owed step fits first, unless it needs other owed steps and the step further on doesn't (3 ÷ 1 = 3
             # can be the owed step after GCF(3, 2), still unwritten, or the later one after GCF(8, 3), written)
             hits = [(j, 0) for j in sorted(mine) if fits(trace[vis[j]])]
