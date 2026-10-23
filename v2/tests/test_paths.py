@@ -823,6 +823,24 @@ def test_a_route_with_an_expression_twice_takes_it_twice():
     assert finish(s, "add-fractions")
 
 
+@pytest.mark.parametrize("key, steps", [
+    ("better-buy:2", ["6 x 5 = 30", "10 x 3 = 30", "10 x 3 = 30", "7.5 x 3 = 22.5", "4.2 / 6 = 0.7", "0.7 x 30 = 21",
+                      "21 < 22.5"]),
+    ("compare-fractions:1", ["4 x 7 = 28", "7 / 5 = 1.4", "gcf(4, 7) = 1", "4 / 1 = 4", "4 x 7 = 28", "28 / 1.4 = 20",
+                             "4 x 25 = 100", "3 x 25 = 75", "75 / 100 = 0.75", "0.75 x 28 = 21", "21 > 20"]),
+])
+def test_a_repeated_line_keeps_the_route_the_student_is_on(key, steps):
+    """A repeat that a route of the same method has again may go to that route, but the routes the student is on
+    stay beside it, so her next steps are still taken."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert any(k in kinds(fb) for k in ("correct", "on_track", "done", "info")), (t, messages(fb))
+        assert "unknown" not in kinds(fb), (t, messages(fb))
+    assert s.phase in ("answer", "done")
+
+
 def test_a_head_step_written_out_that_ends_a_route_finishes():
     s = QuestionSession("missing-value", {"a": "25", "b": "1", "d": "3.5"})
     run_all(s, ["25x3.5=87.5", "25/1=25"])

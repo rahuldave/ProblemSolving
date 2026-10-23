@@ -336,6 +336,7 @@ class QuestionSession:
             out = self._written_after(step, self.live, with_shadow=True)
             if out is not None:
                 return out
+        keep = {}
         if not advanced and not waiting and not far:  # a step the student wrote already on a live route: that,
             named = set(self.named_methods())  # unless a route of the same method has it again (3 × 5 = 15 twice)
             for r, at in self.live.items():
@@ -347,6 +348,7 @@ class QuestionSession:
                     if not far:
                         return [Feedback(kind="info", message=f"You have {step_candidate('x', self.routes[r], j).expression} "
                                                               "already. What's your next step?")]
+                    keep = dict(self.live)  # the routes she is on stay beside the one that has it again
                     break
         if not advanced and not waiting and not far:
             far = self._reach(step, self._shadow())
@@ -357,7 +359,7 @@ class QuestionSession:
         if not advanced and far:
             for r, at in waiting.items():
                 self.tries[(r, at)] = self.tries.get((r, at), []) + [written(step)]
-            return self._skipped_to(step, far, waiting)
+            return self._skipped_to(step, far, {**keep, **waiting})
         if not advanced and not waiting:
             if cls.status == "none":
                 extra = f" (Also, {written(step).split(' = ')[0]} is {cls.expected_result}.)" if cls.arithmetic_ok is False else ""
@@ -425,6 +427,10 @@ class QuestionSession:
                 j = next((j for j in sorted(head[r]) if fits(self.routes[r][2][self.routes[r][3][j]])), None)
                 if j is not None:
                     head[r] = head[r] - {j}
+                    moved[r] = (pool[r], owed.get(r, frozenset()), set())
+                    continue
+                done = set(range(pool[r])) - head[r] - set(owed.get(r, ()))  # or a line the route has written already
+                if any(fits(self.routes[r][2][self.routes[r][3][j]]) for j in done):
                     moved[r] = (pool[r], owed.get(r, frozenset()), set())
             pool = {r: at for r, (at, o, h) in moved.items()}
         self.shadow = {r: at for r, at in pool.items() if r not in self.live}
