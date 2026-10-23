@@ -333,7 +333,7 @@ class QuestionSession:
             beside = {r: p for r, p in far.items() if not toward or p < len(self.routes[r][3]) - 1}
             far = {r: p for r, p in far.items() if r not in beside}
         if not advanced and not waiting and not far:  # a step taken as done in the head, written out after all
-            out = self._written_after(step, self.live)
+            out = self._written_after(step, self.live, with_shadow=True)
             if out is not None:
                 return out
         if not advanced and not waiting and not far:
@@ -408,15 +408,23 @@ class QuestionSession:
             for r, (at, o, h) in moved.items():
                 head[r] |= h
                 owed[r] = o
+            fits = self._fitter(inp)  # or a step a route took as done in the head, written out after all
+            for r in set(pool) - set(moved):
+                j = next((j for j in sorted(head[r]) if fits(self.routes[r][2][self.routes[r][3][j]])), None)
+                if j is not None:
+                    head[r] = head[r] - {j}
+                    moved[r] = (pool[r], owed.get(r, frozenset()), set())
             pool = {r: at for r, (at, o, h) in moved.items()}
         self.shadow = {r: at for r, at in pool.items() if r not in self.live}
         for r in self.shadow:
             self.inhead[r], self.owed[r] = head[r], owed.get(r, frozenset())
         return self.shadow
 
-    def _written_after(self, step, pool):
+    def _written_after(self, step, pool, with_shadow=False):
         """A step some routes of `pool` (route → position) took as done in the head, written out after all: those
-        routes stay (the others don't fit it), and the step leaves their head steps. None when no route has it."""
+        routes stay (the others don't fit it), and the step leaves their head steps. None when no route has it.
+        `with_shadow`: the shadow's routes where it is a later step stay too (5 × 3 = 15 can be route 966's head
+        step and route 1009's next one)."""
         hit = {}
         for r in pool:
             j = next((j for j in sorted(self.inhead.get(r, ()))
@@ -434,14 +442,27 @@ class QuestionSession:
             note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
         else:
             note = []
+        before = set(self.named_methods())
         for r, j in hit.items():
             self.inhead[r] = self.inhead[r] - {j}
-        self.live = {r: pool[r] for r in hit}
+        later = {}
+        if with_shadow:
+            keep = {r: pool[r] for r in hit}
+            self.live = keep  # the shadow is worked out beside the routes that stay
+            later = self._apply(self._reach(step, self._shadow()))
+        self.live = {**later, **{r: pool[r] for r in hit}}
+        self.named = {self.routes[r][0]["method"] for r in self.live}
+        self.tree_entries = None
+        after = set(self.named_methods())
+        if len(after) == 1 and after != before:  # the routes that stay are another method's (GCF(12, 20) = 4)
+            note.append(Feedback(kind="method", message=f"You're using: {self.names(after)}."))
+            self.announced = next(iter(after))
         self.shadow = {}
         self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
         self.slips = 0
         self.history.append(c.expression)
-        return note + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")]
+        return [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
+            + [f for f in note if f.kind == "method"]
 
     def _ended(self, r):
         """A route is finished when its last step is done and no skipped step is still to write."""

@@ -772,6 +772,34 @@ def test_head_steps_written_out_and_repeated_steps_keep_the_route(key, steps):
         assert "correct" in kinds(fb) or "done" in kinds(fb), (t, messages(fb))
 
 
+# ---------------------------------------------------------------- the eighth review's findings
+
+@pytest.mark.parametrize("key, steps", [
+    ("compare-fractions:1", ["gcf(3,4)=1", "3/1=3", "4/1=4", "5/1=5", "gcf(5,7)=1", "28/4=7", "3x7=21", "28/7=4",
+                             "5x4=20", "21>20"]),
+    ("compare-fractions:2", ["3/8=0.375", "2x2=4", "5x2=10", "4/10=0.4", "6/0.4=15"]),
+    ("better-buy:2", ["4.2x5=21", "7.5/10=0.75", "6x5=30", "gcf(6,10)=2"]),
+    ("compare-fractions:2", ["8x5=40", "gcf(8,5)=1", "8/1=8", "8x5=40", "2x40=80", "80/5=16", "15<16"]),
+    ("compare-fractions:1", ["5x3=15", "gcf(3,5)=1", "3/1=3", "7x3=21", "3x5=15", "4x15=60", "60/3=20", "20<21"]),
+])
+def test_a_head_step_written_out_keeps_the_other_readings(key, steps):
+    """A step written out after it was done in the head stays a statement the shadow's routes can fit, and the
+    routes where it is a later step stay beside the ones that had it in the head."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert any(k in kinds(fb) for k in ("correct", "on_track", "done")), (t, messages(fb))
+
+
+def test_a_head_step_written_out_names_the_method_it_leaves():
+    s = session("better-buy", 0)
+    run_all(s, ["20x3=60"])
+    fb = s.submit("gcf(12,20)=4")
+    assert "correct" in kinds(fb) and any(f.kind == "method" and "Common quantity" in f.message for f in fb), \
+        messages(fb)
+
+
 def test_a_head_step_written_out_counts_once():
     s = session("add-fractions", 0)
     run_all(s, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19", "60/6=10"])
