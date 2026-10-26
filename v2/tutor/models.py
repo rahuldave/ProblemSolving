@@ -64,6 +64,8 @@ class Number(BaseModel):
             return True
         if self.places:  # a rounded decimal: accept it if it rounds the exact value (a half rounds away from 0, so
             half = Fraction(1, 2 * 10 ** self.places)  # 0.75 is 0.8, not 0.7)
+            if (exact * 10 ** (self.places + 1)).denominator == 1:
+                return False  # the exact decimal ends within one more place: write it (0.15, not 0.2; 0.75, not 0.8)
             gap = self.value - exact
             return abs(gap) < half or (abs(gap) == half and (gap > 0) == (exact > 0))
         return False

@@ -5,8 +5,8 @@ the consistent set (the live routes and the methods they name, the story's settl
 feedback, and the time. The session id is a random number, and no name, address or account is logged. The student's
 own text is kept as typed (cut to MAX_TEXT characters), so whatever she types is in the log.
 
-The file is $TUTOR_LOG, or v2/logs/statements.jsonl (git-ignored). On the dokku server the container's files go when
-it restarts, so keeping the log needs a storage mount. Writing a line never fails a request.
+The file is $TUTOR_LOG, or v2/logs/statements.jsonl (git-ignored). On the server a dokku storage mount keeps
+/app/v2/logs across restarts (PATHS.md, "Logging"). Writing a line never fails a request.
 """
 
 import json
@@ -18,7 +18,6 @@ from pathlib import Path
 
 import build as engine
 
-from .parse import ParseError, parse_all
 from .session import QuestionSession, WordProblemSession
 
 DEFAULT = engine.ROOT / "logs" / "statements.jsonl"
@@ -46,13 +45,12 @@ def snapshot(session) -> dict:
     return _question_state(session)
 
 
-def parsed(session, text: str):
-    """How the text parses, with the options on offer now (12 is a choice only when there are 12 options)."""
+def parsed(session):
+    """How the session read the student's text: the reading it used (12 is a value when there are fewer options),
+    or None when the text didn't parse. Taken after the session has the text."""
     try:
-        choices = len(session.ask().get("options") or [])
-        return [r.model_dump(mode="json") for r in parse_all(text, choices)]
-    except ParseError as e:
-        return {"error": str(e)}
+        read = getattr(session, "read", None)
+        return read.model_dump(mode="json") if read is not None else None
     except Exception as e:  # the log never fails a request
         return {"error": repr(e)}
 

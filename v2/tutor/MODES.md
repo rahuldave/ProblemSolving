@@ -95,7 +95,9 @@ method.
 
 - Once the first step has fixed a method, the student can't switch. `4 x 18 = 72` then `6 x 3 = 18` is "not
   recognized".
-- Two steps in one expression, like `4/6 × 18 = 12`, are not read yet (`PATHS.md`, step 4).
+- Two steps in one expression, like `3 × 40/5 = 24`, are not read yet (`PATHS.md`, step 4). The tutor says
+  that it reads as two steps. A fraction that comes first, as in `4/6 × 18 = 12`, is one number, so that step is
+  read.
 - Every entry has to be in the parser's notation.
 
 ## Mode 1: type steps (existing)

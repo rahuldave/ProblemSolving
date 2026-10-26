@@ -32,8 +32,20 @@ def step_op(step) -> str:
     return step.kind
 
 
+def _terminates(v) -> bool:
+    d = v.denominator
+    for p in (2, 5):
+        while d % p == 0:
+            d //= p
+    return d == 1
+
+
 def fits(pattern, number) -> bool:
-    """Does a student's Number fit a candidate operand (a value or a wildcard)?"""
+    """Does a student's Number fit a candidate operand (a value or a wildcard)? A fraction she writes stands only
+    for a fraction: 40/5 isn't the 8 of 3 × 8 (3 × 40/5 is two steps, 3 × 40 then ÷ 5), and 15/100 isn't the 0.15
+    of 0.15 × 80."""
+    if "/" in number.text and (isinstance(pattern, tuple) or (isinstance(pattern, Fraction) and _terminates(pattern))):
+        return False
     if isinstance(pattern, tuple) and pattern and pattern[0] == "int":
         return number.value.denominator == 1
     if isinstance(pattern, tuple) and pattern and pattern[0] == "cf":
@@ -44,7 +56,11 @@ def fits(pattern, number) -> bool:
 
 
 class RuleClassifier:
-    """Exact matching: same operation, same numbers (either order where order doesn't matter)."""
+    """Exact matching: same operation, same numbers (either order where order doesn't matter). `strict`: a result
+    that is a decimal that ends must be exact (to-decimal: 5 ÷ 8 = 0.6 is a slip)."""
+
+    def __init__(self, strict=False):
+        self.strict = strict
 
     def classify(self, step: StudentStep, candidates: list[Candidate]) -> Classification:
         op = step_op(step)
@@ -99,7 +115,8 @@ class RuleClassifier:
             return {"arithmetic_ok": step.relation == relation, "expected_result": relation}
         if step.result is None or c.result is None or isinstance(c.result, str):
             return self._own_arithmetic(step)
-        return {"arithmetic_ok": step.result.close_to(c.result), "expected_result": _fmt(c.result)}
+        ok = step.result.value == c.result if self.strict and _terminates(c.result) else step.result.close_to(c.result)
+        return {"arithmetic_ok": ok, "expected_result": _fmt(c.result)}
 
     def _own_arithmetic(self, step) -> dict:
         """Check the student's arithmetic on their own numbers."""

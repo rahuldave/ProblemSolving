@@ -599,12 +599,37 @@ def test_the_students_own_factor_after_a_step_she_must_write():
     assert "correct" in kinds(s.submit("36 / 12 = 3"))
 
 
-@pytest.mark.parametrize("text", ["0.7", "0.8"])
-def test_a_tie_isnt_a_rounding(text):
-    """0.75 rounds to 0.8, never to 0.7; 0.8 is right only as that rounding."""
+@pytest.mark.parametrize("text, ok", [("0.7", False), ("0.8", False), ("0.75", True)])
+def test_a_decimal_that_ends_is_written_exactly(text, ok):
+    """3/4 is 0.75, which ends within two places: 0.7 and 0.8 are not roundings of it."""
     s = session("to-decimal", 0)
     fb = s.submit(text)
-    assert ("done" in kinds(fb)) == (text == "0.8"), messages(fb)
+    assert ("done" in kinds(fb)) == ok, messages(fb)
+
+
+@pytest.mark.parametrize("key, text, ok", [
+    ("to-decimal:2", "0.6", False), ("to-decimal:2", "0.625", True),  # to-decimal: a decimal that ends, exactly
+    ("add-fractions:1", "1.58", True), ("missing-value:2", "0.67", False),
+])
+def test_rounded_bare_numbers(key, text, ok):
+    """A rounded decimal is a rounding only when the exact decimal doesn't end within one more place. 1.58 rounds
+    19/12 = 1.58333…; 0.67 is no answer of 4/6 = x/15 (10)."""
+    qid, i = key.split(":")
+    if int(i) > len(engine.Q[qid]["examples"]):
+        pytest.skip("no such example")
+    s = session(qid, int(i) - 1)
+    answer = s.routes[0][1].get("answer")
+    fb = s.submit(text)
+    if ok:
+        assert "done" in kinds(fb), (answer, messages(fb))
+    else:
+        assert "done" not in kinds(fb), (answer, messages(fb))
+
+
+def test_a_rounded_decimal_isnt_taken_for_one_that_ends():
+    """15 ÷ 100 = 0.15 ends: 0.2 isn't it, so 0.2 × 80 = 16 isn't the next step of a rounding."""
+    s = session("percent-of", 0)
+    assert "correct" not in kinds(s.submit("0.2"))
 
 
 # ---------------------------------------------------------------- the fourth review's findings
@@ -692,11 +717,11 @@ def test_done_after_done_stays_done():
     assert s.phase == "done"
 
 
-def test_a_rounded_step_is_a_rounding_not_a_trap():
-    """3 ÷ 4 = 0.8 rounds 0.75 to one place. 0.8 is also the add-tops-and-bottoms reading's 4/5, but that reading
-    never divides 3 by 4: the step is taken as rounded (the rounding policy is a decision left open)."""
+def test_a_rounded_step_onto_a_traps_answer_is_that_trap():
+    """3 ÷ 4 is 0.75, which ends within two places, so 0.8 is no rounding of it: a slip, onto the
+    add-tops-and-bottoms reading's answer 4/5, which names that trap."""
     s = WordProblemSession("pizza-shared")
-    assert "trap" not in kinds(s.submit("3 / 4 = 0.8"))
+    assert kinds(s.submit("3 / 4 = 0.8")) == ["trap"]
 
 
 @pytest.mark.parametrize("seq", [["gcf(8,3)=1", "3/1=3", "gcf(3,2)=1"]])
@@ -852,3 +877,87 @@ def test_a_head_step_written_out_counts_once():
     run_all(s, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19", "60/6=10"])
     assert "correct" not in kinds(s.submit("60/6=10"))
     assert s.history.count("60 ÷ 6 = 10") == 1
+
+
+# ---------------------------------------------------------------- the PR validation's findings
+
+@pytest.mark.parametrize("key, text", [("missing-value:1", "3*40/5=24"), ("percent-of:1", "80*15/100=12"),
+                                       ("percent-of:1", "15*80/100=12")])
+def test_two_steps_in_one_are_not_one_step(key, text):
+    """3 × 40/5 = 24 reads left to right as 3 × 40, then ÷ 5. It isn't scale factor's 3 × 8 = 24: a fraction she
+    writes stands only for a fraction. It is refused, with the two steps named, until expressions are read (step 4)."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    fb = s.submit(text)
+    assert kinds(fb) == ["unknown"] and "two steps" in fb[0].message and s.history == []
+
+
+def test_two_steps_in_one_in_a_word_problem():
+    s = WordProblemSession("lemonade-more-sugar")
+    fb = s.submit("4*18/6=12")
+    assert kinds(fb) == ["unknown"] and s.phase == "extract"
+
+
+def test_a_leading_fraction_is_one_number():
+    s = WordProblemSession("lemonade-more-sugar")
+    assert "correct" in kinds(s.submit("4/6*18=12"))
+
+
+def test_the_history_holds_what_she_wrote():
+    """Her history has her own statements; steps done in the head are marked."""
+    s = session("missing-value", 0)
+    run_all(s, ["120 / 5 = 24"])
+    assert s.history == ["(in your head) 3 × 40 = 120", "120 / 5 = 24"] or \
+        s.history == ["(in your head) 3 × 40 = 120", "120 ÷ 5 = 24"]
+    s = session("missing-value", 0)
+    run_all(s, ["120"])
+    assert s.history == ["120"]
+
+
+@pytest.mark.parametrize("i, text", [(0, "3/4"), (1, "3/4")])
+def test_simplifys_answer_as_a_fraction(i, text):
+    """Simplify 6/8 (and 72/96): the answer 3/4 is the pair x1 = 3, y1 = 4."""
+    s = session("simplify-fraction", i)
+    fb = s.submit(text)
+    assert "done" in kinds(fb) and s.phase == "done", messages(fb)
+
+
+def picked(wid):
+    """A word problem with every decision picked right."""
+    s = WordProblemSession(wid)
+    while s.phase == "extract":
+        if s.pre_step():  # a step on a decision's edge (2 × 12 = 24)
+            s.submit(typed(s.pre_step()))
+            continue
+        s.decide(s.di, next(i for i, j in enumerate(s.order[s.di], 1)
+                            if s.wp["extract"][s.di]["options"][j].get("correct")))
+    return s
+
+
+@pytest.mark.parametrize("wid, pre, text, phase", [
+    ("lemonade-more-sugar", ["4*18=72", "72/6=12"], "12-4=8", "answer"),
+    ("jacket-sale", ["0.15*80=12"], "80-15=65", "then"),
+    ("lemonade-more-sugar", [], "18", "solve"),
+    ("lemonade-more-sugar", ["4*18=72"], "4*24=96", "solve"),
+])
+def test_a_trap_is_named_in_every_phase(wid, pre, text, phase):
+    s = picked(wid)
+    for t in pre:
+        s.submit(t)
+    assert s.phase == phase
+    fb = s.submit(text)
+    assert "trap" in kinds(fb), messages(fb)
+
+
+def test_a_traps_answer_the_right_reading_has_too_gets_the_note_while_solving():
+    """6 in pancakes-dozen is a quantity of the right reading and where the eggs reading stops: before the decisions
+    it is taken with a note, and so it is after them."""
+    s = picked("pancakes-dozen")
+    fb = s.submit("6")
+    assert any(f.message.startswith("Careful") for f in fb) or "trap" in kinds(fb), messages(fb)
+
+
+def test_simplify_doesnt_take_an_unsimplified_pair():
+    s = session("simplify-fraction", 0)
+    x, y = (s.values[k] for k in ("x", "y"))
+    assert "done" not in kinds(s.submit(f"{x}/{y}"))

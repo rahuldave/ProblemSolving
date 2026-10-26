@@ -56,7 +56,7 @@ def test_every_statement_is_logged_and_reads_back():
     assert [l["endpoint"] for l in got] == ["start", "hint", "input", "step", "done"]
     typed = got[2]
     assert typed["problem"] == "lemonade-more-sugar" and typed["text"] == "18 / 6 = 3"
-    assert typed["parsed"][0]["kind"] == "arithmetic" and typed["before"]["phase"] == "extract"
+    assert typed["parsed"]["kind"] == "arithmetic" and typed["before"]["phase"] == "extract"
     assert typed["after"]["question"]["named"] == ["scale_factor"]
     assert "correct" in [f["kind"] for f in typed["feedback"]] and typed["time"].endswith("+00:00")
     value = got[3]
@@ -83,6 +83,14 @@ def test_what_claude_read_is_logged(monkeypatch):
     (line,) = [l for l in lines_for(sid) if l["endpoint"] == "say"]
     assert line["text"] == "3 times 40 is 120" and line["interpreted"] == ["3 × 40 = 120"]
     assert line["inputs"][0]["op"] == "multiply" and line["checked"] == [True]
+
+
+def test_the_log_has_the_reading_the_session_used():
+    """12 at a decision with two options is a number, not option 12: the log says so."""
+    sid = client.post("/api/sessions", json={"problem": "lemonade-more-sugar"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/input", json={"text": "12"})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "input"]
+    assert line["parsed"] == {"kind": "value", "value": {"text": "12"}}
 
 
 def test_a_long_text_is_cut_in_the_log():

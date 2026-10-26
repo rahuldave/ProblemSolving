@@ -69,14 +69,14 @@ own position. The quantities between the old position and the new one become don
 
 ### Outcomes
 
-| The statement fits | The tutor says |
-|---|---|
-| a quantity on a correct path | It is right, and names the quantity, for example "3 is the scale factor". |
-| a quantity on a trap path only | It names the misreading, for example "16 uses all 24 glasses". |
-| a quantity on a correct path and a trap path | It is right so far. The reading is still open. |
-| the operation of a quantity, with a wrong result | It is an arithmetic slip, with the expected result. |
-| no quantity, with correct arithmetic | The arithmetic is right, but the step does not lead to the answer. |
-| nothing | It asks the student to write the step again, or to take a hint. |
+| The statement fits | The tutor says | Built |
+|---|---|---|
+| a quantity on a correct path | It is right, and names the quantity, for example "3 is the scale factor". | Partly. It shows the step that makes the quantity, not its name. |
+| a quantity on a trap path only | It names the misreading, for example "16 uses all 24 glasses". | Yes |
+| a quantity on a correct path and a trap path | It is right so far. The reading is still open. | Yes, with a note on the trap |
+| the operation of a quantity, with a wrong result | It is an arithmetic slip, with the expected result. | Yes |
+| no quantity, with correct arithmetic | The arithmetic is right, but the step does not lead to the answer. | No. It says the step isn't recognized. |
+| nothing | It asks the student to write the step again, or to take a hint. | Yes |
 
 ### Break a step down
 
@@ -151,10 +151,19 @@ steps. If decomposition asks too many questions, try Jev on cases from the logs.
 
 ## Logging
 
-The tutor writes one line of JSON for each statement to a file in the container. The line has the session
-id, the problem, the phase, the text, the parsed input, the consistent set before and after, and the
-feedback. The line has no name, address or other detail about the student. A short command copies the
-file from the server.
+The tutor writes one line of JSON for each statement to `v2/logs/statements.jsonl`, or to the path in
+`TUTOR_LOG`. The line has the session id, the problem, the phase, the text, the reading used, the
+consistent set before and after, and the feedback. The line has no name, address or other detail about the
+student. The student's own text is kept, cut to 2000 characters.
+
+On the server, the dokku storage mount `/var/lib/dokku/data/storage/problemsolving-logs` is mounted at
+`/app/v2/logs`, so the log survives a restart or a deploy. Copy it with this command:
+
+```sh
+ssh dokku enter problemsolving web cat /app/v2/logs/statements.jsonl > statements.jsonl
+```
+
+Someone with access to the host can copy the file from the host path with `scp` instead.
 
 ## Steps of the work
 
