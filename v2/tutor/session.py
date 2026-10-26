@@ -19,7 +19,7 @@ from fractions import Fraction
 import build as engine
 
 from .classifier import Classifier, RuleClassifier, is_wildcard, step_op
-from .classifier import two_steps as classifier_two_steps
+from .classifier import is_fraction_text, two_steps as classifier_two_steps
 from .models import Candidate, ChoiceAnswer, Feedback, Number, ValueAnswer
 from .parse import ParseError, parse, parse_all
 from .paths import QuestionIndex, word_problem_index
@@ -105,8 +105,13 @@ def slip_text(step, c=None, decimal=False) -> str:
     it): the rounding carried, so the exact value is named. A result rounded where the exact decimal ends
     (4.5 ÷ 20 = 0.23 for 0.225) is asked for exactly. Anything else (0.67 × 15 = 99.5) is an arithmetic slip."""
     res = getattr(step, "result", None)
-    if decimal and res is not None and "/" in res.text:
-        return f"Right step. Write the result as a decimal, not as the fraction {res}: “{written(step)}”."
+    if decimal and res is not None and is_fraction_text(res.text):  # 5 ÷ 8 = 5/8: right value, not a decimal
+        rights = [c.result] if c is not None and isinstance(c.result, Fraction) else []
+        if step.kind == "arithmetic":
+            a, b = step.left.value, step.right.value
+            rights.append({"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op])
+        if res.value in rights:
+            return f"Right step. Write the result as a decimal, not as the fraction {res}: “{written(step)}”."
     if c is not None and res is not None and step.kind == "arithmetic" and isinstance(c.result, Fraction):
         a, b = step.left.value, step.right.value
         own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
@@ -549,7 +554,8 @@ class QuestionSession:
         mark = f"(in your head) {c.expression}"  # written out now: no longer a head step in her history
         if mark in self.history:
             self.history.remove(mark)
-        self.history.append(written(step))
+        # as she wrote it, or the corrected step after "It's 10. Let's carry on"
+        self.history.append(c.expression if any(f.kind == "slip" for f in note) else written(step))
         out = [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
             + [f for f in note if f.kind == "method"]
         if any(self._ended(r) for r in self.live):  # a route that stays has ended (25 ÷ 1 = 25 after 25 × 3.5 = 87.5)
@@ -700,7 +706,8 @@ class QuestionSession:
             mine = owed.get(r, frozenset())
             ahead = []  # the earliest step further on that fits, with the steps it leaves owed
             for j in range(at, len(vis)):
-                q = steps[j]  # routes share most of their quantities: test each one once
+                q = (steps[j], v["method"])  # routes share most quantities: test each once per method (the method
+                # matters: a fraction she writes is never Convert to decimals' decimal)
                 if q not in memo:
                     memo[q] = fits(trace[vis[j]])
                 if memo[q]:
@@ -761,7 +768,7 @@ class QuestionSession:
         live route. A number that fits quantities on several routes keeps them all, each at its own position."""
         n = inp.value
         self._current = inp
-        if self.q.get("output_format") == "decimal" and "/" in n.text:
+        if self.q.get("output_format") == "decimal" and is_fraction_text(n.text):
             return [Feedback(kind="unknown", message=f"{n} is a fraction: write it as a decimal.")]
         ends = lambda pool: {r: len(self.routes[r][3]) for r in pool  # the routes this number is the answer of
                              if isinstance(self.routes[r][1].get("answer"), Fraction) and self._close(n, self.routes[r][1]["answer"])}
@@ -951,7 +958,7 @@ class QuestionSession:
             if not inp or inp.kind != "value":
                 return [Feedback(kind="error", message="Write the answer as a number.")]
             ok = self._close(inp.value, expected) and not (
-                self.q.get("output_format") == "decimal" and "/" in inp.value.text)  # a decimal, not 5/8
+                self.q.get("output_format") == "decimal" and is_fraction_text(inp.value.text))  # a decimal, not 5/8
         if not ok:
             return [Feedback(kind="unknown", message=f"Not quite. Look at your last step: {self.history[-1]}.")]
         self.phase = "done"

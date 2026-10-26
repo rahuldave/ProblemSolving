@@ -40,6 +40,14 @@ def _terminates(v) -> bool:
     return d == 1
 
 
+def is_fraction_text(text) -> bool:
+    """Is a number written as a fraction? 3/4 is; 0.75/1 and 100/1 aren't (n/1 is n, and a decimal point means a
+    decimal)."""
+    if "/" not in text or "." in text:
+        return False
+    return text.split("/", 1)[1].strip() != "1"
+
+
 def two_steps(step) -> bool:
     """3 × 40/5 = 24, typed, reads left to right as two steps (3 × 40, then ÷ 5): a fraction written after ×
     that is a whole number (40/5 = 8, not n/1) isn't one number. Any other fraction is (15 × 4/5, 80 × 15/100,
@@ -98,9 +106,12 @@ class RuleClassifier:
             return sorted(pairs) == sorted(got)
         if two_steps(step):
             return False
-        if c.methods and set(c.methods) <= self.as_decimals and any(  # 3/4 written as a fraction isn't the
-                "/" in n.text and n.value.denominator != 1 and _terminates(n.value)  # 0.75 of Convert to decimals,
-                for n in (step.left, step.right)):                                 # in either place
+        result = getattr(step, "result", None)
+        if c.methods and set(c.methods) <= self.as_decimals and (  # 3/4 written as a fraction isn't the 0.75 of
+                any(is_fraction_text(n.text) and n.value.denominator != 1 and _terminates(n.value)  # Convert to
+                    for n in (step.left, step.right))                  # decimals, as an operand in either place,
+                or (result is not None and is_fraction_text(result.text)  # and a result that ends written as a
+                    and result.value.denominator != 1 and _terminates(result.value))):  # fraction (3 ÷ 4 = 3/4)
             return False
         a, b = step.left, step.right
         x, y = c.operands
@@ -129,7 +140,7 @@ class RuleClassifier:
             return {"arithmetic_ok": step.relation == relation, "expected_result": relation}
         if step.result is None or c.result is None or isinstance(c.result, str):
             return self._own_arithmetic(step)
-        if self.strict and "/" in step.result.text:  # to-decimal: 5 ÷ 8 = 5/8 isn't written as a decimal
+        if self.strict and is_fraction_text(step.result.text):  # to-decimal: 5 ÷ 8 = 5/8 isn't a decimal
             return {"arithmetic_ok": False, "expected_result": _fmt(c.result)}
         ok = step.result.value == c.result if self.strict and _terminates(c.result) else step.result.close_to(c.result)
         return {"arithmetic_ok": ok, "expected_result": _fmt(c.result)}
@@ -154,7 +165,7 @@ class RuleClassifier:
             return {}
         if exact is None:
             return {}
-        if self.strict and "/" in step.result.text:  # to-decimal: 5 ÷ 8 = 5/8 isn't written as a decimal
+        if self.strict and is_fraction_text(step.result.text):  # to-decimal: 5 ÷ 8 = 5/8 isn't a decimal
             return {"arithmetic_ok": False, "expected_result": _fmt(exact)}
         if step.result.close_to(exact) or _carried(step, exact, self.exact_values):
             return {"arithmetic_ok": True, "expected_result": _fmt(exact)}

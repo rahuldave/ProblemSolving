@@ -1197,6 +1197,46 @@ def test_a_head_step_written_out_is_in_the_history_as_she_wrote_it():
     assert q.history.count("60 ÷ 6 = 10") == 1 and "(in your head) 60 ÷ 6 = 10" not in q.history
 
 
+# ---------------------------------------------------------------- PR validation, round G
+
+def test_a_head_step_written_out_with_a_carry_on_slip_keeps_the_corrected_step():
+    q = session("add-fractions", 0)
+    run_all(q, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19"])
+    q.submit("60/6=11")
+    fb = q.submit("60/6=11")
+    assert any("carry on" in f.message for f in fb), messages(fb)
+    assert q.history[-1] == "60 ÷ 6 = 10" and "60 ÷ 6 = 11" not in q.history, q.history
+
+
+@pytest.mark.parametrize("i, text, decimal_note", [(0, "3 / 4 = 1/3", False), (1, "5 / 8 = 5/8", True)])
+def test_the_decimal_note_only_for_the_right_value_as_a_fraction(i, text, decimal_note):
+    s = session("to-decimal", i)
+    fb = s.submit(text)
+    assert kinds(fb) == ["slip"]
+    assert ("as a decimal" in fb[0].message) == decimal_note, fb[0].message
+    if not decimal_note:
+        assert "check the arithmetic" in fb[0].message
+
+
+@pytest.mark.parametrize("text", ["0.75/1", "100/1"])
+def test_n_over_1_and_a_decimal_over_1_are_not_fractions(text):
+    from tutor.classifier import is_fraction_text
+    assert not is_fraction_text(text) and is_fraction_text("3/4")
+
+
+def test_a_decimal_over_1_isnt_called_a_fraction():
+    s = session("to-decimal", 0)
+    fb = s.submit("3 / 4 = 0.75/1")
+    assert "fraction" not in messages(fb)
+
+
+def test_a_result_written_as_a_fraction_isnt_convert_to_decimals():
+    """3 ÷ 4 = 3/4 then 5 ÷ 7 = 5/7: no decimals were written, so this isn't Convert to decimals."""
+    s = session("compare-fractions", 0)
+    msgs = messages(s.submit("3 / 4 = 3/4")) + " " + messages(s.submit("5 / 7 = 5/7"))
+    assert "Convert to decimals" not in msgs, msgs
+
+
 def test_simplify_doesnt_take_an_unsimplified_pair():
     s = session("simplify-fraction", 0)
     x, y = (s.values[k] for k in ("x", "y"))
