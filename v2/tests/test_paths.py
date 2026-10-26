@@ -10,7 +10,7 @@ from tutor.models import Number, ValueAnswer
 from tutor.parse import parse
 from tutor.paths import used_before
 
-from tutor.session import QuestionSession, WordProblemSession, answer_options
+from tutor.session import QuestionSession, WordProblemSession, answer_options, step_candidate
 
 from test_tutor import EXAMPLES, kinds, one_route_per_method, typed
 
@@ -1235,6 +1235,56 @@ def test_a_result_written_as_a_fraction_isnt_convert_to_decimals():
     s = session("compare-fractions", 0)
     msgs = messages(s.submit("3 / 4 = 3/4")) + " " + messages(s.submit("5 / 7 = 5/7"))
     assert "Convert to decimals" not in msgs, msgs
+
+
+# ---------------------------------------------------------------- PR validation, round H
+
+@pytest.mark.parametrize("key, steps, fix", [
+    ("add-fractions:1", ["5 / 6 = 0.83", "3 / 4 = 3/4"], ["3 / 4 = 0.75", "0.83 + 0.75 = 1.58"]),
+    ("compare-fractions:1", ["5 / 7 = 0.71", "3 / 4 = 3/4"], ["3 / 4 = 0.75", "0.75 > 0.71"]),
+    ("compare-fractions:2", ["2 / 5 = 0.4", "3 / 8 = 3/8"], ["3 / 8 = 0.375", "0.375 < 0.4"]),
+])
+def test_convert_to_decimals_keeps_her_when_she_writes_a_fraction(key, steps, fix):
+    """On Convert to decimals, 3 ÷ 4 = 3/4 is a slip asking for the decimal; she stays on Convert to decimals and
+    finishes on it once she writes the decimal."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    assert "correct" in kinds(s.submit(steps[0]))
+    assert "decimal" in s.named_methods()
+    fb = s.submit(steps[1])
+    assert kinds(fb) == ["slip"] and "as a decimal" in fb[0].message, messages(fb)
+    for t in fix:
+        fb = s.submit(t)
+        assert any(k in kinds(fb) for k in ("correct", "done")), (t, messages(fb))
+    assert finish(s, qid) and s.named_methods() == ["decimal"], (s.phase, s.named_methods())
+
+
+def test_a_fraction_first_step_alone_doesnt_announce_convert_to_decimals():
+    s = session("compare-fractions", 0)
+    assert "Convert to decimals" not in messages(s.submit("3 / 4 = 3/4"))
+
+
+def test_stale_head_marks_go_when_the_route_changes():
+    s = session("add-fractions", 0)
+    for t in ["lcm(6,4)=12", "10+9=19", "12/6=2", "5 x 2 = 10", "12/4=3", "3x3=9", "gcf(19,12)=1"]:
+        s.submit(t)
+    on = {step_candidate("x", s.routes[r], j).expression for r in s.live for j in s.inhead.get(r, ())}
+    marks = [h[len("(in your head) "):] for h in s.history if h.startswith("(in your head) ")]
+    assert all(m in on for m in marks), (marks, on)
+
+
+@pytest.mark.parametrize("text, frac", [("1.5/2", True), ("0.75/1", False), ("100/1", False), ("3/4", True),
+                                        ("0.75", False)])
+def test_what_is_a_fraction(text, frac):
+    from tutor.classifier import is_fraction_text
+    assert is_fraction_text(text) == frac
+
+
+@pytest.mark.parametrize("text", ["3 / 4 = 1.5/2", "1.5/2"])
+def test_to_decimal_refuses_a_fraction_with_a_decimal_in_it(text):
+    s = session("to-decimal", 0)
+    fb = s.submit(text)
+    assert "done" not in kinds(fb) and "correct" not in kinds(fb), messages(fb)
 
 
 def test_simplify_doesnt_take_an_unsimplified_pair():

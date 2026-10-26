@@ -364,6 +364,9 @@ class QuestionSession:
 
     def _submit_step(self, step):
         self._current = step
+        out = self._decimal_slip(step)
+        if out is not None:
+            return out
         pool = {**self.live, **self._rechosen(step)}  # routes re-run with the student's own factor or power of ten
         cands = self.candidates(pool)
         cls = self.classifier.classify(step, cands)
@@ -551,16 +554,28 @@ class QuestionSession:
         self.shadow = {}
         self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
         self.slips = 0
-        mark = f"(in your head) {c.expression}"  # written out now: no longer a head step in her history
-        if mark in self.history:
-            self.history.remove(mark)
         # as she wrote it, or the corrected step after "It's 10. Let's carry on"
         self.history.append(c.expression if any(f.kind == "slip" for f in note) else written(step))
+        self._remark_head()
         out = [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
             + [f for f in note if f.kind == "method"]
         if any(self._ended(r) for r in self.live):  # a route that stays has ended (25 ÷ 1 = 25 after 25 × 3.5 = 87.5)
             out += self.finish_steps()
         return out
+
+    def _remark_head(self):
+        """The history's "(in your head)" lines, rebuilt for the routes now live: a mark for a step on no live route
+        goes, and the kept route's head steps not yet marked are added before her last step."""
+        r0 = min(self.live) if self.live else None
+        on = {step_candidate("x", self.routes[r], j).expression for r in self.live for j in self.inhead.get(r, ())}
+        mark = "(in your head) "
+        self.history = [h for h in self.history if not h.startswith(mark) or h[len(mark):] in on]
+        if r0 is not None:
+            have = {h[len(mark):] for h in self.history if h.startswith(mark)}
+            new = [mark + step_candidate("x", self.routes[r0], j).expression for j in sorted(self.inhead.get(r0, ()))]
+            new = [h for h in new if h[len(mark):] not in have]
+            if new:
+                self.history[-1:-1] = new
 
     def _ended(self, r):
         """A route is finished when its last step is done and no skipped step is still to write."""
@@ -848,6 +863,27 @@ class QuestionSession:
                  "steps": [step_candidate("x", self.routes[r], j).expression for j in sorted(self.owed[r])]}
                 for r in self.live if self.owed.get(r)]
         return {"methods": named if len(named) > 1 else [], "head": head, "owed": owed}
+
+    def _decimal_slip(self, step):
+        """She is on Convert to decimals (it is named) and writes one of its steps with the right value as a fraction
+        that ends (3 ÷ 4 = 3/4): a slip on that route, asking for the decimal. She stays on Convert to decimals."""
+        conv = getattr(self.classifier, "as_decimals", set())
+        res = getattr(step, "result", None)
+        if (not conv or not self.history or step.kind != "arithmetic" or res is None or not is_fraction_text(res.text)
+                or res.value.denominator == 1 or not engine.terminates(res.value)
+                or not set(self.named_methods()) & conv):
+            return None
+        bare = step.model_copy(update={"result": None})
+        for r, at in self.live.items():
+            v, env, trace, vis = self.routes[r]
+            if v["method"] not in conv:
+                continue
+            for j in sorted(self.owed.get(r, ())) + list(range(at, len(vis))):
+                st, args, result = trace[vis[j]]
+                if result == res.value and self._fits(bare, trace[vis[j]]):
+                    return [Feedback(kind="slip", message=f"Right step. Write the result as a decimal, not as the "
+                                                          f"fraction {res}: “{written(step)}”.")]
+        return None
 
     def _rechosen(self, step):
         """Live routes re-run with the student's own choice where the method lets them choose: any common factor

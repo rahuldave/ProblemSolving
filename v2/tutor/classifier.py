@@ -41,11 +41,13 @@ def _terminates(v) -> bool:
 
 
 def is_fraction_text(text) -> bool:
-    """Is a number written as a fraction? 3/4 is; 0.75/1 and 100/1 aren't (n/1 is n, and a decimal point means a
-    decimal)."""
-    if "/" not in text or "." in text:
+    """Is a number written as a fraction? 3/4 and 1.5/2 are; 0.75/1 and 100/1 aren't (n/1 is n)."""
+    if "/" not in text:
         return False
-    return text.split("/", 1)[1].strip() != "1"
+    try:
+        return Fraction(text.split("/", 1)[1].strip()) != 1
+    except (ValueError, ZeroDivisionError):
+        return True
 
 
 def two_steps(step) -> bool:
