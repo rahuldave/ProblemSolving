@@ -1172,6 +1172,31 @@ def test_a_rounding_carried_into_a_rounded_result_names_the_routes_value():
     assert kinds(fb) == ["slip"] and "10.05" not in fb[0].message and "= 10" in fb[0].message, messages(fb)
 
 
+# ---------------------------------------------------------------- PR validation, round F
+
+@pytest.mark.parametrize("result", ["99.5", "12.5", "1.005"])
+def test_a_wrong_result_after_a_rounding_is_an_arithmetic_slip(result):
+    """0.67 × 15 = 99.5 is wrong arithmetic, not a carried rounding: the slip doesn't give 10 away."""
+    s = session("missing-value", 1)
+    s.submit("4 / 6 = 0.67")
+    fb = s.submit(f"0.67 x 15 = {result}")
+    assert kinds(fb) == ["slip"] and "check the arithmetic" in fb[0].message and "= 10" not in fb[0].message
+
+
+def test_a_fraction_result_on_to_decimal_is_asked_for_as_a_decimal():
+    s = session("to-decimal", 0)
+    fb = s.submit("3 / 4 = 3/4")
+    assert kinds(fb) == ["slip"] and "as a decimal" in fb[0].message
+
+
+def test_a_head_step_written_out_is_in_the_history_as_she_wrote_it():
+    """add-fractions: 60 ÷ 6 = 10 taken as done in the head, then written out: it is in her history once, as a
+    step she wrote, and no longer marked as done in the head."""
+    q = session("add-fractions", 0)
+    run_all(q, ["lcm(6,4)=12", "5x12=60", "3x12=36", "36/4=9", "10+9=19", "60/6=10"])
+    assert q.history.count("60 ÷ 6 = 10") == 1 and "(in your head) 60 ÷ 6 = 10" not in q.history
+
+
 def test_simplify_doesnt_take_an_unsimplified_pair():
     s = session("simplify-fraction", 0)
     x, y = (s.values[k] for k in ("x", "y"))

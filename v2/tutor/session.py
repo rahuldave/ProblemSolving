@@ -99,11 +99,14 @@ def two_steps(step) -> str:
     return f" It reads as two steps, {step.left} {sym} {top} and then ÷ {bottom}: write them one at a time."
 
 
-def slip_text(step, c=None) -> str:
-    """The first answer to a slip. Her own arithmetic right on a number she rounded earlier (0.67 × 15 = 10.05): the
-    rounding carried, so the exact value is named. A result rounded where the exact decimal ends (4.5 ÷ 20 = 0.23 for
-    0.225) is asked for exactly. Anything else is an arithmetic slip."""
+def slip_text(step, c=None, decimal=False) -> str:
+    """The first answer to a slip. A fraction where a decimal is asked for (to-decimal: 3 ÷ 4 = 3/4) is asked for as
+    a decimal. Her own arithmetic right on a number she rounded earlier (0.67 × 15 = 10.05, or 10.1 rounded from
+    it): the rounding carried, so the exact value is named. A result rounded where the exact decimal ends
+    (4.5 ÷ 20 = 0.23 for 0.225) is asked for exactly. Anything else (0.67 × 15 = 99.5) is an arithmetic slip."""
     res = getattr(step, "result", None)
+    if decimal and res is not None and "/" in res.text:
+        return f"Right step. Write the result as a decimal, not as the fraction {res}: “{written(step)}”."
     if c is not None and res is not None and step.kind == "arithmetic" and isinstance(c.result, Fraction):
         a, b = step.left.value, step.right.value
         own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
@@ -118,8 +121,11 @@ def slip_text(step, c=None) -> str:
             and isinstance(c.result, Fraction) and any(n.places and all(n.value != x for x in c.operands
                                                                          if isinstance(x, Fraction))
                                                        for n in (step.left, step.right)):
-        return (f"Right step, but a rounded number carried into {res}. With the exact value it's "
-                f"{c.expression or engine.fmt(c.result)}: write that.")
+        a, b = step.left.value, step.right.value
+        own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        if own is not None and abs(res.value - own) <= Fraction(1, 10 ** res.places):  # her numbers give about it
+            return (f"Right step, but a rounded number carried into {res}. With the exact value it's "
+                    f"{c.expression or engine.fmt(c.result)}: write that.")
     if res is not None and res.places and step.kind == "arithmetic":
         a, b = step.left.value, step.right.value
         exact = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
@@ -432,7 +438,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step, step_candidate("x", self.routes[min(advanced)], advanced[min(advanced)] - 1) if advanced else None))]
+                return [Feedback(kind="slip", message=slip_text(step, step_candidate("x", self.routes[min(advanced)], advanced[min(advanced)] - 1) if advanced else None, decimal=self.q.get("output_format") == "decimal"))]
             slip = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             slip = []
@@ -516,7 +522,7 @@ class QuestionSession:
         if self.classifier.classify(step, [c]).arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step, c))]
+                return [Feedback(kind="slip", message=slip_text(step, c, decimal=self.q.get("output_format") == "decimal"))]
             note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
         else:
             note = []
@@ -540,7 +546,10 @@ class QuestionSession:
         self.shadow = {}
         self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
         self.slips = 0
-        self.history.append(c.expression)
+        mark = f"(in your head) {c.expression}"  # written out now: no longer a head step in her history
+        if mark in self.history:
+            self.history.remove(mark)
+        self.history.append(written(step))
         out = [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
             + [f for f in note if f.kind == "method"]
         if any(self._ended(r) for r in self.live):  # a route that stays has ended (25 ÷ 1 = 25 after 25 × 3.5 = 87.5)
@@ -734,7 +743,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step, c))]
+                return [Feedback(kind="slip", message=slip_text(step, c, decimal=self.q.get("output_format") == "decimal"))]
             out = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             out = []
