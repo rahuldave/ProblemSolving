@@ -188,7 +188,7 @@ class QuestionSession:
             strict=self.q.get("output_format") == "decimal",
             as_decimals={mid for mid, m in engine.methods_of(qid).items() if m.get("name") == "Convert to decimals"})
         self.routes, _ = engine.routes_for(qid, self.values)
-        if isinstance(self.classifier, RuleClassifier) and not self.classifier.exact_values:
+        if isinstance(self.classifier, RuleClassifier):  # this session's numbers, each time
             self.classifier.exact_values = frozenset(  # the numbers a typed decimal can be exactly (not a rounding)
                 {engine.num(v) for v in self.values.values()}
                 | {x for v, env, trace, vis in self.routes for i in vis for x in (trace[i][1] or []) + [trace[i][2]]
@@ -448,9 +448,11 @@ class QuestionSession:
         for r in skipped:
             self.inhead.setdefault(r, set()).add(0)
         out = slip
+        self._heads = {}
         if r0 in skipped:
             skipped_step = step_candidate("x", self.routes[r0], advanced[r0] - 2)
             out.append(Feedback(kind="info", message=f"You did {skipped_step.expression} in your head. Fine."))
+            self._heads = {r0: {advanced[r0] - 2}}
         return self._advance(advanced, waiting, r0, before, out)
 
     def _at(self, r):
@@ -587,12 +589,15 @@ class QuestionSession:
         self.live = {**others, **advanced}
         self.named = alive_methods
         self.slips = self.hints = 0
-        if skipped_to:  # her history holds what she wrote; the steps done in the head are marked as such
-            heads = getattr(self, "_heads", {}).get(r0, set())
-            self.history += [f"(in your head) {step_candidate('x', self.routes[r0], j).expression}"
-                             for j in sorted(heads)]
+        # her history holds what she wrote (the corrected step after "It's 24. Let's carry on"); the steps done in
+        # the head are marked as such
+        heads = getattr(self, "_heads", {}).get(r0, set())
+        self._heads = {}
+        self.history += [f"(in your head) {step_candidate('x', self.routes[r0], j).expression}" for j in sorted(heads)]
         said = self._current
-        mine = str(said.value) if said.kind == "value" else written(said) if skipped_to else done.expression
+        carried_on = any(f.kind == "slip" for f in out)
+        mine = str(said.value) if said.kind == "value" else written(said) if skipped_to and not carried_on \
+            else done.expression
         self.history.append(shown or mine)
         out.append(Feedback(kind="correct", message=f"✓ {shown}" if shown else f"✓ {done.expression}  ({done.say})"))
         after = set(self.named_methods())
@@ -779,6 +784,11 @@ class QuestionSession:
         before = set(self.named_methods())
         named = {self.routes[r][0]["method"] for r in fin}
         named = (named & before) or named
+        r_first = min(fin)
+        head0 = set(range(self._at(r_first), fin[r_first] - 1)) | self.owed.get(r_first, frozenset())
+        if len(fin) == 1:  # one route: its steps done in the head are marked in the history (several: see ambiguity())
+            self.history += [f"(in your head) {step_candidate('x', self.routes[r_first], j).expression}"
+                             for j in sorted(head0)]
         for r, end in fin.items():  # the answer itself is stated, not done in the head; owed steps were too
             self.inhead.setdefault(r, set()).update(set(range(self._at(r), end - 1)) | self.owed.get(r, frozenset()))
             self.owed[r] = frozenset()
@@ -829,6 +839,9 @@ class QuestionSession:
                 continue
             seen.add(key)
             self.routes.append(route)
+            if isinstance(self.classifier, RuleClassifier):  # a re-run's numbers are exact too
+                self.classifier.exact_values = self.classifier.exact_values | {
+                    x for i in route[3] for x in (route[2][i][1] or []) + [route[2][i][2]] if isinstance(x, Fraction)}
             self.choices[len(self.routes) - 1] = choices
             self.owed[len(self.routes) - 1] = self.owed.get(r, frozenset())
             out[len(self.routes) - 1] = at
@@ -1145,10 +1158,6 @@ class WordProblemSession:
                 inp = None
             if inp is not None and inp.kind == "value":
                 return self.submit_input(inp)
-            t = self._trap_quantity(inp) if inp is not None else None
-            if t:  # a step only a trap's reading has (4 × 24 = 96), before a guessed build-up takes it
-                self.read = inp
-                return self._trap_feedback(t, inp)
             self.question.read = None
             out = self._solved(self.question.submit(text), inp)
             self.read = self.question.read
@@ -1171,9 +1180,9 @@ class WordProblemSession:
         if self.phase == "solve":
             if self._story_answer_fits(inp):
                 return self._story_answer(inp)  # any follow-up step done in the head too (80 − 12 = 68)
-            # a trap's answer is named here as before the decisions (18, 0.8), and so is a step only a trap's reading
-            # has, before a guessed build-up can take it (4 × 24 = 96 isn't on the way to 4 × 25 = 100)
-            t = self._trap_named(inp) if inp.kind == "value" else self._trap_quantity(inp)
+            # a trap's answer is named here as before the decisions (18, 0.8); a step goes to the question first, and
+            # is named only if the right reading can't take it, not even as a build-up (4 × 10 = 40 toward 80)
+            t = self._trap_named(inp) if inp.kind == "value" else None
             if t:
                 return self._trap_feedback(t, inp)
             out = self._solved(self.question.submit_input(inp), inp)
@@ -1225,7 +1234,10 @@ class WordProblemSession:
         if inp is not None and any(f.kind == "slip" for f in out) and getattr(inp, "result", None) is not None:
             t = next(iter(self._traps_of_answer(ValueAnswer(value=inp.result))), None)
             if t and not self._fits_reading(ValueAnswer(value=inp.result), self.paths().readings[0], exact=True):
-                return self._trap_feedback(t, inp)  # 3 ÷ 4 = 0.8 lands on the add-tops-and-bottoms answer
+                # 3 ÷ 4 = 0.8 lands on the add-tops-and-bottoms answer. If the question carried on with the right
+                # value (a second slip), she sees that too
+                trap = self._trap_feedback(t, inp)
+                return out + trap if any(f.kind == "correct" for f in out) else trap
         if inp is not None and inp.kind != "value" and [f.kind for f in out] == ["unknown"]:
             k = self._after_index(inp)
             if k is not None:

@@ -41,11 +41,12 @@ def _terminates(v) -> bool:
 
 
 def two_steps(step) -> bool:
-    """3 × 40/5 = 24 reads left to right as two steps (3 × 40, then ÷ 5): a fraction written second, after an
-    operation other than ÷, that is a whole number (40/5 = 8) isn't one number. Any other fraction is (15 × 4/5,
-    80 × 15/100, 3 × 7/4)."""
-    return (step.kind == "arithmetic" and step.op != "divide" and "/" in step.right.text
-            and step.right.value.denominator == 1)
+    """3 × 40/5 = 24, typed, reads left to right as two steps (3 × 40, then ÷ 5): a fraction written after ×
+    that is a whole number (40/5 = 8, not n/1) isn't one number. Any other fraction is (15 × 4/5, 80 × 15/100,
+    1 − 3/4), and so is every fraction from the boxes or Claude, where it is plainly one number."""
+    return (step.kind == "arithmetic" and getattr(step, "typed", False) and step.op == "multiply"
+            and "/" in step.right.text and step.right.value.denominator == 1
+            and step.right.text.split("/", 1)[1].strip() not in ("1", "1.0"))
 
 
 def fits(pattern, number) -> bool:
@@ -157,25 +158,27 @@ class RuleClassifier:
 
 
 def _carried(step, exact, exact_values=frozenset()) -> bool:
-    """3 × 1.67 = 5: an operand she rounded (1.67 for 5/3) can carry its rounding into the result, so a result is
-    right when some values her rounded operands stand for give it exactly. Only for + − × ÷ with a rounded operand."""
+    """3 × 1.67 = 5: an operand she rounded (1.67 for 5/3) carries its rounding into the result. The result is right
+    when it is what the exact values her rounded operands stand for give (3 × 5/3 = 5): the exact values are the
+    question's and the routes' numbers her rounding fits. Not any value in a rounding's range: 0.3 × 900 = 250 is
+    neither 270 nor 300."""
     if step.kind != "arithmetic" or step.result is None:
         return False
-    rounded = [n.places and n.value not in exact_values for n in (step.left, step.right)]
-    if not any(rounded):  # 4.5 is the question's 4.5, not a rounding
-        return False
-    lo_hi = []
-    for n, r in zip((step.left, step.right), rounded):
-        h = Fraction(1, 2 * 10 ** n.places) if r else 0
-        lo_hi.append((n.value - h, n.value + h))
-    (a0, a1), (b0, b1) = lo_hi
-    if step.op == "divide" and b0 <= 0 <= b1:
-        return False
-    combos = [{"add": x + y, "subtract": x - y, "multiply": x * y, "divide": x / y if y else None}[step.op]
-              for x in (a0, a1) for y in (b0, b1)]
-    combos = [v for v in combos if v is not None]
-    r, h = step.result.value, Fraction(1, 2 * 10 ** step.result.places) if step.result.places else 0
-    return min(combos) - h <= r <= max(combos) + h
+    choices = []
+    for n in (step.left, step.right):
+        if n.places and n.value not in exact_values:  # 4.5 is the question's 4.5, not a rounding
+            stands = [x for x in exact_values if isinstance(x, Fraction) and n.close_to(x)]
+            if not stands:
+                return False
+            choices.append(stands)
+        else:
+            choices.append([n.value])
+    for x in choices[0]:
+        for y in choices[1]:
+            v = {"add": x + y, "subtract": x - y, "multiply": x * y, "divide": x / y if y else None}[step.op]
+            if v is not None and (step.result.value == v or step.result.close_to(v)):
+                return True
+    return False
 
 
 def _gcd(a, b):

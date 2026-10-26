@@ -84,6 +84,7 @@ class ArithmeticStep(BaseModel):
     left: Number
     right: Number
     result: Optional[Number] = None
+    typed: bool = Field(default=False, exclude=True)  # read from typed text, where 3 × 40/5 has no brackets
 
 
 class FunctionStep(BaseModel):

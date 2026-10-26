@@ -982,7 +982,6 @@ def picked(wid):
     ("lemonade-more-sugar", ["4*18=72", "72/6=12"], "12-4=8", "answer"),
     ("jacket-sale", ["0.15*80=12"], "80-15=65", "then"),
     ("lemonade-more-sugar", [], "18", "solve"),
-    ("lemonade-more-sugar", ["4*18=72"], "4*24=96", "solve"),
 ])
 def test_a_trap_is_named_in_every_phase(wid, pre, text, phase):
     s = picked(wid)
@@ -1040,6 +1039,78 @@ def test_a_rounded_result_that_ends_is_asked_for_exactly():
 def test_a_slip_onto_a_traps_answer_while_solving_names_it():
     s = picked("pizza-shared")
     assert kinds(s.submit("3 / 4 = 0.8")) == ["trap"]
+
+
+# ---------------------------------------------------------------- PR validation, round B (87bcb50) and D
+
+def test_a_carry_on_slip_puts_the_corrected_step_in_the_history():
+    s = session("missing-value", 0)
+    s.submit("8 x 3 = 25")
+    fb = s.submit("8 x 3 = 25")
+    assert any("Let's carry on" in f.message for f in fb)
+    assert "8 × 3 = 25" not in s.history and any("24" in h for h in s.history if not h.startswith("("))
+
+
+@pytest.mark.parametrize("wid, text", [("free-throws", "4 x 10 = 40"), ("lemonade-more-sugar", "4 x 6 = 24"),
+                                       ("pancakes-dozen", "2 x 3 = 6"), ("lemonade-more-sugar", "4 x 24 = 96")])
+def test_a_step_the_right_reading_takes_isnt_a_trap(wid, text):
+    """A build-up the right reading takes (4 × 10 = 40 toward 80, 4 × 24 = 96 toward 100) isn't named a trap
+    after the decisions: a trap is named only when the right reading can't take the step."""
+    s = picked(wid)
+    fb = s.submit(text)
+    assert "trap" not in kinds(fb) and any(k in kinds(fb) for k in ("correct", "on_track")), messages(fb)
+
+
+def test_a_second_slip_onto_a_traps_answer_shows_the_carry_on():
+    s = picked("pizza-shared")
+    s.submit("3 / 4 = 0.8")
+    fb = s.submit("3 / 4 = 0.8")
+    assert "trap" in kinds(fb) and any("carry on" in f.message for f in fb), messages(fb)
+
+
+@pytest.mark.parametrize("key, pre, step", [
+    ("missing-value:1", [{"kind": "arithmetic", "op": "divide", "left": {"text": "3"}, "right": {"text": "5"},
+                          "result": {"text": "0.6"}}],
+     {"kind": "arithmetic", "op": "multiply", "left": {"text": "40"}, "right": {"text": "3/5"}, "result": {"text": "24"}}),
+])
+def test_boxes_and_claude_fractions_are_one_number(key, pre, step):
+    """From the boxes or Claude a fraction is one number: 40 × 3/5 is a step, not 40 × 3 then ÷ 5."""
+    from pydantic import TypeAdapter
+    from tutor.models import StudentInput
+    ad = TypeAdapter(StudentInput)
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for p in pre:
+        s.submit_input(ad.validate_python(p))
+    fb = s.submit_input(ad.validate_python(step))
+    assert "two steps" not in messages(fb)
+
+
+@pytest.mark.parametrize("text, note", [("1 - 3/4 = 0.25", False), ("8 x 3/1 = 24", False), ("3 x 40/5 = 24", True)])
+def test_the_two_steps_note_only_for_a_whole_fraction_after_times(text, note):
+    s = session("missing-value", 0)
+    assert ("two steps" in messages(s.submit(text))) == note
+
+
+def test_a_mental_first_step_is_marked_in_the_history():
+    s = session("percent-of", 0)
+    run_all(s, ["0.15 x 80 = 12"])
+    assert s.history[0].startswith("(in your head)") and "15 ÷ 100" in s.history[0]
+
+
+@pytest.mark.parametrize("key, steps, ok", [
+    ("better-buy:1", ["20 / 12 = 1.67", "3 x 1.67 = 5"], True),
+    ("better-buy:1", ["20 / 12 = 1.67", "3 x 1.67 = 4.9"], False),
+])
+def test_a_carried_rounding_is_right_only_for_what_the_exact_values_give(key, steps, ok):
+    """1.67 stands for 5/3: 3 × 1.67 = 5 is right (3 × 5/3), 4.9 is neither 3 × 1.67 nor 3 × 5/3."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    fb = s.submit(steps[0])
+    if "correct" not in kinds(fb):
+        pytest.skip("not a first step here")
+    fb = s.submit(steps[1])
+    assert ("slip" not in kinds(fb)) == ok, messages(fb)
 
 
 def test_simplify_doesnt_take_an_unsimplified_pair():
