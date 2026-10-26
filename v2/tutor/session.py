@@ -19,6 +19,7 @@ from fractions import Fraction
 import build as engine
 
 from .classifier import Classifier, RuleClassifier, is_wildcard, step_op
+from .classifier import two_steps as classifier_two_steps
 from .models import Candidate, ChoiceAnswer, Feedback, Number, ValueAnswer
 from .parse import ParseError, parse, parse_all
 from .paths import QuestionIndex, word_problem_index
@@ -91,12 +92,23 @@ def written(step) -> str:
 def two_steps(step) -> str:
     """A note for a 3 × 40/5 = 24: read left to right it is two steps, 3 × 40 and then ÷ 5 (reading expressions is step 4
     of PATHS.md). A fraction first (2/3 × 18) is one number."""
-    if step.kind != "arithmetic" or step.op == "divide" or "/" not in step.right.text or "/" in step.left.text \
-            or not engine.terminates(step.right.value):  # 3 × 5/3 is one step with a fraction in it
+    if not classifier_two_steps(step) or "/" in step.left.text:
         return ""
     top, bottom = step.right.text.split("/", 1)
     sym = {"add": "+", "subtract": "−", "multiply": "×"}[step.op]
     return f" It reads as two steps, {step.left} {sym} {top} and then ÷ {bottom}: write them one at a time."
+
+
+def slip_text(step) -> str:
+    """The first answer to a slip. A result rounded where the exact decimal ends (4.5 ÷ 20 = 0.23 for 0.225) is
+    asked for exactly; anything else is an arithmetic slip."""
+    res = getattr(step, "result", None)
+    if res is not None and res.places and step.kind == "arithmetic":
+        a, b = step.left.value, step.right.value
+        exact = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        if exact is not None and engine.terminates(exact) and abs(res.value - exact) < Fraction(1, 10 ** res.places):
+            return f"Right step. {engine.fmt(exact)} ends, so write it exactly, not rounded: “{written(step)}”."
+    return f"Right step, but check the arithmetic in “{written(step)}”. Try it again."
 
 
 def bindings(qid, values):
@@ -173,6 +185,7 @@ class QuestionSession:
         self.tree_entries = tree(qid)["first_steps"]  # the first steps are classified against the tree
         self.paths = QuestionIndex(qid, self.values, self.routes)  # every quantity on every route
         self.inhead = {}   # route → its visible positions taken as done in the head
+        self.read = None   # the reading of the student's last text the session used (for the log)
         self.owed = {}     # route → visible positions it skipped that the later step didn't need: still to write
         self.said = []     # the statements taken so far, in order: the shadow is worked out from them
         self.shadow = {}   # route → position, while a statement is matched against the shadow (_shadow)
@@ -390,7 +403,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”. Try it again.")]
+                return [Feedback(kind="slip", message=slip_text(step))]
             slip = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             slip = []
@@ -472,7 +485,7 @@ class QuestionSession:
         if self.classifier.classify(step, [c]).arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”. Try it again.")]
+                return [Feedback(kind="slip", message=slip_text(step))]
             note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
         else:
             note = []
@@ -621,10 +634,6 @@ class QuestionSession:
         st, args, result = entry
         if st["op"] != step_op(step) or not engine.visible(st):
             return False
-        if step.kind in ("arithmetic", "function") and any(
-                "/" in n.text and any(isinstance(x, Fraction) and "." in engine.fmt(x) and n.value == x for x in args)
-                for n in (step.left, step.right)):  # a fraction where the route writes a decimal: another method
-            return False
         c = Candidate(id="x", op=st["op"], operands=list(args), result=result)
         return self.classifier.classify(step, [c]).status == "match"
 
@@ -691,7 +700,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”. Try it again.")]
+                return [Feedback(kind="slip", message=slip_text(step))]
             out = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             out = []
@@ -1120,8 +1129,9 @@ class WordProblemSession:
             if t:  # a step only a trap's reading has (4 × 24 = 96), before a guessed build-up takes it
                 self.read = inp
                 return self._trap_feedback(t, inp)
+            self.question.read = None
             out = self._solved(self.question.submit(text), inp)
-            self.read = getattr(self.question, "read", inp)
+            self.read = self.question.read
             return out
         if self.phase == "then":
             try:
@@ -1164,7 +1174,7 @@ class WordProblemSession:
             traps = self._traps_of_answer(inp)
             if traps and (given or not self._fits_reading(inp, self.paths().readings[0])):
                 return traps[0]
-            return None if given else self._exact_trap(inp)
+            return None if given else self._exact_trap(inp) or self._trap_quantity(inp)
         if inp.kind in ("arithmetic", "function", "compare", "ratio_compare", "plot"):
             return self._trap_for(inp) or self._trap_quantity(inp)
         return None
@@ -1192,6 +1202,10 @@ class WordProblemSession:
             self._narrow(inp)
         if self.question.phase == "done":
             return out + self._after_question()
+        if inp is not None and any(f.kind == "slip" for f in out) and getattr(inp, "result", None) is not None:
+            t = next(iter(self._traps_of_answer(ValueAnswer(value=inp.result))), None)
+            if t and not self._fits_reading(ValueAnswer(value=inp.result), self.paths().readings[0], exact=True):
+                return self._trap_feedback(t, inp)  # 3 ÷ 4 = 0.8 lands on the add-tops-and-bottoms answer
         if inp is not None and inp.kind != "value" and [f.kind for f in out] == ["unknown"]:
             k = self._after_index(inp)
             if k is not None:
@@ -1561,7 +1575,8 @@ class WordProblemSession:
         self.then_pos = len(self.run["after"])
         self.phase = "done"
         named = q.named_methods()
-        how = f". You used {q.names(named)}." if len(named) == 1 and len(q.history) > 1 else ""
+        written_steps = [h for h in q.history if not h.startswith("(in your head)")]
+        how = f". You used {q.names(named)}." if len(named) == 1 and len(written_steps) > 1 else ""
         for t in same:
             out.append(Feedback(kind="info", message=f"Careful: {inp.value} is also the answer if the story is read "
                                                      f"this way: {t['option']['trap']} The answer alone can't show "

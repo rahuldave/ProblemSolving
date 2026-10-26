@@ -40,12 +40,16 @@ def _terminates(v) -> bool:
     return d == 1
 
 
+def two_steps(step) -> bool:
+    """3 × 40/5 = 24 and 80 × 15/100 = 12 read left to right as two steps (3 × 40, then ÷ 5): a fraction that ends,
+    after an operation other than ÷, isn't one number (nor is 3/4 in 5/6 + 3/4, which no method adds as fractions).
+    A fraction written first (3/5 × 40) is one number, and so is one that doesn't end (3 × 5/3)."""
+    return (step.kind == "arithmetic" and step.op != "divide" and "/" in step.right.text
+            and _terminates(step.right.value))
+
+
 def fits(pattern, number) -> bool:
-    """Does a student's Number fit a candidate operand (a value or a wildcard)? A fraction she writes stands only
-    for a fraction: 40/5 isn't the 8 of 3 × 8 (3 × 40/5 is two steps, 3 × 40 then ÷ 5), and 15/100 isn't the 0.15
-    of 0.15 × 80."""
-    if "/" in number.text and (isinstance(pattern, tuple) or (isinstance(pattern, Fraction) and _terminates(pattern))):
-        return False
+    """Does a student's Number fit a candidate operand (a value or a wildcard)?"""
     if isinstance(pattern, tuple) and pattern and pattern[0] == "int":
         return number.value.denominator == 1
     if isinstance(pattern, tuple) and pattern and pattern[0] == "cf":
@@ -88,6 +92,8 @@ class RuleClassifier:
             pairs = [tuple(x) for x in c.operands]
             got = [(n.value, d.value) for n, d in (step.left, step.right)]
             return sorted(pairs) == sorted(got)
+        if two_steps(step):
+            return False
         a, b = step.left, step.right
         x, y = c.operands
         if fits(x, a) and fits(y, b):

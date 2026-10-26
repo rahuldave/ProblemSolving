@@ -957,6 +957,49 @@ def test_a_traps_answer_the_right_reading_has_too_gets_the_note_while_solving():
     assert any(f.message.startswith("Careful") for f in fb) or "trap" in kinds(fb), messages(fb)
 
 
+# ---------------------------------------------------------------- PR validation, round A
+
+@pytest.mark.parametrize("key, steps", [
+    ("missing-value:1", ["3 / 5 = 0.6", "3/5 x 40 = 24"]),
+    ("proportion-check:1", ["6 / 8 = 0.75", "3/4 x 96 = 72"]),
+    ("add-fractions:1", ["lcm(6, 4) = 12", "3 / 4 = 0.75", "3/4 x 12 = 9"]),
+    ("compare-fractions:1", ["3/4 > 5/7"]),
+    ("compare-fractions:2", ["3/8 < 2/5"]),
+    ("missing-value:1", ["3/5 x 40 = 24"]),
+])
+def test_a_fraction_written_first_is_one_number(key, steps):
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert "correct" in kinds(fb) or "done" in kinds(fb), (t, messages(fb))
+
+
+@pytest.mark.parametrize("text", ["24", "96"])
+def test_a_traps_quantity_is_named_while_solving(text):
+    s = picked("lemonade-more-sugar")
+    assert "trap" in kinds(s.submit(text))
+
+
+def test_the_log_reading_is_reset_for_text_that_doesnt_parse():
+    s = picked("lemonade-more-sugar")
+    s.submit("4 x 18 = 72")
+    s.read = None
+    s.submit("hello there")
+    assert s.read is None
+
+
+def test_a_rounded_result_that_ends_is_asked_for_exactly():
+    s = session("better-buy", 0)
+    fb = s.submit("4.5 / 20 = 0.23")
+    assert kinds(fb) == ["slip"] and "exactly" in fb[0].message and "0.225" in fb[0].message
+
+
+def test_a_slip_onto_a_traps_answer_while_solving_names_it():
+    s = picked("pizza-shared")
+    assert kinds(s.submit("3 / 4 = 0.8")) == ["trap"]
+
+
 def test_simplify_doesnt_take_an_unsimplified_pair():
     s = session("simplify-fraction", 0)
     x, y = (s.values[k] for k in ("x", "y"))
