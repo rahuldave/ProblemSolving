@@ -41,11 +41,11 @@ def _terminates(v) -> bool:
 
 
 def two_steps(step) -> bool:
-    """3 × 40/5 = 24 and 80 × 15/100 = 12 read left to right as two steps (3 × 40, then ÷ 5): a fraction that ends,
-    after an operation other than ÷, isn't one number (nor is 3/4 in 5/6 + 3/4, which no method adds as fractions).
-    A fraction written first (3/5 × 40) is one number, and so is one that doesn't end (3 × 5/3)."""
+    """3 × 40/5 = 24 reads left to right as two steps (3 × 40, then ÷ 5): a fraction written second, after an
+    operation other than ÷, that is a whole number (40/5 = 8) isn't one number. Any other fraction is (15 × 4/5,
+    80 × 15/100, 3 × 7/4)."""
     return (step.kind == "arithmetic" and step.op != "divide" and "/" in step.right.text
-            and _terminates(step.right.value))
+            and step.right.value.denominator == 1)
 
 
 def fits(pattern, number) -> bool:
@@ -63,8 +63,11 @@ class RuleClassifier:
     """Exact matching: same operation, same numbers (either order where order doesn't matter). `strict`: a result
     that is a decimal that ends must be exact (to-decimal: 5 ÷ 8 = 0.6 is a slip)."""
 
-    def __init__(self, strict=False):
+    def __init__(self, strict=False, as_decimals=()):
         self.strict = strict
+        self.as_decimals = set(as_decimals)  # methods whose point is writing the fractions as decimals
+        self.exact_values = frozenset()  # the question's numbers and every route's: a typed decimal among them isn't
+        # a rounding she carries (the session fills it in)
 
     def classify(self, step: StudentStep, candidates: list[Candidate]) -> Classification:
         op = step_op(step)
@@ -93,6 +96,10 @@ class RuleClassifier:
             got = [(n.value, d.value) for n, d in (step.left, step.right)]
             return sorted(pairs) == sorted(got)
         if two_steps(step):
+            return False
+        if c.methods and set(c.methods) <= self.as_decimals and any(  # 3/4 written as a fraction isn't the
+                "/" in n.text and n.value.denominator != 1 and _terminates(n.value)  # 0.75 of Convert to decimals,
+                for n in (step.left, step.right)):                                 # in either place
             return False
         a, b = step.left, step.right
         x, y = c.operands
@@ -144,7 +151,31 @@ class RuleClassifier:
             return {}
         if exact is None:
             return {}
-        return {"arithmetic_ok": step.result.close_to(exact), "expected_result": _fmt(exact)}
+        if step.result.close_to(exact) or _carried(step, exact, self.exact_values):
+            return {"arithmetic_ok": True, "expected_result": _fmt(exact)}
+        return {"arithmetic_ok": False, "expected_result": _fmt(exact)}
+
+
+def _carried(step, exact, exact_values=frozenset()) -> bool:
+    """3 × 1.67 = 5: an operand she rounded (1.67 for 5/3) can carry its rounding into the result, so a result is
+    right when some values her rounded operands stand for give it exactly. Only for + − × ÷ with a rounded operand."""
+    if step.kind != "arithmetic" or step.result is None:
+        return False
+    rounded = [n.places and n.value not in exact_values for n in (step.left, step.right)]
+    if not any(rounded):  # 4.5 is the question's 4.5, not a rounding
+        return False
+    lo_hi = []
+    for n, r in zip((step.left, step.right), rounded):
+        h = Fraction(1, 2 * 10 ** n.places) if r else 0
+        lo_hi.append((n.value - h, n.value + h))
+    (a0, a1), (b0, b1) = lo_hi
+    if step.op == "divide" and b0 <= 0 <= b1:
+        return False
+    combos = [{"add": x + y, "subtract": x - y, "multiply": x * y, "divide": x / y if y else None}[step.op]
+              for x in (a0, a1) for y in (b0, b1)]
+    combos = [v for v in combos if v is not None]
+    r, h = step.result.value, Fraction(1, 2 * 10 ** step.result.places) if step.result.places else 0
+    return min(combos) - h <= r <= max(combos) + h
 
 
 def _gcd(a, b):

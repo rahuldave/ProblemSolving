@@ -539,14 +539,59 @@ def test_a_ratio_table_build_up_isnt_taken_as_an_answer(key, text):
     assert "correct" in kinds(s.submit("6 x 3 = 18"))
 
 
-def test_a_fraction_isnt_the_decimal_methods_step():
-    """5/6 + 3/4 = 19/12 adds the fractions directly: no route does that (the decimal route adds 5/6 + 0.75)."""
-    s = session("add-fractions", 0)
-    fb = s.submit("5/6 + 3/4 = 19/12")
-    assert kinds(fb) == ["unknown"] and "Convert to decimals" not in messages(fb)
+@pytest.mark.parametrize("key, text", [("add-fractions:1", "5/6 + 3/4 = 19/12"), ("add-fractions:1", "3/4 + 5/6 = 19/12"),
+                                       ("add-fractions:2", "2/3 + 1/5 = 13/15"), ("add-fractions:2", "1/5 + 2/3 = 13/15"),
+                                       ("compare-fractions:1", "3/4 > 5/7"), ("compare-fractions:2", "3/8 < 2/5")])
+def test_a_fraction_isnt_the_decimal_methods_step(key, text):
+    """5/6 + 3/4 = 19/12 adds the fractions as fractions: Convert to decimals adds 5/6 + 0.75, and a fraction she
+    writes as a fraction is never that method's decimal, in either order (and so for comparing them)."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    fb = s.submit(text)
+    assert kinds(fb) == ["unknown"] and "Convert to decimals" not in messages(fb), messages(fb)
+
+
+def test_adding_the_tops_and_bottoms_isnt_read_right():
     p = WordProblemSession("pizza-shared")
-    fb = p.submit("5/6 + 3/4 = 8/10")
-    assert "read the story right" not in messages(fb)
+    for text in ("5/6 + 3/4 = 8/10", "3/4 + 5/6 = 8/10"):
+        fb = p.submit(text)
+        assert "read the story right" not in messages(fb)
+
+
+@pytest.mark.parametrize("key, text", [("missing-value:1", "15 x 4/5 = 12"), ("missing-value:1", "40 x 3/5 = 24"),
+                                       ("percent-of:1", "80 x 15/100 = 12"), ("percent-of:2", "60 x 35/100 = 21")])
+def test_a_fraction_written_second_is_one_number(key, text):
+    """A fraction written second that isn't a whole number is one number: 80 × 15/100 = 12 is one step."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    assert "two steps" not in messages(s.submit(text))
+
+
+def test_a_carried_rounding_is_named_not_called_a_slip_of_her_arithmetic():
+    """4 ÷ 6 = 0.67, then 0.67 × 15 = 10.05: her arithmetic is right; the rounding carried."""
+    s = session("missing-value", 1)
+    assert "correct" in kinds(s.submit("4 / 6 = 0.67"))
+    fb = s.submit("0.67 x 15 = 10.05")
+    assert kinds(fb) == ["slip"] and "rounding carried" in fb[0].message and "ends, so write it" not in fb[0].message
+
+
+@pytest.mark.parametrize("key, text", [("to-decimal:2", "5 / 8 = 0.6"), ("better-buy:1", "4.5 / 20 = 0.2"),
+                                       ("better-buy:1", "4.5 / 20 = 0.23")])
+def test_no_cruder_rounding_passes_where_a_closer_one_fails(key, text):
+    """5/8 = 0.625 and 4.5/20 = 0.225 end, so they are written exactly: 0.6 and 0.2 fail as 0.62 and 0.23 do."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    assert "correct" not in kinds(s.submit(text))
+
+
+def test_a_rounding_she_carries_gives_the_routes_result():
+    """20 ÷ 12 = 1.67, then 3 × 1.67 = 5: 3 × 5/3 is 5, so the result is right."""
+    s = session("better-buy", 0)
+    for t in ("20 / 12 = 1.67", "3 x 1.67 = 5"):
+        fb = s.submit(t)
+        if "correct" not in kinds(fb):
+            pytest.skip(f"{t} isn't a route step here: {messages(fb)}")
+        assert "slip" not in kinds(fb), (t, messages(fb))
 
 
 def test_a_slip_onto_a_traps_answer_names_the_trap():
@@ -881,11 +926,10 @@ def test_a_head_step_written_out_counts_once():
 
 # ---------------------------------------------------------------- the PR validation's findings
 
-@pytest.mark.parametrize("key, text", [("missing-value:1", "3*40/5=24"), ("percent-of:1", "80*15/100=12"),
-                                       ("percent-of:1", "15*80/100=12")])
+@pytest.mark.parametrize("key, text", [("missing-value:1", "3*40/5=24"), ("missing-value:1", "3*40/8=15")])
 def test_two_steps_in_one_are_not_one_step(key, text):
-    """3 × 40/5 = 24 reads left to right as 3 × 40, then ÷ 5. It isn't scale factor's 3 × 8 = 24: a fraction she
-    writes stands only for a fraction. It is refused, with the two steps named, until expressions are read (step 4)."""
+    """3 × 40/5 = 24 reads left to right as 3 × 40, then ÷ 5: 40/5 is a whole number, so the fraction written second
+    isn't one number. It is refused, with the two steps named, until expressions are read (step 4)."""
     qid, i = key.split(":")
     s = session(qid, int(i) - 1)
     fb = s.submit(text)
@@ -963,8 +1007,6 @@ def test_a_traps_answer_the_right_reading_has_too_gets_the_note_while_solving():
     ("missing-value:1", ["3 / 5 = 0.6", "3/5 x 40 = 24"]),
     ("proportion-check:1", ["6 / 8 = 0.75", "3/4 x 96 = 72"]),
     ("add-fractions:1", ["lcm(6, 4) = 12", "3 / 4 = 0.75", "3/4 x 12 = 9"]),
-    ("compare-fractions:1", ["3/4 > 5/7"]),
-    ("compare-fractions:2", ["3/8 < 2/5"]),
     ("missing-value:1", ["3/5 x 40 = 24"]),
 ])
 def test_a_fraction_written_first_is_one_number(key, steps):

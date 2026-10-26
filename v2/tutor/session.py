@@ -99,10 +99,21 @@ def two_steps(step) -> str:
     return f" It reads as two steps, {step.left} {sym} {top} and then ÷ {bottom}: write them one at a time."
 
 
-def slip_text(step) -> str:
-    """The first answer to a slip. A result rounded where the exact decimal ends (4.5 ÷ 20 = 0.23 for 0.225) is
-    asked for exactly; anything else is an arithmetic slip."""
+def slip_text(step, c=None) -> str:
+    """The first answer to a slip. Her own arithmetic right on a number she rounded earlier (0.67 × 15 = 10.05): the
+    rounding carried, so the exact value is named. A result rounded where the exact decimal ends (4.5 ÷ 20 = 0.23 for
+    0.225) is asked for exactly. Anything else is an arithmetic slip."""
     res = getattr(step, "result", None)
+    if c is not None and res is not None and step.kind == "arithmetic" and isinstance(c.result, Fraction):
+        a, b = step.left.value, step.right.value
+        own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        typed = [n for n in (step.left, step.right) if n.places]
+        rounded = [n for n in typed if all(n.value != x for x in c.operands if isinstance(x, Fraction))]
+        if own is not None and res.value == own and rounded:
+            exact = next((x for x in c.operands if isinstance(x, Fraction) and rounded[0].close_to(x)), None)
+            was = f" {rounded[0]} is {engine.fmt(exact)} rounded, and" if exact is not None else ""
+            return (f"Your arithmetic is right, but{was} the rounding carried into {res}. With the exact value it's "
+                    f"{c.expression or engine.fmt(c.result)}: write that.")
     if res is not None and res.places and step.kind == "arithmetic":
         a, b = step.left.value, step.right.value
         exact = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
@@ -173,8 +184,15 @@ class QuestionSession:
         self.qid, self.q = qid, engine.Q[qid]
         self.values = {k: engine.fmt(engine.num(v)) for k, v in values.items()}
         self.methods = engine.methods_of(qid)
-        self.classifier = classifier or RuleClassifier(strict=self.q.get("output_format") == "decimal")
+        self.classifier = classifier or RuleClassifier(  # a fraction she writes is never Convert to decimals' decimal
+            strict=self.q.get("output_format") == "decimal",
+            as_decimals={mid for mid, m in engine.methods_of(qid).items() if m.get("name") == "Convert to decimals"})
         self.routes, _ = engine.routes_for(qid, self.values)
+        if isinstance(self.classifier, RuleClassifier) and not self.classifier.exact_values:
+            self.classifier.exact_values = frozenset(  # the numbers a typed decimal can be exactly (not a rounding)
+                {engine.num(v) for v in self.values.values()}
+                | {x for v, env, trace, vis in self.routes for i in vis for x in (trace[i][1] or []) + [trace[i][2]]
+                   if isinstance(x, Fraction)})
         self.expanded = len(self.routes)  # routes past this one are re-runs with the student's own choices
         self.live = {r: 0 for r in range(len(self.routes))}  # route → number of its visible steps done
         self.choices = {}  # route → the student's own picks it was re-run with (run(choices=…))
@@ -403,7 +421,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step))]
+                return [Feedback(kind="slip", message=slip_text(step, step_candidate("x", self.routes[min(advanced)], advanced[min(advanced)] - 1) if advanced else None))]
             slip = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             slip = []
@@ -485,7 +503,7 @@ class QuestionSession:
         if self.classifier.classify(step, [c]).arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step))]
+                return [Feedback(kind="slip", message=slip_text(step, c))]
             note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
         else:
             note = []
@@ -634,7 +652,8 @@ class QuestionSession:
         st, args, result = entry
         if st["op"] != step_op(step) or not engine.visible(st):
             return False
-        c = Candidate(id="x", op=st["op"], operands=list(args), result=result)
+        loc = st.get("loc") or ()  # the method the step is in, for the classifier's method rules
+        c = Candidate(id="x", op=st["op"], operands=list(args), result=result, methods=[loc[0][1]] if loc else [])
         return self.classifier.classify(step, [c]).status == "match"
 
     def _reach(self, inp, pool, prune=True, owed=None):
@@ -700,7 +719,7 @@ class QuestionSession:
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=slip_text(step))]
+                return [Feedback(kind="slip", message=slip_text(step, c))]
             out = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             out = []
@@ -1046,7 +1065,8 @@ class WordProblemSession:
 
     def _question_on(self, inputs):
         values = {k: engine.fmt(v) for k, v in inputs.items()}
-        return QuestionSession(self.plan["question"], values, self.classifier, ask_final=False)
+        return QuestionSession(self.plan["question"], values,
+                               None if type(self.classifier) is RuleClassifier else self.classifier, ask_final=False)
 
     def _start_solving(self, question=None):
         self.phase = "solve"
