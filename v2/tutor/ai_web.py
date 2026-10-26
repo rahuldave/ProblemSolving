@@ -16,7 +16,7 @@ from collections import defaultdict, deque
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from . import ai
+from . import ai, log
 
 PER_SESSION = (20, 600)   # at most 20 readings per session in 10 minutes
 GLOBAL = (300, 3600)      # and 300 in an hour in all
@@ -92,8 +92,13 @@ def register(app):
             ids = ai.decision_ids(s)  # the decisions as this request numbers them
         reading = ai.call(req)
         with LOCK:
+            before = log.state(s)
             feedback, shown, checked = (ai.feed(s, reading.inputs, reading.decisions, ids) if reading.inputs
                                         else ([], [], []))
+            after = log.state(s)
+        log.write(sid, entry["key"], "say", before, after, feedback, text=text,
+                  inputs=[i.model_dump(mode="json") for i in reading.inputs], decisions=list(reading.decisions or []),
+                  interpreted=shown, checked=checked, note=reading.note, error=reading.error)
         return {**state(sid, entry, feedback), "interpreted": shown, "checked": checked, "note": reading.note,
                 "error": reading.error}
 

@@ -37,3 +37,72 @@ def test_word_problem_options_and_commands():
 def test_unknown_session_and_problem():
     assert client.post("/api/sessions/nope/input", json={"text": "1"}).status_code == 404
     assert client.post("/api/sessions", json={"problem": "nope"}).status_code == 404
+
+
+# ---------------------------------------------------------------- the statement log (tutor/log.py)
+
+def lines_for(sid):
+    from tutor import log
+    return [l for l in log.read() if l["session"] == sid]
+
+
+def test_every_statement_is_logged_and_reads_back():
+    sid = client.post("/api/sessions", json={"problem": "lemonade-more-sugar"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/hint")
+    client.post(f"/api/sessions/{sid}/input", json={"text": "18 / 6 = 3"})
+    client.post(f"/api/sessions/{sid}/step", json={"kind": "value", "value": {"text": "12"}})
+    client.post(f"/api/sessions/{sid}/done")
+    got = lines_for(sid)
+    assert [l["endpoint"] for l in got] == ["start", "hint", "input", "step", "done"]
+    typed = got[2]
+    assert typed["problem"] == "lemonade-more-sugar" and typed["text"] == "18 / 6 = 3"
+    assert typed["parsed"]["kind"] == "arithmetic" and typed["before"]["phase"] == "extract"
+    assert typed["after"]["question"]["named"] == ["scale_factor"]
+    assert "correct" in [f["kind"] for f in typed["feedback"]] and typed["time"].endswith("+00:00")
+    value = got[3]
+    assert value["input"] == {"kind": "value", "value": {"text": "12"}} and value["after"]["phase"] == "done"
+    assert not any(k in l for l in got for k in ("name", "email", "ip"))
+
+
+def test_choosing_a_method_is_logged():
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/method", json={"method": "scale_factor"})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "method"]
+    assert line["method"] == "scale_factor" and line["before"]["routes"] > line["after"]["routes"]
+    assert line["after"]["named"] == ["scale_factor"]
+
+
+def test_what_claude_read_is_logged(monkeypatch):
+    from test_ai import fake, step
+    from tutor import ai
+    monkeypatch.setattr(ai, "api_key", lambda: "sk-test")
+    monkeypatch.setattr(ai, "_client", fake({"inputs": [step("multiply", "3", "40", "120")], "note": ""}))
+    monkeypatch.setattr(ai, "_client_key", ai._FIXED)
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/say", json={"text": "3 times 40 is 120"})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "say"]
+    assert line["text"] == "3 times 40 is 120" and line["interpreted"] == ["3 × 40 = 120"]
+    assert line["inputs"][0]["op"] == "multiply" and line["checked"] == [True]
+
+
+def test_the_log_has_the_reading_the_session_used():
+    """12 at a decision with two options is a number, not option 12: the log says so."""
+    sid = client.post("/api/sessions", json={"problem": "lemonade-more-sugar"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/input", json={"text": "12"})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "input"]
+    assert line["parsed"] == {"kind": "value", "value": {"text": "12"}}
+
+
+def test_a_long_text_is_cut_in_the_log():
+    from tutor import log
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/input", json={"text": "x" * 100_000})
+    (line,) = [l for l in lines_for(sid) if l["endpoint"] == "input"]
+    assert len(line["text"]) == log.MAX_TEXT
+
+
+def test_a_log_that_cant_be_written_doesnt_stop_the_student(monkeypatch, tmp_path):
+    monkeypatch.setenv("TUTOR_LOG", str(tmp_path))  # a directory: opening it to append fails
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    r = client.post(f"/api/sessions/{sid}/input", json={"text": "3 x 40 = 120"})
+    assert r.status_code == 200 and r.json()["feedback"][0]["kind"] == "correct"

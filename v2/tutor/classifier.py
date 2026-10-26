@@ -32,6 +32,33 @@ def step_op(step) -> str:
     return step.kind
 
 
+def _terminates(v) -> bool:
+    d = v.denominator
+    for p in (2, 5):
+        while d % p == 0:
+            d //= p
+    return d == 1
+
+
+def is_fraction_text(text) -> bool:
+    """Is a number written as a fraction? 3/4 and 1.5/2 are; 0.75/1 and 100/1 aren't (n/1 is n)."""
+    if "/" not in text:
+        return False
+    try:
+        return Fraction(text.split("/", 1)[1].strip()) != 1
+    except (ValueError, ZeroDivisionError):
+        return True
+
+
+def two_steps(step) -> bool:
+    """3 × 40/5 = 24, typed, reads left to right as two steps (3 × 40, then ÷ 5): a fraction written after ×
+    that is a whole number (40/5 = 8, not n/1) isn't one number. Any other fraction is (15 × 4/5, 80 × 15/100,
+    1 − 3/4), and so is every fraction from the boxes or Claude, where it is plainly one number."""
+    return (step.kind == "arithmetic" and getattr(step, "typed", False) and step.op == "multiply"
+            and "/" in step.right.text and step.right.value.denominator == 1
+            and step.right.text.split("/", 1)[1].strip() not in ("1", "1.0"))
+
+
 def fits(pattern, number) -> bool:
     """Does a student's Number fit a candidate operand (a value or a wildcard)?"""
     if isinstance(pattern, tuple) and pattern and pattern[0] == "int":
@@ -44,7 +71,14 @@ def fits(pattern, number) -> bool:
 
 
 class RuleClassifier:
-    """Exact matching: same operation, same numbers (either order where order doesn't matter)."""
+    """Exact matching: same operation, same numbers (either order where order doesn't matter). `strict`: a result
+    that is a decimal that ends must be exact (to-decimal: 5 ÷ 8 = 0.6 is a slip)."""
+
+    def __init__(self, strict=False, as_decimals=()):
+        self.strict = strict
+        self.as_decimals = set(as_decimals)  # methods whose point is writing the fractions as decimals
+        self.exact_values = frozenset()  # the question's numbers and every route's: a typed decimal among them isn't
+        # a rounding she carries (the session fills it in)
 
     def classify(self, step: StudentStep, candidates: list[Candidate]) -> Classification:
         op = step_op(step)
@@ -67,11 +101,17 @@ class RuleClassifier:
             return want == got
         if step.kind == "ratio_compare" or any(isinstance(x, tuple) and len(x) == 2 and not isinstance(x[0], str)
                                                for x in c.operands):
-            if step.kind != "ratio_compare":
-                return False
+            if step.kind != "ratio_compare" or not all(isinstance(x, tuple) and len(x) == 2 for x in c.operands):
+                return False  # a ratio comparison only fits a comparison of two ratios (not 21 > 20)
             pairs = [tuple(x) for x in c.operands]
             got = [(n.value, d.value) for n, d in (step.left, step.right)]
             return sorted(pairs) == sorted(got)
+        if two_steps(step):
+            return False
+        if c.methods and set(c.methods) <= self.as_decimals and any(  # 3/4 written as a fraction isn't the 0.75
+                is_fraction_text(n.text) and n.value.denominator != 1 and _terminates(n.value)  # of Convert to
+                for n in (step.left, step.right)):                     # decimals, as an operand in either place
+            return False                                                # (a result as a fraction fits, as on main)
         a, b = step.left, step.right
         x, y = c.operands
         if fits(x, a) and fits(y, b):
@@ -99,7 +139,10 @@ class RuleClassifier:
             return {"arithmetic_ok": step.relation == relation, "expected_result": relation}
         if step.result is None or c.result is None or isinstance(c.result, str):
             return self._own_arithmetic(step)
-        return {"arithmetic_ok": step.result.close_to(c.result), "expected_result": _fmt(c.result)}
+        if self.strict and is_fraction_text(step.result.text):  # to-decimal: 5 ÷ 8 = 5/8 isn't a decimal
+            return {"arithmetic_ok": False, "expected_result": _fmt(c.result)}
+        ok = step.result.value == c.result if self.strict and _terminates(c.result) else step.result.close_to(c.result)
+        return {"arithmetic_ok": ok, "expected_result": _fmt(c.result)}
 
     def _own_arithmetic(self, step) -> dict:
         """Check the student's arithmetic on their own numbers."""
@@ -121,7 +164,35 @@ class RuleClassifier:
             return {}
         if exact is None:
             return {}
-        return {"arithmetic_ok": step.result.close_to(exact), "expected_result": _fmt(exact)}
+        if self.strict and is_fraction_text(step.result.text):  # to-decimal: 5 ÷ 8 = 5/8 isn't a decimal
+            return {"arithmetic_ok": False, "expected_result": _fmt(exact)}
+        if step.result.close_to(exact) or _carried(step, exact, self.exact_values):
+            return {"arithmetic_ok": True, "expected_result": _fmt(exact)}
+        return {"arithmetic_ok": False, "expected_result": _fmt(exact)}
+
+
+def _carried(step, exact, exact_values=frozenset()) -> bool:
+    """3 × 1.67 = 5: an operand she rounded (1.67 for 5/3) carries its rounding into the result. The result is right
+    when it is what the exact values her rounded operands stand for give (3 × 5/3 = 5): the exact values are the
+    question's and the routes' numbers her rounding fits. Not any value in a rounding's range: 0.3 × 900 = 250 is
+    neither 270 nor 300."""
+    if step.kind != "arithmetic" or step.result is None:
+        return False
+    choices = []
+    for n in (step.left, step.right):
+        if n.places and n.value not in exact_values:  # 4.5 is the question's 4.5, not a rounding
+            stands = [x for x in exact_values if isinstance(x, Fraction) and n.close_to(x)]
+            if not stands:
+                return False
+            choices.append(stands)
+        else:
+            choices.append([n.value])
+    for x in choices[0]:
+        for y in choices[1]:
+            v = {"add": x + y, "subtract": x - y, "multiply": x * y, "divide": x / y if y else None}[step.op]
+            if v is not None and (step.result.value == v or step.result.close_to(v)):
+                return True
+    return False
 
 
 def _gcd(a, b):

@@ -78,7 +78,7 @@ def parse_all(text: str, choices: int = 0):
         split = _split_binary(lhs)
         if split and (not rhs or re.fullmatch(NUM, rhs.strip())):  # 72 / 6 = 12 reads first as a division
             op, a, b = split
-            data = {"kind": "arithmetic", "op": op, "left": _num(a), "right": _num(b)}
+            data = {"kind": "arithmetic", "op": op, "left": _num(a), "right": _num(b), "typed": True}
             if rhs.strip():
                 data["result"] = _num(rhs)
             out.append(data)

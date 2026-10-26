@@ -3,8 +3,11 @@
 A QuestionSession keeps the set of routes (ways through the question's methods) that are still consistent with what
 the student has written. The first step, and the second where methods share a first step, are classified against the
 generated first-step trees (trees/<question>.json); later steps against the next step of each route still alive.
-A WordProblemSession runs the extraction decisions first, then a QuestionSession on the extracted numbers, then any
-follow-up step, then asks for the answer in the story's terms.
+A step that is no live route's next step is matched further along each route, against every quantity on it
+(paths.py): the steps it skips become done in the head. A bare number is a statement too: the answer, or a quantity
+on some route. A WordProblemSession runs the extraction decisions first, then a QuestionSession on the extracted
+numbers, then any follow-up step, then asks for the answer in the story's terms. A statement made before the
+decisions settles them when it fits the correct reading, and names the trap when it fits only a trap's reading.
 """
 
 import copy
@@ -15,9 +18,11 @@ from fractions import Fraction
 
 import build as engine
 
-from .classifier import Classifier, RuleClassifier, is_wildcard
-from .models import Candidate, ChoiceAnswer, Feedback
+from .classifier import Classifier, RuleClassifier, is_wildcard, step_op
+from .classifier import is_fraction_text, two_steps as classifier_two_steps
+from .models import Candidate, ChoiceAnswer, Feedback, Number, ValueAnswer
 from .parse import ParseError, parse, parse_all
+from .paths import QuestionIndex, word_problem_index
 
 _trees = {}
 
@@ -84,6 +89,56 @@ def written(step) -> str:
     return lhs + (f" = {step.result}" if step.result is not None else "")
 
 
+def two_steps(step) -> str:
+    """A note for a 3 × 40/5 = 24: read left to right it is two steps, 3 × 40 and then ÷ 5 (reading expressions is step 4
+    of PATHS.md). A fraction first (2/3 × 18) is one number."""
+    if not classifier_two_steps(step) or "/" in step.left.text:
+        return ""
+    top, bottom = step.right.text.split("/", 1)
+    sym = {"add": "+", "subtract": "−", "multiply": "×"}[step.op]
+    return f" It reads as two steps, {step.left} {sym} {top} and then ÷ {bottom}: write them one at a time."
+
+
+def slip_text(step, c=None, decimal=False) -> str:
+    """The first answer to a slip. A fraction where a decimal is asked for (to-decimal: 3 ÷ 4 = 3/4) is asked for as
+    a decimal. Her own arithmetic right on a number she rounded earlier (0.67 × 15 = 10.05, or 10.1 rounded from
+    it): the rounding carried, so the exact value is named. A result rounded where the exact decimal ends
+    (4.5 ÷ 20 = 0.23 for 0.225) is asked for exactly. Anything else (0.67 × 15 = 99.5) is an arithmetic slip."""
+    res = getattr(step, "result", None)
+    if decimal and res is not None and is_fraction_text(res.text):  # 5 ÷ 8 = 5/8: right value, not a decimal
+        rights = [c.result] if c is not None and isinstance(c.result, Fraction) else []
+        if step.kind == "arithmetic":
+            a, b = step.left.value, step.right.value
+            rights.append({"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op])
+        if res.value in rights:
+            return f"Right step. Write the result as a decimal, not as the fraction {res}: “{written(step)}”."
+    if c is not None and res is not None and step.kind == "arithmetic" and isinstance(c.result, Fraction):
+        a, b = step.left.value, step.right.value
+        own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        typed = [n for n in (step.left, step.right) if n.places]
+        rounded = [n for n in typed if all(n.value != x for x in c.operands if isinstance(x, Fraction))]
+        if own is not None and res.value == own and rounded:
+            exact = next((x for x in c.operands if isinstance(x, Fraction) and rounded[0].close_to(x)), None)
+            was = f" {rounded[0]} is {engine.fmt(exact)} rounded, and" if exact is not None else ""
+            return (f"Your arithmetic is right, but{was} the rounding carried into {res}. With the exact value it's "
+                    f"{c.expression or engine.fmt(c.result)}: write that.")
+    if res is not None and res.places and step.kind == "arithmetic" and c is not None \
+            and isinstance(c.result, Fraction) and any(n.places and all(n.value != x for x in c.operands
+                                                                         if isinstance(x, Fraction))
+                                                       for n in (step.left, step.right)):
+        a, b = step.left.value, step.right.value
+        own = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        if own is not None and abs(res.value - own) <= Fraction(1, 10 ** res.places):  # her numbers give about it
+            return (f"Right step, but a rounded number carried into {res}. With the exact value it's "
+                    f"{c.expression or engine.fmt(c.result)}: write that.")
+    if res is not None and res.places and step.kind == "arithmetic":
+        a, b = step.left.value, step.right.value
+        exact = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
+        if exact is not None and engine.terminates(exact) and abs(res.value - exact) < Fraction(1, 10 ** res.places):
+            return f"Right step. {engine.fmt(exact)} ends, so write it exactly, not rounded: “{written(step)}”."
+    return f"Right step, but check the arithmetic in “{written(step)}”. Try it again."
+
+
 def bindings(qid, values):
     """The question's values, plus the core question's names for them when it is a question in context (percent-of's
     a, b, d are p, 100, n), so a method's idea inherited through the reduction reads with numbers."""
@@ -146,8 +201,17 @@ class QuestionSession:
         self.qid, self.q = qid, engine.Q[qid]
         self.values = {k: engine.fmt(engine.num(v)) for k, v in values.items()}
         self.methods = engine.methods_of(qid)
-        self.classifier = classifier or RuleClassifier()
+        self.classifier = classifier or RuleClassifier(  # a fraction she writes is never Convert to decimals' decimal
+            strict=self.q.get("output_format") == "decimal",
+            as_decimals={mid for mid, m in engine.methods_of(qid).items() if m.get("name") == "Convert to decimals"})
         self.routes, _ = engine.routes_for(qid, self.values)
+        self._exact = frozenset(  # the numbers a typed decimal can be exactly (not a rounding)
+            {engine.num(v) for v in self.values.values()}
+            | {x for v, env, trace, vis in self.routes for i in vis for x in (trace[i][1] or []) + [trace[i][2]]
+               if isinstance(x, Fraction)})
+        if isinstance(self.classifier, RuleClassifier):
+            self.classifier = copy.copy(self.classifier)  # its own copy: a re-run's numbers stay in this session
+            self.classifier.exact_values = self._exact
         self.expanded = len(self.routes)  # routes past this one are re-runs with the student's own choices
         self.live = {r: 0 for r in range(len(self.routes))}  # route → number of its visible steps done
         self.choices = {}  # route → the student's own picks it was re-run with (run(choices=…))
@@ -156,6 +220,14 @@ class QuestionSession:
         self.so_far = None  # the method announced as "That's X so far", while another was still building up
         self.tries = {}    # (route, position) → build-up steps written toward that step (6 × 2 = 12 toward 6 × 3)
         self.tree_entries = tree(qid)["first_steps"]  # the first steps are classified against the tree
+        self.paths = QuestionIndex(qid, self.values, self.routes)  # every quantity on every route
+        self.inhead = {}   # route → its visible positions taken as done in the head
+        self.read = None   # the reading of the student's last text the session used (for the log)
+        self.owed = {}     # route → visible positions it skipped that the later step didn't need: still to write
+        self.said = []     # the statements taken so far, in order: the shadow is worked out from them
+        self.shadow = {}   # route → position, while a statement is matched against the shadow (_shadow)
+        self.chosen = None  # the method picked from the cards (boxes), if any
+        self.last_match = None  # how the last accepted step fitted: "exact", "wildcard" (a tree wildcard) or "skip"
         self.slips = 0
         self.hints = 0
         self.history = []
@@ -170,6 +242,10 @@ class QuestionSession:
         new.routes = self.routes[:self.expanded]
         new.live = {r: 0 for r in range(self.expanded)}
         new.choices, new.named, new.tries, new.history, new.announced = {}, None, {}, [], None
+        new.inhead, new.owed, new.said, new.shadow, new.chosen, new.last_match = {}, {}, [], {}, None, None
+        if isinstance(self.classifier, RuleClassifier):  # a fresh session starts from the question's numbers only
+            new.classifier = copy.copy(self.classifier)
+            new.classifier.exact_values = self._exact
         new.tree_entries = tree(self.qid)["first_steps"]
         new.slips = new.hints = 0
         new.phase, new.result, new.finished = "steps", None, None
@@ -237,13 +313,21 @@ class QuestionSession:
         if self.phase == "answer":
             return self.submit_answer(text)
         try:
-            readings = [r for r in parse_all(text) if r.kind not in ("choice", "value")]
+            readings = [r for r in parse_all(text) if r.kind != "choice"]
         except ParseError as e:
             return [Feedback(kind="error", message=str(e))]
-        if not readings:
-            return [Feedback(kind="error", message="That looks like an answer. Write the step that gets you there, "
-                                                   "like `4 x 18 = 72`, or type `done` if you've finished.")]
-        return self.submit_readings(readings)
+        steps = [r for r in readings if r.kind != "value"]
+        values = [r for r in readings if r.kind == "value"]
+        fb = self.submit_readings(steps) if steps else None
+        if values and (fb is None or not any(f.kind in ("correct", "slip", "on_track") for f in fb)):
+            # a bare number (19/12 is a number too, not only 19 ÷ 12): the answer, or a quantity on some route
+            read = getattr(self, "read", None)
+            fv = self.submit_value(values[0])
+            if fb is None or any(f.kind in ("correct", "done") for f in fv):
+                self.read = values[0]
+                return fv
+            self.read = read
+        return fb
 
     def submit_readings(self, readings):
         """`4/3 = 4/3` can be a division or a comparison: use the reading that fits."""
@@ -253,17 +337,20 @@ class QuestionSession:
             if any(f.kind in ("correct", "slip", "on_track") for f in fb):
                 return fb
             first = first or fb
+        self.read = readings[0]
         return first
 
     def submit_input(self, inp):
         """A typed StudentInput (from the parser, a structured UI, or a model): a step, a choice or a value."""
+        self.read = inp  # the reading of the student's text the session used (for the log)
         if self.phase == "done":
             return [Feedback(kind="info", message="This one is finished.")]
         if self.phase == "answer":
             return self.answer_input(inp, None)
-        if inp.kind in ("choice", "value"):
-            return [Feedback(kind="error", message="That looks like an answer. Write the step that gets you there, "
-                                                   "or say you're done if you've finished.")]
+        if inp.kind == "choice":
+            return [Feedback(kind="error", message="There's nothing to pick here. Write a step, like `4 x 18 = 72`.")]
+        if inp.kind == "value":
+            return self.submit_value(inp)
         return self.submit_step(inp)
 
     def submit_step(self, step):
@@ -276,22 +363,18 @@ class QuestionSession:
         return out
 
     def _submit_step(self, step):
+        self._current = step
         pool = {**self.live, **self._rechosen(step)}  # routes re-run with the student's own factor or power of ten
         cands = self.candidates(pool)
         cls = self.classifier.classify(step, cands)
-        if cls.status == "none":
-            extra = f" (Also, {written(step).split(' = ')[0]} is {cls.expected_result}.)" if cls.arithmetic_ok is False else ""
-            return [Feedback(kind="unknown", message=f"I don't recognize “{written(step)}” as a next step here.{extra} "
-                                                     "Type `hint` for a nudge.")]
+        chosen, advanced, waiting, skipped = [], {}, {}, set()
         if cls.status == "match":  # every entry the step fits names a method the graph draws on this step; the
             # exact one only decides the arithmetic feedback. The routes then filter by the actual numbers.
             chosen = [c for c in cands if self.classifier.classify(step, [c]).status == "match"]
-        else:
+        elif cls.status == "on_track":
             chosen = [c for c in cands if c.id in cls.matched]
         allowed = set().union(*(set(c.methods) for c in chosen))
         mental = set().union(*(set(c.methods) for c in chosen if c.mental))
-
-        advanced, waiting, skipped = {}, {}, set()
         for r, at in pool.items():
             mid = self.routes[r][0]["method"]
             if mid not in allowed:
@@ -306,48 +389,268 @@ class QuestionSession:
                     break
                 if res and res.status == "on_track" and not offset:
                     waiting[r] = at
+        # a step that is no live route's next step may be one further along a live route (the steps before it done
+        # in the head), or else along a route of the shadow
+        far = {} if advanced else self._reach(step, self.live)
+        # a build-up (6 × 2 = 12 toward 18) stays one; the routes it fits further along stay live beside it, not
+        # named. Only a build-up toward a power of ten, which the question doesn't name, loses to a route's answer
+        # (4 × 3 = 12 is scale factor's answer, not the start of 4 × 25 = 100).
+        beside = {}
+        if waiting:
+            toward = all("until" not in self.routes[r][2][self.routes[r][3][at]][0].get("search", {"until": 1})
+                         for r, at in waiting.items())
+            beside = {r: p for r, p in far.items() if not toward or p < len(self.routes[r][3]) - 1}
+            far = {r: p for r, p in far.items() if r not in beside}
+        if not advanced and not waiting and not far:  # a step taken as done in the head, written out after all
+            out = self._written_after(step, self.live, with_shadow=True)
+            if out is not None:
+                return out
+        keep = {}
+        if not advanced and not waiting and not far:  # a step the student wrote already on a live route: that,
+            named = set(self.named_methods())  # unless a route of the same method has it again (3 × 5 = 15 twice)
+            for r, at in self.live.items():
+                done = set(range(at)) - self.inhead.get(r, set()) - set(self.owed.get(r, ()))
+                j = next((j for j in sorted(done) if self._fits(step, self.routes[r][2][self.routes[r][3][j]])), None)
+                if j is not None:
+                    far = {q: p for q, p in self._reach(step, self._shadow()).items()
+                           if self.routes[q][0]["method"] in named}
+                    if not far:
+                        return [Feedback(kind="info", message=f"You have {step_candidate('x', self.routes[r], j).expression} "
+                                                              "already. What's your next step?")]
+                    keep = dict(self.live)  # the routes she is on stay beside the one that has it again
+                    break
+        if not advanced and not waiting and not far:
+            far = self._reach(step, self._shadow())
+            if not far:  # or written out on a route of the shadow (GCF(12, 20) = 4 after 3 × 20 = 60)
+                out = self._written_after(step, self.shadow)
+                if out is not None:
+                    return out
+        if not advanced and far:
+            for r, at in waiting.items():
+                self.tries[(r, at)] = self.tries.get((r, at), []) + [written(step)]
+            return self._skipped_to(step, far, {**keep, **waiting})
         if not advanced and not waiting:
-            return [Feedback(kind="unknown", message=f"“{written(step)}” is how {self.names(allowed)} starts, but those "
+            if cls.status == "none":
+                extra = f" (Also, {written(step).split(' = ')[0]} is {cls.expected_result}.)" if cls.arithmetic_ok is False else ""
+                return [Feedback(kind="unknown", message=f"I don't recognize “{written(step)}” as a step here.{extra}{two_steps(step)} "
+                                                         "Type `hint` for a nudge.")]
+            exact = set().union(*(set(c.methods) for c in chosen if not is_wildcard(c))) & set(self.live_methods())
+            if not exact:  # only a wildcard fits (any whole number in a build-up): that names no method
+                return [Feedback(kind="unknown", message=f"I don't recognize “{written(step)}” as a step here.{two_steps(step)} "
+                                                         "Type `hint` for a nudge.")]
+            return [Feedback(kind="unknown", message=f"“{written(step)}” is how {self.names(exact)} starts, but those "
                                                      "numbers don't lead anywhere here. Type `hint` for a nudge.")]
         if cls.arithmetic_ok is False:
             self.slips += 1
             if self.slips < 2:
-                return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”. Try it again.")]
+                return [Feedback(kind="slip", message=slip_text(step, step_candidate("x", self.routes[min(advanced)], advanced[min(advanced)] - 1) if advanced else None, decimal=self.q.get("output_format") == "decimal"))]
             slip = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
         else:
             slip = []
         if not advanced:
-            self.live = waiting
+            for r, p in beside.items():
+                self.inhead.setdefault(r, set()).update(range(self.live[r], p))
+            self.live = {**{r: p + 1 for r, p in beside.items()}, **waiting}
             self.named = {self.routes[r][0]["method"] for r in waiting}
             for r, at in waiting.items():
                 self.tries[(r, at)] = self.tries.get((r, at), []) + [written(step)]
             target = next(self.next_step(r).search["target"] for r in waiting)
+            self.last_match = "skip" if beside else "exact"
             return [Feedback(kind="on_track", message=f"Good, keep building: {written(step)}. "
                                                       f"Keep going until you reach {engine.fmt(target)}.")]
 
         before = set(self.named_methods())
         alive_methods = {self.routes[r][0]["method"] for r in advanced}
+        self.last_match = "exact" if any(not is_wildcard(c) and set(c.methods) & alive_methods for c in chosen) else "wildcard"
         if self.tree_entries is not None:  # go down the tree while the method is still open, then leave it
             nexts = [n for c in chosen if c.id.startswith("t") for n in self.tree_entries[int(c.id[1:])].get("next", [])
                      if set(n["methods"]) & alive_methods]
             self.tree_entries = nexts if len(alive_methods) > 1 and nexts and not self.history and not skipped else None
         r0 = min(advanced, key=lambda r: (r in skipped, r))
-        done = step_candidate("x", self.routes[r0], advanced[r0] - 1)
-        self.live = {**waiting, **advanced}
-        self.named = alive_methods
-        self.slips = self.hints = 0
-        self.history.append(done.expression)
+        for r in skipped:
+            self.inhead.setdefault(r, set()).add(0)
         out = slip
+        self._heads = {}
         if r0 in skipped:
             skipped_step = step_candidate("x", self.routes[r0], advanced[r0] - 2)
             out.append(Feedback(kind="info", message=f"You did {skipped_step.expression} in your head. Fine."))
-        out.append(Feedback(kind="correct", message=f"✓ {done.expression}  ({done.say})"))
+            self._heads = {r0: {advanced[r0] - 2}}
+        return self._advance(advanced, waiting, r0, before, out)
+
+    def _at(self, r):
+        return self.live[r] if r in self.live else self.shadow[r]
+
+    def _shadow(self):
+        """The routes that fit every statement so far but aren't live, each at its own position: {route: position}.
+        A statement that was some live route's next step left them out (5 × 12 = 60 starts cross-multiply, and is
+        common denominator's step after LCM(6, 4) = 12 done in the head). They are worked out from the statements
+        only when no live route fits one, so a student who writes every step never pays for them."""
+        pool = {r: 0 for r in range(self.expanded) if self.chosen in (None, self.routes[r][0]["method"])}
+        head, owed = {r: set() for r in pool}, {}
+        for inp in self.said:
+            reach = self._reach(inp, pool, prune=False, owed=owed)  # every route that fits, not only the tightest
+            moved = {r: self._move(r, pool[r], p, owed.get(r, frozenset())) for r, p in reach.items()}
+            for r, (at, o, h) in moved.items():
+                head[r] |= h
+                owed[r] = o
+            fits = self._fitter(inp)  # or a step a route took as done in the head, written out after all
+            for r in set(pool) - set(moved):
+                j = next((j for j in sorted(head[r]) if fits(self.routes[r][2][self.routes[r][3][j]])), None)
+                if j is not None:
+                    head[r] = head[r] - {j}
+                    moved[r] = (pool[r], owed.get(r, frozenset()), set())
+                    continue
+                done = set(range(pool[r])) - head[r] - set(owed.get(r, ()))  # or a line the route has written already
+                if any(fits(self.routes[r][2][self.routes[r][3][j]]) for j in done):
+                    moved[r] = (pool[r], owed.get(r, frozenset()), set())
+            pool = {r: at for r, (at, o, h) in moved.items()}
+        self.shadow = {r: at for r, at in pool.items() if r not in self.live}
+        for r in self.shadow:
+            self.inhead[r], self.owed[r] = head[r], owed.get(r, frozenset())
+        return self.shadow
+
+    def _written_after(self, step, pool, with_shadow=False):
+        """A step some routes of `pool` (route → position) took as done in the head, written out after all: those
+        routes stay (the others don't fit it), and the step leaves their head steps. None when no route has it.
+        `with_shadow`: the shadow's routes where it is a later step stay too (5 × 3 = 15 can be route 966's head
+        step and route 1009's next one)."""
+        hit = {}
+        for r in pool:
+            j = next((j for j in sorted(self.inhead.get(r, ()))
+                      if self._fits(step, self.routes[r][2][self.routes[r][3][j]])), None)
+            if j is not None:
+                hit[r] = j
+        if not hit:
+            return None
+        r0 = min(hit)
+        c = step_candidate("x", self.routes[r0], hit[r0])
+        if self.classifier.classify(step, [c]).arithmetic_ok is False:
+            self.slips += 1
+            if self.slips < 2:
+                return [Feedback(kind="slip", message=slip_text(step, c, decimal=self.q.get("output_format") == "decimal"))]
+            note = [Feedback(kind="slip", message=f"It's {engine.fmt(c.result)}. Let's carry on with that.")]
+        else:
+            note = []
+        before = set(self.named_methods())
+        for r, j in hit.items():
+            self.inhead[r] = self.inhead[r] - {j}
+        later = {}
+        if with_shadow:
+            keep = {r: pool[r] for r in hit}
+            self.live = keep  # the shadow is worked out beside the routes that stay
+            later = self._apply(self._reach(step, self._shadow()))
+        self.live = {**later, **{r: pool[r] for r in hit}}
+        self.named = {self.routes[r][0]["method"] for r in self.live}
+        self.tree_entries = None
+        after = set(self.named_methods())
+        if len(after) == 1 and after != before:  # the routes that stay are another method's (GCF(12, 20) = 4)
+            note.append(Feedback(kind="method", message=f"You're using: {self.names(after)}."))
+            self.announced = next(iter(after))
+        elif after != before:
+            note.append(Feedback(kind="method", message=f"That step fits {self.names(after)}."))
+        self.shadow = {}
+        self.said.append(step)  # the shadow's routes must fit it too: there it is a step done in the head, not twice
+        self.slips = 0
+        # as she wrote it, or the corrected step after "It's 10. Let's carry on"
+        self.history.append(c.expression if any(f.kind == "slip" for f in note) else written(step))
+        self._remark_head()
+        out = [f for f in note if f.kind == "slip"] + [Feedback(kind="correct", message=f"✓ {c.expression}  (you'd done it in your head)")] \
+            + [f for f in note if f.kind == "method"]
+        if any(self._ended(r) for r in self.live):  # a route that stays has ended (25 ÷ 1 = 25 after 25 × 3.5 = 87.5)
+            out += self.finish_steps()
+        return out
+
+    def _remark_head(self):
+        """The history's "(in your head)" lines, rebuilt for the routes now live: a mark for a step on no live route
+        goes, and the kept route's head steps not yet marked are added before her last step."""
+        r0 = min(self.live) if self.live else None
+        on = {step_candidate("x", self.routes[r], j).expression for r in self.live for j in self.inhead.get(r, ())}
+        mark = "(in your head) "
+        self.history = [h for h in self.history if not h.startswith(mark) or h[len(mark):] in on]
+        if r0 is not None:
+            have = {h[len(mark):] for h in self.history if h.startswith(mark)}
+            later = lambda j: {_plain(step_candidate("x", self.routes[r0], k).expression)
+                               for k in range(j + 1, len(self.routes[r0][3]))}
+            for j in sorted(self.inhead.get(r0, ())):
+                e = step_candidate("x", self.routes[r0], j).expression
+                if e in have:
+                    continue
+                after = later(j)  # before the first written step that comes after it on the route (and so may use it)
+                i = next((i for i, h in enumerate(self.history) if not h.startswith(mark) and _plain(h) in after),
+                         max(len(self.history) - 1, 0))
+                self.history.insert(i, mark + e)
+
+    def _ended(self, r):
+        """A route is finished when its last step is done and no skipped step is still to write."""
+        return self.next_step(r) is None and not self.owed.get(r)
+
+    def _move(self, r, at, p, owed):
+        """Route r at position `at` (owing the steps `owed`) fits its step p: (new position, steps still owed, steps
+        done in the head). An owed step written leaves the position. Of the steps p skips, the ones p needs were done
+        in the head, and the others are still to write (6 ÷ 2 = 3 before 6 × 3 = 18 in walk-to-school)."""
+        if p < at:
+            at2, owed2, head = at, owed - {p}, set()
+        else:
+            loose = set(self.paths.head(self.routes[r], at, p))
+            at2, owed2, head = p + 1, frozenset(owed | loose), set(range(at, p)) - loose
+        used = self._needed_owed(r, p, owed2)  # owed steps the written step needs were done in the head after all
+        return at2, frozenset(owed2 - used), head | used
+
+    def _needed_owed(self, r, p, owed):
+        """The owed steps of route r that its step p is computed from."""
+        if not owed:
+            return set()
+        steps = self.paths.path(self.routes[r])
+        need = self.paths.index.ancestors(steps[p])
+        return {j for j in owed if steps[j] in need}
+
+    def _apply(self, far):
+        """Move the routes in `far` (route → the position of the step the statement fits): {route: new position}."""
+        out, self._heads = {}, {}
+        for r, p in far.items():
+            at, o, h = self._move(r, self._at(r), p, self.owed.get(r, frozenset()))
+            self.inhead.setdefault(r, set()).update(h)
+            self.owed[r] = o
+            self._heads[r] = h  # this statement's steps done in the head, for the history
+            out[r] = at
+        return out
+
+    def _advance(self, advanced, others, r0, before, out, skipped_to=False, shown=None, pos=None):
+        """Move the routes the step fits on: `advanced` (route → its new position) are named for it, `others` stay
+        live without being named. r0 is the route whose step is shown; `before` the methods named until now;
+        `skipped_to` says the step was found further along the routes; `shown` replaces the step shown; `pos`
+        (route → position) is where the step was found, when that isn't just before the new position (an owed step)."""
+        done = step_candidate("x", self.routes[r0], pos[r0] if pos else advanced[r0] - 1)
+        alive_methods = {self.routes[r][0]["method"] for r in advanced}
+        if not pos:  # a next step: the owed steps it needs were done in the head
+            for r, at in advanced.items():
+                used = self._needed_owed(r, at - 1, self.owed.get(r, frozenset()))
+                if used:
+                    self.owed[r] = frozenset(self.owed[r] - used)
+                    self.inhead.setdefault(r, set()).update(used)
+        self.said.append(self._current)
+        self.shadow = {}
+        self.live = {**others, **advanced}
+        self.named = alive_methods
+        self.slips = self.hints = 0
+        # her history holds what she wrote (the corrected step after "It's 24. Let's carry on"); the steps done in
+        # the head are marked as such
+        heads = getattr(self, "_heads", {}).get(r0, set())
+        self._heads = {}
+        self.history += [f"(in your head) {step_candidate('x', self.routes[r0], j).expression}" for j in sorted(heads)]
+        said = self._current
+        carried_on = any(f.kind == "slip" for f in out)
+        mine = str(said.value) if said.kind == "value" else done.expression if carried_on else written(said)
+        self.history.append(shown or mine)
+        self._remark_head()
+        out.append(Feedback(kind="correct", message=f"✓ {shown}" if shown else f"✓ {done.expression}  ({done.say})"))
         after = set(self.named_methods())
         if len(after) == 1 and after != before:
             mid = next(iter(after))
             m = self.methods[mid]
             idea = method_text(self.qid, mid, 'idea', self.values)
-            if set(self.live_methods()) - after:  # another method is still building up toward its step
+            if set(self.live_methods()) - after and not any(self._ended(r) for r in advanced):
+                # another method is still building up toward its step (and this one isn't finished)
                 out.append(Feedback(kind="method", message=f"That's {m['name']} so far. {idea}"))
                 self.so_far = mid
             else:
@@ -358,10 +661,212 @@ class QuestionSession:
             out.append(Feedback(kind="method", message=f"You're using: {m['name']}."))
             self.announced = next(iter(after))
         elif len(after) > 1 and after != before:
-            out.append(Feedback(kind="method", message=f"That step starts {self.names(after)}. Your next step will tell which."))
-        if all(self.next_step(r) is None for r in advanced):
+            finishing = any(self._ended(r) for r in advanced)
+            out.append(Feedback(kind="method", message=f"That step fits {self.names(after)}." if finishing or skipped_to
+                                else f"That step starts {self.names(after)}. Your next step will tell which."))
+        # one route the step moved has ended with nothing owed: the student's route is done (4/3 < 1.4 ends unit
+        # rate while the graph route still owes its plot; a sibling expansion may still owe GCF(3, 4) = 1)
+        if any(self._ended(r) for r in advanced):
             out += self.finish_steps()
         return out
+
+    # ------------------------------------------------------------ statements further along a route
+
+    def _close(self, n, exact):
+        """A student's number for an exact value. On a question about writing a decimal (to-decimal), a decimal that
+        ends must be written exactly: 0.6 isn't 5/8."""
+        if self.q.get("output_format") == "decimal" and isinstance(exact, Fraction) and engine.terminates(exact):
+            return n.value == exact
+        return n.close_to(exact)
+
+    def _fitter(self, inp, exact=False):
+        """Does a statement fit a route's trace entry? A step by its operation and numbers (the arithmetic is
+        checked apart), a bare number by its value. `exact`: the numbers as typed, without rounding."""
+        if inp.kind == "value":
+            n = inp.value
+            if exact:
+                return lambda e: isinstance(e[2], Fraction) and n.value == e[2]
+            return lambda e: isinstance(e[2], Fraction) and self._close(n, e[2])
+        if exact and inp.kind in ("arithmetic", "function"):
+            def same(e):
+                x, y = e[1] if e[1] and len(e[1]) == 2 else (None, None)
+                a, b = inp.left.value, inp.right.value
+                return ((a, b) == (x, y) or (e[0]["op"] in ("add", "multiply", "gcf", "lcm") and (a, b) == (y, x))) \
+                    and self._fits(inp, e)
+            return same
+        return lambda e: self._fits(inp, e)
+
+    def _fits(self, step, entry):
+        """Does a typed step fit a route's trace entry (its operation and numbers; the arithmetic is checked apart)?"""
+        st, args, result = entry
+        if st["op"] != step_op(step) or not engine.visible(st):
+            return False
+        loc = st.get("loc") or ()  # the method the step is in, for the classifier's method rules
+        c = Candidate(id="x", op=st["op"], operands=list(args), result=result, methods=[loc[0][1]] if loc else [])
+        return self.classifier.classify(step, [c]).status == "match"
+
+    def _reach(self, inp, pool, prune=True, owed=None):
+        """_further for a statement: the routes where it fits with its numbers exactly (6 ÷ 0.4), or else as rounded
+        (0.67 for 2/3). A rounded number never wins over an exact one (0.4 isn't 0.375 when 0.4 is on a route)."""
+        return (self._further(self._fitter(inp, exact=True), pool, prune, owed)
+                or self._further(self._fitter(inp), pool, prune, owed))
+
+    def _further(self, fits, pool, prune=True, owed=None):
+        """The routes in `pool` (route → position) with a visible step that `fits`: a step it still owes, or the
+        earliest at or after its position. {route: that step's position}. The steps it skips that it needs become
+        done in the head; the others stay to write. With `prune`, a route that skips a step out of order (5 × 4
+        before 3 × 7 in one order of an `all` block) counts only when no route of its method skips fewer."""
+        owed = self.owed if owed is None else owed
+        found, memo = {}, {}
+        for r, at in pool.items():
+            route = self.routes[r]
+            v, env, trace, vis = route
+            steps = self.paths.path(route)
+            mine = owed.get(r, frozenset())
+            ahead = []  # the earliest step further on that fits, with the steps it leaves owed
+            for j in range(at, len(vis)):
+                q = (steps[j], v["method"])  # routes share most quantities: test each once per method (the method
+                # matters: a fraction she writes is never Convert to decimals' decimal)
+                if q not in memo:
+                    memo[q] = fits(trace[vis[j]])
+                if memo[q]:
+                    ahead = [(j, len(self.paths.head(route, at, j)))]
+                    break
+            # an owed step fits first, unless it needs other owed steps and the step further on doesn't (3 ÷ 1 = 3
+            # can be the owed step after GCF(3, 2), still unwritten, or the later one after GCF(8, 3), written)
+            hits = [(j, 0) for j in sorted(mine) if fits(trace[vis[j]])]
+            clean = [h for h in hits + ahead if not self._needed_owed(r, h[0], mine - {h[0]})]
+            pick = (clean or hits + ahead or [None])[0]
+            if pick is not None:
+                found[r] = pick
+        if not prune:
+            return {r: p for r, (p, loose) in found.items()}
+        best = {}
+        for r, (p, loose) in found.items():
+            m = self.routes[r][0]["method"]
+            best[m] = min(best.get(m, loose), loose)
+        return {r: p for r, (p, loose) in found.items() if loose == best[self.routes[r][0]["method"]]}
+
+    def _head_text(self, far):
+        """What the found routes did in the head, said once when they agree on it."""
+        said = {tuple(step_candidate("x", self.routes[r], j).expression
+                      for j in range(self._at(r), p) if j not in self.paths.head(self.routes[r], self._at(r), p))
+                for r, p in far.items()}
+        if () in said:  # some route fits with nothing done in the head
+            return None
+        if len(said) == 1:
+            steps = next(iter(said))
+            return f"You did {' and '.join(steps)} in your head." if len(steps) <= 2 else \
+                f"You did {len(steps)} steps in your head: {', '.join(steps)}."
+        return "You did the steps before it in your head."
+
+    def _skipped_to(self, step, far, others=None):
+        """A step that is no live route's next step but is a later step of some: the steps before it were done in
+        the head. `others` (route → position) stay live without being named: routes the step builds up on."""
+        r0 = min(far)
+        c = step_candidate("x", self.routes[r0], far[r0])
+        cls = self.classifier.classify(step, [c])
+        if cls.arithmetic_ok is False:
+            self.slips += 1
+            if self.slips < 2:
+                return [Feedback(kind="slip", message=slip_text(step, c, decimal=self.q.get("output_format") == "decimal"))]
+            out = [Feedback(kind="slip", message=f"It's {cls.expected_result}. Let's carry on with that.")]
+        else:
+            out = []
+        before = set(self.named_methods())
+        head = self._head_text(far)
+        if head:
+            out.append(Feedback(kind="info", message=head))
+        moved = self._apply(far)
+        self.tree_entries = None
+        self.last_match = "skip"
+        return self._advance(moved, others or {}, r0, before, out, skipped_to=True, pos=far)
+
+    def submit_value(self, inp):
+        """A bare number while the steps are open: the answer (every step done in the head), or a quantity on some
+        live route. A number that fits quantities on several routes keeps them all, each at its own position."""
+        n = inp.value
+        self._current = inp
+        if self.q.get("output_format") == "decimal" and is_fraction_text(n.text):
+            return [Feedback(kind="unknown", message=f"{n} is a fraction: write it as a decimal.")]
+        ends = lambda pool: {r: len(self.routes[r][3]) for r in pool  # the routes this number is the answer of
+                             if isinstance(self.routes[r][1].get("answer"), Fraction) and self._close(n, self.routes[r][1]["answer"])}
+        if self.q["outputs"] == ["x1", "y1"] and "/" in n.text:  # simplify's answer is a fraction: 3/4 is x1 = 3, y1 = 4
+            top, bottom = (engine.num(x) for x in n.text.split("/", 1))
+            pair = lambda pool: {r: len(self.routes[r][3]) for r in pool
+                                 if (self.routes[r][1].get("x1"), self.routes[r][1].get("y1")) == (top, bottom)}
+            fin = pair(self.live) or pair(self._shadow())
+            if fin:
+                return self._answered(fin, n)
+        if self.q["outputs"] == ["answer"]:
+            fin = ends(self.live) or ends(self._shadow())
+            if fin:
+                return self._answered(fin, n)
+        if any(n.close_to(engine.num(v)) for v in self.values.values()):
+            return [Feedback(kind="info", message=f"{n} is one of the numbers in the question. Write a step with it, "
+                                                  "like `4 x 18 = 72`, or a number you worked out.")]
+        far = self._reach(inp, self.live) or self._reach(inp, self._shadow())
+        if not far:
+            return [Feedback(kind="unknown", message=f"I don't see where {n} comes from here. Write the step that "
+                                                     "gives it, like `4 x 18 = 72`, or type `hint`.")]
+        before = set(self.named_methods())
+        steps = {step_candidate("x", self.routes[r], p).expression for r, p in far.items()}
+        out = []
+        if len(steps) > 1:
+            out.append(Feedback(kind="info", message=f"{n} fits more than one step: " + "; ".join(sorted(steps))
+                                + ". Your next step will tell which."))
+        else:
+            head = self._head_text(far)
+            if head:
+                out.append(Feedback(kind="info", message=head))
+        moved = self._apply(far)
+        self.tree_entries = None
+        self.last_match = "skip"
+        r0 = min(far)
+        return self._advance(moved, {}, r0, before, out, skipped_to=True, shown=str(n) if len(steps) > 1 else None,
+                             pos=far)
+
+    def _answered(self, fin, n, mine=None):
+        """The student gave the answer: the routes it ends finish, with the steps not written done in the head."""
+        before = set(self.named_methods())
+        named = {self.routes[r][0]["method"] for r in fin}
+        named = (named & before) or named
+        r_first = min(fin)
+        head0 = set(range(self._at(r_first), fin[r_first] - 1)) | self.owed.get(r_first, frozenset())
+        if len(fin) == 1:  # one route: its steps done in the head are marked in the history (several: see ambiguity())
+            self.history += [f"(in your head) {step_candidate('x', self.routes[r_first], j).expression}"
+                             for j in sorted(head0)]
+        for r, end in fin.items():  # the answer itself is stated, not done in the head; owed steps were too
+            self.inhead.setdefault(r, set()).update(set(range(self._at(r), end - 1)) | self.owed.get(r, frozenset()))
+            self.owed[r] = frozenset()
+        self.live = fin
+        self.shadow = {}
+        self.said.append(ValueAnswer(value=n))
+        self.named = named
+        self.tree_entries = None
+        self.last_match = "skip"
+        r0 = min(fin, key=lambda r: (self.routes[r][0]["method"] not in named, r))
+        self.result = engine.outputs_of(self.qid, self.routes[r0][1])
+        how = f"You used {self.names(self.named_methods())}." if self.history and len(self.named_methods()) == 1 \
+            else "You did the working in your head."
+        self.history.append(mine or str(n))
+        self.phase = "done"
+        shown = "/".join(engine.fmt(v) for v in self.result.values()) if isinstance(self.result, dict) \
+            else engine.show(self.result)
+        return [Feedback(kind="done", message=f"✓ Correct: {shown}. {how}")]
+
+    def ambiguity(self):
+        """What the statements so far leave open, for a later question back to the student (PATHS.md, step 5):
+        the methods still named when there are several, and each live route's steps taken as done in the head.
+        {"methods": [...], "head": [{"route", "method", "steps": [expressions]}]}"""
+        named = self.named_methods()
+        head = [{"route": r, "method": self.routes[r][0]["method"],
+                 "steps": [step_candidate("x", self.routes[r], j).expression for j in sorted(self.inhead[r])]}
+                for r in self.live if self.inhead.get(r)]
+        owed = [{"route": r, "method": self.routes[r][0]["method"],
+                 "steps": [step_candidate("x", self.routes[r], j).expression for j in sorted(self.owed[r])]}
+                for r in self.live if self.owed.get(r)]
+        return {"methods": named if len(named) > 1 else [], "head": head, "owed": owed}
 
     def _rechosen(self, step):
         """Live routes re-run with the student's own choice where the method lets them choose: any common factor
@@ -381,7 +886,11 @@ class QuestionSession:
                 continue
             seen.add(key)
             self.routes.append(route)
+            if isinstance(self.classifier, RuleClassifier):  # a re-run's numbers are exact too
+                self.classifier.exact_values = self.classifier.exact_values | {
+                    x for i in route[3] for x in (route[2][i][1] or []) + [route[2][i][2]] if isinstance(x, Fraction)}
             self.choices[len(self.routes) - 1] = choices
+            self.owed[len(self.routes) - 1] = self.owed.get(r, frozenset())
             out[len(self.routes) - 1] = at
         return out
 
@@ -428,9 +937,14 @@ class QuestionSession:
         return (v, env2, trace2, vis2), choices
 
     def finish_steps(self):
-        finished = [r for r in self.live if self.next_step(r) is None]
+        if self.phase != "steps":
+            return [Feedback(kind="info", message="This one is finished." if self.phase == "done" else
+                             "That's all the steps.")]
+        finished = [r for r in self.live if self._ended(r)]
         if not finished:
             return [Feedback(kind="info", message="There's at least one more step. Type `hint` if you're stuck.")]
+        named = set(self.named_methods())  # a route kept live but not named isn't the one the student walked
+        finished.sort(key=lambda r: self.routes[r][0]["method"] not in named)
         self.live = {r: self.live[r] for r in finished}
         self.result = engine.outputs_of(self.qid, self.routes[finished[0]][1])
         if self.ask_final:
@@ -445,6 +959,7 @@ class QuestionSession:
             inp = parse(text, choices=len(opts or []))
         except ParseError:
             inp = None
+        self.read = inp
         return self.answer_input(inp, text)
 
     def answer_input(self, inp, text):
@@ -461,7 +976,8 @@ class QuestionSession:
         else:
             if not inp or inp.kind != "value":
                 return [Feedback(kind="error", message="Write the answer as a number.")]
-            ok = inp.value.close_to(expected)
+            ok = self._close(inp.value, expected) and not (
+                self.q.get("output_format") == "decimal" and is_fraction_text(inp.value.text))  # a decimal, not 5/8
         if not ok:
             return [Feedback(kind="unknown", message=f"Not quite. Look at your last step: {self.history[-1]}.")]
         self.phase = "done"
@@ -477,7 +993,8 @@ class QuestionSession:
         nexts = {}
         named = set(self.named_methods())
         for r in self.live:
-            c = self.next_step(r)
+            owed = sorted(self.owed.get(r, ()))  # a step skipped out of order comes first
+            c = step_candidate("x", self.routes[r], owed[0]) if owed else self.next_step(r)
             if c and self.routes[r][0]["method"] in named:
                 nexts.setdefault(self.routes[r][0]["method"], c)
         if not nexts:
@@ -503,6 +1020,7 @@ class QuestionSession:
         if not live:
             return [Feedback(kind="error", message=f"{mid!r} isn't one of the methods still open here.")]
         self.live = live
+        self.chosen = mid
         self.named = {mid}
         self.announced = mid
         if self.tree_entries is not None:  # still classifying against the tree: keep only this method's entries
@@ -511,12 +1029,13 @@ class QuestionSession:
         return [Feedback(kind="method", message=f"You're using: {m['name']}. {method_text(self.qid, mid, 'idea', self.values)}")]
 
     def next_steps(self):
-        """The next visible step of every live route: [(route index, step dict, Candidate)]."""
+        """The steps each live route can take now: its owed steps, then its next visible step.
+        [(route index, step dict, Candidate)]."""
         out = []
         for r, at in self.live.items():
             v, env, trace, vis = self.routes[r]
-            if at < len(vis):
-                out.append((r, trace[vis[at]][0], step_candidate("x", self.routes[r], at)))
+            for p in sorted(self.owed.get(r, ())) + ([at] if at < len(vis) else []):
+                out.append((r, trace[vis[p]][0], step_candidate("x", self.routes[r], p)))
         return out
 
 
@@ -527,7 +1046,7 @@ class WordProblemSession:
     def __init__(self, wid, classifier: Classifier | None = None):
         self.wid, self.wp = wid, engine.WP[wid]
         self.classifier = classifier or RuleClassifier()
-        ok, self.info = engine.check_word_problem(self.wp)
+        self.info = story(wid)
         self.plan, self.run = self.info["plan"], self.info["run"]
         self.decided = set()
         self.di = None
@@ -538,6 +1057,8 @@ class WordProblemSession:
             self.order[di] = idx
         self.pre_todo = []    # steps on a settled decision's ✓ edge still to write: indexes into run["before"]
         self.pre_done = set()
+        self.settled_by_work = set()  # decisions a statement settled, not a pick: a same-numbers trap stays open
+        self.open_traps = []  # traps a statement fitted as well as the correct reading did (12: the savings, or a step)
         self._proto = None
         self.question = None
         self.then_pos = 0
@@ -595,9 +1116,18 @@ class WordProblemSession:
     def _probe(self):
         """A fresh QuestionSession on the correct reading's numbers (expanded once, then copied)."""
         if self._proto is None:
-            values = {k: engine.fmt(v) for k, v in self.run["inputs"].items()}
-            self._proto = QuestionSession(self.plan["question"], values, self.classifier, ask_final=False)
+            if type(self.classifier) is RuleClassifier:  # the usual classifier: share the expansion between sessions
+                if self.wid not in _probes:
+                    _probes[self.wid] = self._question_on(self.run["inputs"])
+                self._proto = _probes[self.wid]
+            else:
+                self._proto = self._question_on(self.run["inputs"])
         return self._proto.fresh()
+
+    def _question_on(self, inputs):
+        values = {k: engine.fmt(v) for k, v in inputs.items()}
+        return QuestionSession(self.plan["question"], values,
+                               None if type(self.classifier) is RuleClassifier else self.classifier, ask_final=False)
 
     def _start_solving(self, question=None):
         self.phase = "solve"
@@ -661,13 +1191,25 @@ class WordProblemSession:
                 if not 1 <= int(m[2]) <= len(self.wp["extract"][di]["options"]):
                     return [Feedback(kind="error", message=f"Pick a number from 1 to {len(self.wp['extract'][di]['options'])}.")]
                 return self.submit_input(ChoiceAnswer(index=int(m[2]), decision=di))
+            n = len(self.wp["extract"][self.di]["options"])
+            if re.fullmatch(r"\s*\d+\s*", text) and not 1 <= int(text) <= n:
+                n = 0  # 12 isn't an option number: it's a number the student found
             try:
-                inp = parse(text, choices=len(self.wp["extract"][self.di]["options"]))
+                inp = parse(text, choices=n)
             except ParseError as e:
                 return [Feedback(kind="error", message=str(e))]
             return self.submit_input(inp)
         if self.phase == "solve":
-            return self._solved(self.question.submit(text))
+            try:
+                inp = parse(text)
+            except ParseError:
+                inp = None
+            if inp is not None and inp.kind == "value":
+                return self.submit_input(inp)
+            self.question.read = None
+            out = self._solved(self.question.submit(text), inp)
+            self.read = self.question.read
+            return out
         if self.phase == "then":
             try:
                 step = parse(text)
@@ -680,19 +1222,80 @@ class WordProblemSession:
 
     def submit_input(self, inp):
         """A typed StudentInput (from the parser, a structured UI, or a model)."""
+        self.read = inp  # the reading of the student's text the session used (for the log)
         if self.phase == "extract":
             return self._pre(inp) if self.pre_todo else self._extract(inp)
         if self.phase == "solve":
-            return self._solved(self.question.submit_input(inp))
+            if self._story_answer_fits(inp):
+                return self._story_answer(inp)  # any follow-up step done in the head too (80 − 12 = 68)
+            # a trap's answer is named here as before the decisions (18, 0.8); a step goes to the question first, and
+            # is named only if the right reading can't take it, not even as a build-up (4 × 10 = 40 toward 80)
+            t = self._trap_named(inp) if inp.kind == "value" else None
+            if t:
+                return self._trap_feedback(t, inp)
+            out = self._solved(self.question.submit_input(inp), inp)
+            return out + self._caution(inp, out)
         if self.phase == "then":
             return self._then(inp)
         if self.phase == "answer":
             return self._answer_input(inp, None)
         return [Feedback(kind="info", message="This one is finished.")]
 
-    def _solved(self, out):
+    def _trap_named(self, inp):
+        """The trap a statement gives away, the same in every phase. A number: a trap's answer that the correct
+        reading has no quantity for (numbers from the story don't count: 18 restates a given), or exactly a trap's
+        answer that the correct reading has only rounded (0.8). A step: a trap's giveaway, or a step only a trap's
+        reading has (4 × 24 = 96, 12 − 4 = 8, 80 − 15 = 65)."""
+        if inp.kind == "value":
+            given = any(inp.value.close_to(engine.num(q["value"])) for q in self.wp["quantities"])
+            traps = self._traps_of_answer(inp)
+            if traps and (given or not self._fits_reading(inp, self.paths().readings[0])):
+                return traps[0]
+            return None if given else self._exact_trap(inp) or self._trap_quantity(inp)
+        if inp.kind in ("arithmetic", "function", "compare", "ratio_compare", "plot"):
+            return self._trap_for(inp) or self._trap_quantity(inp)
+        return None
+
+    def _trap_feedback(self, t, inp):
+        return [Feedback(kind="trap", message=f"“{_shown(inp)}” fits this reading: {t['option']['trap']}"
+                                              f"{self._trap_tail(t)}")]
+
+    def _caution(self, inp, out):
+        """A number taken as right that is also a trap's answer gets the note it gets before the decisions (6 is
+        a quantity of the right reading, and where the eggs reading stops)."""
+        if inp is None or inp.kind != "value" or not any(f.kind in ("correct", "done") for f in out):
+            return []
+        traps = self._traps_of_answer(inp)
+        if not traps or self._story_answer_fits(inp):
+            return []
+        return [Feedback(kind="info", message=f"Careful: {inp.value} is also where "
+                         + ("this reading stops: " if len(traps) == 1 else "these readings stop: ")
+                         + " ".join(t["option"]["trap"] for t in traps))]
+
+    def _solved(self, out, inp=None):
+        """After the question's feedback. A number that ends the question and is the story's answer too ends the
+        story; a statement the question doesn't take may still be a step of a trap's reading."""
+        if inp is not None and any(f.kind in ("correct", "done") for f in out):
+            self._narrow(inp)
+        if inp is not None and any(f.kind == "slip" for f in out) and getattr(inp, "result", None) is not None:
+            t = next(iter(self._traps_of_answer(ValueAnswer(value=inp.result))), None)
+            if t and not self._fits_reading(ValueAnswer(value=inp.result), self.paths().readings[0], exact=True):
+                # 3 ÷ 4 = 0.8 lands on the add-tops-and-bottoms answer. If the question carried on with the right
+                # value (a second slip), she sees that too, and what comes after it
+                trap = self._trap_feedback(t, inp)
+                if not any(f.kind == "correct" for f in out):
+                    return trap
+                out = out + trap
         if self.question.phase == "done":
-            out += self._after_question()
+            return out + self._after_question()
+        if inp is not None and inp.kind != "value" and [f.kind for f in out] == ["unknown"]:
+            k = self._after_index(inp)
+            if k is not None:
+                return self._skip_to_then(inp, k)
+        if inp is not None and [f.kind for f in out] == ["unknown"]:
+            t = self._trap_named(inp) or next(iter(self._traps_of_answer(inp)), None)
+            if t:
+                return self._trap_feedback(t, inp)
         return out
 
     def decide(self, di, index):
@@ -721,7 +1324,7 @@ class WordProblemSession:
             self.di = di
             return [Feedback(kind="trap", message=f"Not quite. {o['trap']} {self._trap_result(t)}")]
         if inp.kind == "value":
-            return [Feedback(kind="error", message="Pick an option by its number, or write a step like `4 x 18 = 72`.")]
+            return self._value_first(inp)
         return self._jump(inp)
 
     def _trap_result(self, t):
@@ -732,16 +1335,26 @@ class WordProblemSession:
         return f"That reading gives {engine.show(t['run']['final'])}. Try again."
 
     def _pre(self, step):
-        """A step on a settled decision's ✓ edge (90 ÷ 60 = 1.5)."""
-        if step.kind in ("choice", "value"):
+        """A step on a settled decision's ✓ edge (90 ÷ 60 = 1.5): that step, its value, or a later step with it done
+        in the head."""
+        if step.kind == "choice":
             return [Feedback(kind="error", message="Write the step, like `90 / 60 = 1.5`.")]
         i = self.pre_todo[0]
         st, args, result = self.run["before"][i]
         c = Candidate(id="pre", op=st["op"], operands=list(args), result=result,
                       expression=engine.expression(st, args, result))
+        if step.kind == "value":
+            if isinstance(result, Fraction) and step.value.close_to(result):
+                self.pre_todo.pop(0)
+                self.pre_done.add(i)
+                out = [Feedback(kind="correct", message=f"✓ {c.expression}  ({engine.say(st.get('say'), self.run['env'])})")]
+                return out + ([self._ask_pre()] if self.pre_todo else self._next_decision())
+            if self._story_answer_fits(step):
+                return self._story_answer(step)
+            return self._value_first(step, pre=True)
         cls = self.classifier.classify(step, [c])
         if cls.status != "match":
-            return [Feedback(kind="unknown", message="That's not the step I expected. Type `hint` for a nudge.")]
+            return self._jump(step, pre=True)
         if cls.arithmetic_ok is False:
             return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”.")]
         self.pre_todo.pop(0)
@@ -749,63 +1362,140 @@ class WordProblemSession:
         out = [Feedback(kind="correct", message=f"✓ {c.expression}  ({engine.say(st.get('say'), self.run['env'])})")]
         return out + ([self._ask_pre()] if self.pre_todo else self._next_decision())
 
-    def _pre_for(self, step):
-        """(decision, before index) when the step is one on the ✓ edge of a decision not yet settled."""
+    def _pre_for(self, inp):
+        """(decision, before index) when the step (or its value) is one on the ✓ edge of a decision not yet settled."""
         for di in self.open_decisions():
             for i in self._pre_steps(di):
                 st, args, result = self.run["before"][i]
+                if inp.kind == "value":
+                    if isinstance(result, Fraction) and inp.value.close_to(result):
+                        return di, i
+                    continue
                 c = Candidate(id="pre", op=st["op"], operands=list(args), result=result)
-                if self.classifier.classify(step, [c]).status == "match":
+                if self.classifier.classify(inp, [c]).status == "match":
                     return di, i
         return None
 
-    def _jump(self, step):
+    def _settle_pre(self, inp, pre):
+        di, i = pre
+        o = next(o for o in self.wp["extract"][di]["options"] if o.get("correct"))
+        also = [t for t in self._also_fit(inp) if t["decision"] == di]  # a trap of this decision computes it too
+        self.decided.add(di)
+        self.pre_todo = [i] + [j for j in self._pre_steps(di) if j != i]
+        self.di = di
+        dec = self.wp["extract"][di]
+        self.open_traps += [t for t in also if not any(t is u for u in self.open_traps)]
+        out = [Feedback(kind="info", message=f"That {'fits' if also else 'settles it'}: {dec['say']} {o['say']}.")]
+        out += self._pre(inp)
+        out += [Feedback(kind="info", message=f"Careful: “{_shown(inp)}” is also in this reading: {t['option']['trap']}")
+                for t in also]
+        return out
+
+    def _settle(self, what="step", probe=None, still_open=()):
+        """The student's statement fits the correct reading: every open decision is settled (the steps on their ✓
+        edges were done in the head), and solving starts. The decisions of the traps in `still_open`, which the
+        statement fits too, aren't said to be read right; open_readings() keeps them."""
+        self.open_traps = list(still_open)
+        shut = {t["decision"] for t in still_open}
+        rest = [self.wp["extract"][di] for di in range(len(self.wp["extract"])) if di not in self.decided | shut]
+        self.settled_by_work |= set(range(len(self.wp["extract"]))) - self.decided
+        self.decided = set(range(len(self.wp["extract"])))
+        self.pre_todo = []
+        out = [Feedback(kind="info", message=f"That {what} means you read the story right: "
+                                             + "; ".join(next(o["say"] for o in d["options"] if o.get("correct")) for d in rest)
+                                             + ".")] if rest else []
+        return out + self._start_solving(probe)
+
+    def _jump(self, step, pre=False):
         """The student skipped the decisions and started computing. Work out which reading their step comes from:
-        a step of a decision's own (90 ÷ 60, the conversion), a first step of the correct reading, or a trap's."""
-        pre = self._pre_for(step)
-        if pre:
-            di, i = pre
-            o = next(o for o in self.wp["extract"][di]["options"] if o.get("correct"))
-            self.decided.add(di)
-            self.pre_todo = [i] + [j for j in self._pre_steps(di) if j != i]
-            self.di = di
-            dec = self.wp["extract"][di]
-            fb = [Feedback(kind="info", message=f"That step settles it: {dec['say']} {o['say']}.")] + self._pre(step)
-            return fb
+        a step of a decision's own (90 ÷ 60, the conversion), a step of the correct reading (the next step of one of
+        its routes, or one further along with the steps before it done in the head), or a trap's. `pre`: the step
+        came while a settled decision's own step was asked for."""
+        found = None if pre else self._pre_for(step)
+        if found:
+            return self._settle_pre(step, found)
         probe = self._probe()
-        cands = probe.candidates()
-        cls = self.classifier.classify(step, cands)
-        exact = cls.status == "match" and any(not is_wildcard(c) for c in cands if c.id in cls.matched)
         trap = self._trap_for(step)
-        if cls.status == "match" and (exact or not trap):
-            fb = probe.submit_step(step)  # credit the reading only if the step is a step of one of its routes
-            if any(f.kind in ("correct", "slip") for f in fb):
-                rest = [self.wp["extract"][di] for di in range(len(self.wp["extract"])) if di not in self.decided]
-                self.decided = set(range(len(self.wp["extract"])))
-                self.pre_todo = []
-                out = [Feedback(kind="info", message="That step means you read the story right: "
-                                                     + "; ".join(next(o["say"] for o in d["options"] if o.get("correct")) for d in rest) + ".")]
-                out += self._start_solving(probe)
-                out += fb
-                if self.question.phase == "done":
-                    out += self._after_question()
-                return out
+        fb = probe.submit_step(step)  # credit the reading only if the step is a step of one of its routes
+        took = any(f.kind in ("correct", "slip") for f in fb) or \
+            (probe.last_match == "skip" and any(f.kind == "on_track" for f in fb))  # a build-up or a later step
+        if took and any(f.kind == "slip" for f in fb) and getattr(step, "result", None) is not None:
+            said = ValueAnswer(value=step.result)  # 0.35 × 60 = 17.5: 17.5 is the take-them-out reading's answer
+            t = next(iter(self._traps_of_answer(said)), None)
+            if t:
+                return self._name_trap(t, written(step))
+        if took and (probe.last_match != "wildcard" or not trap):
+            # a step of the correct reading that is a trap's giveaway too (2 × 2 = 4 with 24 ÷ 12 = 2 in the head)
+            # is right so far, and the trap's decision stays open
+            out = self._settle("step", probe, still_open=([trap] if trap else []) + self._also_fit(step, trap))
+            if trap:
+                fb = fb + [Feedback(kind="info", message=f"Careful: “{written(step)}” is also how this reading goes: "
+                                                         f"{trap['option']['trap']}")]
+            out += fb
+            if self.question.phase == "done":
+                out += self._after_question()
+            return out
+        k = self._after_index(step)
+        if k is not None:  # the follow-up step (80 − 12 = 68): the question was done in the head
+            t = self._slip_trap(step, self.run["after"][k][2])
+            if t:  # 80 − 12 = 65: the right step, landing on the $15-off reading's answer
+                return self._name_trap(t, written(step))
+            return self._settle("step", probe) + self._skip_to_then(step, k)
+        trap = trap or self._trap_quantity(step)
         if trap:
-            di = trap["decision"]
-            same = (" It happens to give the same answer, for the wrong reason." if trap["same_as_correct"] else
-                    f" That gives {engine.show(trap['run']['final'])}.")
-            if di in self.decided:  # a step of a trap's reading contradicts what the student chose: reopen it
-                self.decided.discard(di)
-                self.di = di
-                chose = next(o["say"] for o in self.wp["extract"][di]["options"] if o.get("correct"))
-                return [Feedback(kind="trap", message=f"“{written(step)}” looks like this reading: {trap['option']['trap']}"
-                                                      f"{same} That doesn't fit what you chose ({chose}), so let's "
-                                                      "look at that decision again.")]
-            self.di = di
-            return [Feedback(kind="trap", message=f"“{written(step)}” looks like this reading: {trap['option']['trap']}"
-                                                  f"{same} Let's sort out this decision first.")]
-        return [Feedback(kind="unknown", message=f"I can't tell which reading “{written(step)}” comes from. "
+            return self._name_trap(trap, written(step))
+        if pre:
+            return [Feedback(kind="unknown", message="That's not the step I expected. Type `hint` for a nudge.")]
+        return [Feedback(kind="unknown", message=f"I can't tell which reading “{written(step)}” comes from.{two_steps(step)} "
                                                  "Pick an option, or type `hint`.")]
+
+    def _also_fit(self, inp, *known):
+        """The traps of open decisions whose reading the statement fits as well (50 is 150 ÷ 3 whether or not 90
+        minutes is converted first): their decisions stay open."""
+        ix = self.paths()
+        return [t for n, t in enumerate(self.info["traps"]) if t["decision"] not in self.decided
+                and not any(t is k for k in known) and self._fits_reading(inp, ix.readings[1 + n])]
+
+    def _after_index(self, step):
+        """The follow-up step of the correct reading (80 − 12 = 68) this step is, from the current one on, or None."""
+        for k in range(self.then_pos, len(self.run["after"])):
+            st, args, result = self.run["after"][k]
+            c = Candidate(id="then", op=st["op"], operands=list(args), result=result)
+            if self.classifier.classify(step, [c]).status == "match":
+                return k
+        return None
+
+    def _skip_to_then(self, step, k):
+        """A follow-up step written while the question is open: the question's answer was found in the head."""
+        q, res = self.question, self.run["result"]
+        fin = {r: len(q.routes[r][3]) for r in q.live
+               if engine.same_answer(engine.outputs_of(q.qid, q.routes[r][1]), res)} or \
+            {r: len(q.routes[r][3]) for r in q.live}
+        q._answered(fin, Number(text=engine.fmt(res)), mine=f"(in your head) {engine.fmt(res)}")
+        self.phase, self.then_pos = "then", k
+        return [Feedback(kind="info", message=f"You found the question's answer, {engine.show(res)}, in your head.")] \
+            + self._then(step)
+
+    def _trap_tail(self, t):
+        return (" It happens to give the same answer, for the wrong reason." if t["same_as_correct"] else
+                f" That gives {engine.show(t['run']['final'])}.")
+
+    def _name_trap(self, trap, shown, also=()):
+        """A statement of a trap's reading: move to that trap's decision, reopening it if the student settled it.
+        `also`: other traps the statement fits as well (two misreadings that both stop at 12)."""
+        di = trap["decision"]
+        same = self._trap_tail(trap) + "".join(f" Or this reading: {t['option']['trap']}" for t in also)
+        if di in self.decided:  # a statement of a trap's reading contradicts what the student chose: reopen it
+            self.decided.discard(di)
+            self.di = di
+            self.pre_todo = []
+            chose = next(o["say"] for o in self.wp["extract"][di]["options"] if o.get("correct"))
+            return [Feedback(kind="trap", message=f"“{shown}” looks like this reading: {trap['option']['trap']}"
+                                                  f"{same} That doesn't fit what you chose ({chose}), so let's "
+                                                  "look at that decision again.")]
+        self.di = di
+        return [Feedback(kind="trap", message=f"“{shown}” looks like this reading: {trap['option']['trap']}"
+                                              f"{same} Let's sort out this decision first.")]
 
     def _trap_for(self, step):
         """The trap whose giveaway steps include this step, if any: the trap's own steps on its branch (18 + 6 = 24),
@@ -820,6 +1510,160 @@ class WordProblemSession:
                 if c and self.classifier.classify(step, [c]).status == "match":
                     return t
         return None
+
+    # ------------------------------------------------------------ statements against every reading's paths
+
+    def paths(self):
+        """Every reading of the story with its paths and quantities (paths.WordProblemIndex)."""
+        return word_problem_index(self.wid, self.info)
+
+    def _fits_quantity(self, inp, q, exact=False):
+        if inp.kind == "value":
+            return isinstance(q.value, Fraction) and (inp.value.value == q.value if exact else inp.value.close_to(q.value))
+        if q.op is None or q.op != step_op(inp):
+            return False
+        c = Candidate(id="q", op=q.op, operands=list(q.operands), result=q.value)
+        return self.classifier.classify(inp, [c]).status == "match"
+
+    def _fits_reading(self, inp, reading, exact=False):
+        ix = self.paths().index
+        return any(self._fits_quantity(inp, ix.q[q], exact) for q in reading.quantities())
+
+    def _trap_quantity(self, inp):
+        """The trap with a quantity on its paths that this statement fits, when the correct reading has no quantity
+        it fits: a step further along (108 ÷ 4 = 27) or a number (4.5)."""
+        ix = self.paths()
+        if self._fits_reading(inp, ix.readings[0]):
+            return None
+        for rd in ix.readings[1:]:
+            if self._fits_reading(inp, rd):
+                return self.info["traps"][rd.trap]
+        return None
+
+    def _narrow(self, inp):
+        """Keep open only the traps whose reading has this statement too (50 × 1.5 = 75 uses the converted 1.5)."""
+        ix = self.paths()
+        keep = []
+        for t in self.open_traps:
+            n = next(n for n, x in enumerate(self.info["traps"]) if x is t)
+            if self._fits_reading(inp, ix.readings[1 + n]):
+                keep.append(t)
+        self.open_traps = keep
+
+    def _slip_trap(self, step, expected):
+        """The trap whose answer a wrong result lands on (80 − 12 = 65 where 68 is right; 65 is the $15-off answer)."""
+        res = getattr(step, "result", None)
+        if res is None or not isinstance(expected, Fraction) or res.close_to(expected):
+            return None
+        return next(iter(self._traps_of_answer(ValueAnswer(value=res))), None)
+
+    def _exact_trap(self, inp):
+        """A trap whose answer is exactly this number, when the correct reading has it only as a rounding."""
+        if inp.kind != "value":
+            return None
+        t = next((t for t in self._traps_of_answer(inp) if inp.value.value == engine.num(t["run"]["final"])), None)
+        if t and not self._fits_reading(inp, self.paths().readings[0], exact=True):
+            return t
+        return None
+
+    def _traps_of_answer(self, inp):
+        """The traps whose wrong answer is this number (27, 16, 8, 18). A trap with the correct answer can't show."""
+        if inp.kind != "value":
+            return []
+        return [t for t in self.info["traps"] if not t["same_as_correct"] and not isinstance(t["run"]["final"], str)
+                and inp.value.close_to(t["run"]["final"])]
+
+    def _story_answer_fits(self, inp):
+        final = self.run["final"]
+        return inp.kind == "value" and not isinstance(final, str) and inp.value.close_to(final)
+
+    def open_readings(self):
+        """The traps the statements so far haven't ruled out, for a later question back (PATHS.md, step 6): the
+        traps of the decisions still open, and once the story is settled by the work, the traps with the correct
+        reading's numbers (sugar with the 6 cups of water instead of the 6 glasses), which no number can show."""
+        if self.phase == "done":  # the answer is in: only the traps with that answer, which it can't rule out
+            return [t for t in self.info["traps"] if engine.same_answer(t["run"]["final"], self.run["final"]) and (
+                any(t is u for u in self.open_traps)
+                or (self.settled_by_work and t["decision"] in self.settled_by_work and self._same_numbers(t)))]
+        by_work = self.question is not None and self.settled_by_work
+        return [t for t in self.info["traps"] if t["decision"] not in self.decided or t in self.open_traps
+                or (by_work and t["decision"] in self.settled_by_work and self._same_numbers(t))]
+
+    def _same_numbers(self, t):
+        """Does the trap's reading compute what the correct reading computes, number for number?"""
+        ix = self.paths()
+        rd = ix.readings[1 + next(n for n, x in enumerate(self.info["traps"]) if x is t)]
+        return ix.labels(rd) <= ix.labels(ix.readings[0]) and engine.same_answer(t["run"]["final"], self.run["final"])
+
+    def _value_first(self, inp, pre=False):
+        """A bare number before the story's decisions are settled. In order: the story's answer (everything done in
+        the head), a trap's wrong answer, a number from the story, the value of a step on an open decision's ✓ edge,
+        a quantity of the correct reading (that settles the decisions), a quantity only a trap's reading has."""
+        n = inp.value
+        if self._story_answer_fits(inp):
+            return self._story_answer(inp)
+        traps = self._traps_of_answer(inp)
+        given = any(n.close_to(engine.num(q["value"])) for q in self.wp["quantities"])
+        correct = not given and self._fits_reading(inp, self.paths().readings[0])  # 18 restates a given
+        if traps and not correct:
+            return self._name_trap(traps[0], str(n), traps[1:])
+        t = self._exact_trap(inp)
+        if t and not given:  # 0.8: the trap's 4/5 exactly, the correct reading's 0.75 or 0.833 only rounded
+            return self._name_trap(t, str(n))
+        if given:
+            return [Feedback(kind="info", message=f"{n} is one of the numbers in the story. Pick an option, or write "
+                                                  "a step with it, like `4 x 18 = 72`.")]
+        found = None if pre else self._pre_for(inp)
+        if found:
+            return self._settle_pre(inp, found)
+        if correct:
+            out = self._settle("number", still_open=traps + self._also_fit(inp, *traps))
+            fb = self.question.submit_value(inp)
+            if traps:  # right so far, and also where a trap's reading stops (12, before 80 − 12 = 68)
+                fb.append(Feedback(kind="info", message=f"Careful: {n} is also where "
+                                   + ("this reading stops: " if len(traps) == 1 else "these readings stop: ")
+                                   + " ".join(t["option"]["trap"] for t in traps)))
+            return self._solved(out + fb, inp)
+        trap = self._trap_quantity(inp)
+        if trap:
+            return self._name_trap(trap, str(n))
+        if pre:
+            return [Feedback(kind="error", message="Write the step, like `90 / 60 = 1.5`.")]
+        return [Feedback(kind="unknown", message=f"I can't tell where {n} comes from. Pick an option, or write the "
+                                                 "step that gives it.")]
+
+    def _story_answer(self, inp):
+        """The student gave the story's answer: whatever is left (the decisions, the question, the follow-up steps)
+        was done in the head. A trap with the same answer (sugar with the 6 cups of water) can't be ruled out by it:
+        its decision isn't said to be read right, and it stays in open_readings() for a question back."""
+        same = [t for t in self.info["traps"] if t["same_as_correct"]
+                and (t["decision"] not in self.decided or t["decision"] in self.settled_by_work)]
+        if self.phase == "extract":
+            still = same + [t for t in self._also_fit(inp, *same)  # a trap with another answer is ruled out by it
+                            if engine.same_answer(t["run"]["final"], self.run["final"])]
+            out = self._settle("answer", still_open=still)
+        else:
+            out = []
+        # the story's answer rules out every trap with another answer; the same-answer ones stay open
+        self.open_traps = [t for t in self.open_traps + same if engine.same_answer(t["run"]["final"], self.run["final"])]
+        self.open_traps = [t for i, t in enumerate(self.open_traps) if not any(t is u for u in self.open_traps[:i])]
+        q = self.question
+        if q.phase != "done":
+            res = self.run["result"]
+            fin = {r: len(q.routes[r][3]) for r in q.live
+                   if engine.same_answer(engine.outputs_of(q.qid, q.routes[r][1]), res)} or \
+                {r: len(q.routes[r][3]) for r in q.live}
+            q._answered(fin, inp.value)
+        self.then_pos = len(self.run["after"])
+        self.phase = "done"
+        named = q.named_methods()
+        written_steps = [h for h in q.history if not h.startswith("(in your head)")]
+        how = f". You used {q.names(named)}." if len(named) == 1 and len(written_steps) > 1 else ""
+        for t in same:
+            out.append(Feedback(kind="info", message=f"Careful: {inp.value} is also the answer if the story is read "
+                                                     f"this way: {t['option']['trap']} The answer alone can't show "
+                                                     "which way you read it."))
+        return out + [Feedback(kind="done", message=f"✓ {self.wp['answer_text']}{how}")]
 
     def _after_question(self):
         """The walked route's answer, not the default route's: an equality-only method (simplify) can't say which
@@ -837,17 +1681,40 @@ class WordProblemSession:
         return out
 
     def _then(self, step):
+        if step.kind == "value":
+            if self._story_answer_fits(step):
+                return self._story_answer(step)
+            for k in range(self.then_pos, len(self.run["after"])):
+                st, args, result = self.run["after"][k]
+                if isinstance(result, Fraction) and step.value.close_to(result):
+                    self.then_pos = k + 1
+                    self.open_traps = []
+                    if self.then_pos >= len(self.run["after"]):
+                        self.phase = "answer"
+                    return [Feedback(kind="correct", message=f"✓ {engine.expression(st, args, result)}")]
+        if step.kind == "value" and self._traps_of_answer(step):
+            t = self._traps_of_answer(step)[0]
+            return [Feedback(kind="trap", message=f"“{step.value}” fits this reading: {t['option']['trap']}"
+                                                  f"{self._trap_tail(t)}")]
         if step.kind in ("choice", "value"):
-            return [Feedback(kind="error", message="Write the step, like `80 - 12 = 68`.")]
+            return [Feedback(kind="error", message="Write the step that answers the story, or type `hint`.")]
         st, args, result = self.run["after"][self.then_pos]
         c = Candidate(id="then", op=st["op"], operands=list(args), result=result,
                       expression=engine.expression(st, args, result))
         cls = self.classifier.classify(step, [c])
         if cls.status != "match":
+            t = self._trap_named(step)
+            if t:  # 80 − 15 = 65
+                return self._trap_feedback(t, step)
             return [Feedback(kind="unknown", message="That's not the step I expected. Type `hint` for a nudge.")]
         if cls.arithmetic_ok is False:
+            t = self._slip_trap(step, result)
+            if t:
+                return [Feedback(kind="trap", message=f"“{written(step)}” fits this reading: {t['option']['trap']}"
+                                                      f"{self._trap_tail(t)}")]
             return [Feedback(kind="slip", message=f"Right step, but check the arithmetic in “{written(step)}”.")]
         self.then_pos += 1
+        self.open_traps = []
         out = [Feedback(kind="correct", message=f"✓ {c.expression}")]
         if self.then_pos >= len(self.run["after"]):
             self.phase = "answer"
@@ -858,6 +1725,7 @@ class WordProblemSession:
             inp = parse(text, choices=len(self._final_options() or []))
         except ParseError:
             inp = None
+        self.read = inp
         return self._answer_input(inp, text)
 
     def _answer_input(self, inp, text):
@@ -869,6 +1737,9 @@ class WordProblemSession:
         else:
             ok = bool(inp) and inp.kind == "value" and inp.value.close_to(engine.num(final))
         if not ok:
+            t = (next(iter(self._traps_of_answer(inp)), None) or self._trap_named(inp)) if inp else None
+            if t:
+                return self._trap_feedback(t, inp)
             return [Feedback(kind="unknown", message="Not quite. Check what the question asks for: "
                                                      f"{self.wp['asks']['text']}.")]
         self.phase = "done"
@@ -925,6 +1796,24 @@ class WordProblemSession:
 
 
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
+
+
+def _plain(text):
+    """A step's text compared loosely: no spaces, ≈ read as =."""
+    return text.replace(" ", "").replace("≈", "=")
+_stories, _probes = {}, {}  # word problem → check_word_problem's analysis; → its question on the correct numbers
+
+
+def story(wid):
+    """build.check_word_problem's analysis of a word problem (its plan, run and traps), worked out once. Sessions
+    only read it."""
+    if wid not in _stories:
+        _stories[wid] = engine.check_word_problem(engine.WP[wid])[1]
+    return _stories[wid]
+
+
+def _shown(inp):
+    return str(inp.value) if inp.kind == "value" else written(inp)
 
 
 def _key_candidate(key):

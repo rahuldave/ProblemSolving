@@ -59,6 +59,11 @@ site, served by GitHub Pages) and `site/` (git-ignored Quarto sources). Don't ha
   position, so build-up steps and steps done in the head don't lose the other routes. Word-problem sessions start
   with the extraction decisions. A student who skips them is classified against the correct reading and against
   each trap's giveaway steps.
+- **Any step, any number** (`tutor/PATHS.md`, the plan). `tutor/paths.py` indexes every quantity on every route
+  (and every reading of a word problem, traps included) from the same expansion as the diagrams. A step that is no
+  live route's next step is matched further along a route. Only the skipped steps the statement needs are done in
+  the head; the others are still to write (owed). A bare number is the answer or a quantity on some route.
+  `ambiguity()` and `open_readings()` say what is still open.
 - **Three ways in, one session** (`tutor/MODES.md` is the design). The page has two selectors: Setup (reading the
   story, then finding the method) is Choices, Type or Claude; Steps is Boxes, Type or Claude. Every way produces
   `StudentInput`s for the same session, so the graph logic lives only in `session.py`:
@@ -72,7 +77,8 @@ site, served by GitHub Pages) and `site/` (git-ignored Quarto sources). Don't ha
     It never judges; the session does (`/say`, rate-limited). `tutor/evals/` holds its eval set and runner.
 - **`tutor/web.py`** is the FastAPI app: `/api/problems`, `/api/sessions`, `/api/sessions/{id}/input|step|hint|where|done`,
   plus routes registered by `skills_web.py` and `ai_web.py`, and one page, `tutor/static/index.html`. Sessions are
-  kept in memory.
+  kept in memory. `tutor/log.py` writes one JSON line per statement to `$TUTOR_LOG` (default `v2/logs/`,
+  git-ignored). On the server a dokku storage mount keeps `/app/v2/logs` (PATHS.md, Logging, has the copy command).
 - **Tests:** `v2/tests/test_tutor.py` includes an "automatic student" that types every route of every example and
   word problem and expects the tutor to reach the right answer, and `test_boxes.py` checks that Type and Boxes hold
   the same routes after every step of all ~11.5k routes (about a minute). A data change that breaks a route shows up

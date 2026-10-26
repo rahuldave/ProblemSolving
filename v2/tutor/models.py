@@ -62,8 +62,14 @@ class Number(BaseModel):
     def close_to(self, exact: Fraction) -> bool:
         if self.value == exact:
             return True
-        if self.places:  # a rounded decimal: accept it if it rounds the exact value
-            return abs(self.value - exact) <= Fraction(1, 2 * 10 ** self.places)
+        if self.places:  # a rounded decimal stands for a decimal that doesn't end (0.667 for 2/3), never for one
+            d = exact.denominator  # that ends: 0.15, 0.225 and 0.625 are written exactly, so no cruder rounding of
+            for p in (2, 5):       # them passes where a closer one fails
+                while d % p == 0:
+                    d //= p
+            if d == 1:
+                return False
+            return abs(self.value - exact) < Fraction(1, 2 * 10 ** self.places)
         return False
 
     def __str__(self) -> str:
@@ -78,6 +84,7 @@ class ArithmeticStep(BaseModel):
     left: Number
     right: Number
     result: Optional[Number] = None
+    typed: bool = Field(default=False, exclude=True)  # read from typed text, where 3 × 40/5 has no brackets
 
 
 class FunctionStep(BaseModel):

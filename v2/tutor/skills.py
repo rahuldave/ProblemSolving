@@ -261,13 +261,13 @@ def frames_for(q: QuestionSession, top_label):
         k = kernel_for(c.op, c.operands, c.say, role)
         if key not in frames:
             done = []  # the steps done in this frame, each after the build-up tries toward it (6 × 2 = 12 before 6 × 3)
-            for p in range(q.live[r] + 1):
+            for p in range(min(q.live[r] + 1, len(vis))):
                 pst, args, result = trace[vis[p]]
                 pkey, pcomp, pi = frame_of(pst, v)
                 if pkey == key:
                     prole = role_of(pst, v, pcomp, pi)
                     done += [{"role": prole, "text": t, "try": True} for t in q.tries.get((r, p), [])]
-                    if p < q.live[r]:
+                    if p < q.live[r] and p not in q.owed.get(r, ()):  # an owed step is still to write
                         done.append({"role": prole, "text": engine.expression(pst, args, result)})
             f = {"component": comp.id if comp else None, "id": frame_id(key), "labels": frame_labels(st, v, i, top_label)}
             if comp:
