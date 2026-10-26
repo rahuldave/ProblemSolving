@@ -1230,39 +1230,7 @@ def test_a_decimal_over_1_isnt_called_a_fraction():
     assert "fraction" not in messages(fb)
 
 
-def test_a_result_written_as_a_fraction_isnt_convert_to_decimals():
-    """3 ÷ 4 = 3/4 then 5 ÷ 7 = 5/7: no decimals were written, so this isn't Convert to decimals."""
-    s = session("compare-fractions", 0)
-    msgs = messages(s.submit("3 / 4 = 3/4")) + " " + messages(s.submit("5 / 7 = 5/7"))
-    assert "Convert to decimals" not in msgs, msgs
-
-
 # ---------------------------------------------------------------- PR validation, round H
-
-@pytest.mark.parametrize("key, steps, fix", [
-    ("add-fractions:1", ["5 / 6 = 0.83", "3 / 4 = 3/4"], ["3 / 4 = 0.75", "0.83 + 0.75 = 1.58"]),
-    ("compare-fractions:1", ["5 / 7 = 0.71", "3 / 4 = 3/4"], ["3 / 4 = 0.75", "0.75 > 0.71"]),
-    ("compare-fractions:2", ["2 / 5 = 0.4", "3 / 8 = 3/8"], ["3 / 8 = 0.375", "0.375 < 0.4"]),
-])
-def test_convert_to_decimals_keeps_her_when_she_writes_a_fraction(key, steps, fix):
-    """On Convert to decimals, 3 ÷ 4 = 3/4 is a slip asking for the decimal; she stays on Convert to decimals and
-    finishes on it once she writes the decimal."""
-    qid, i = key.split(":")
-    s = session(qid, int(i) - 1)
-    assert "correct" in kinds(s.submit(steps[0]))
-    assert "decimal" in s.named_methods()
-    fb = s.submit(steps[1])
-    assert kinds(fb) == ["slip"] and "as a decimal" in fb[0].message, messages(fb)
-    for t in fix:
-        fb = s.submit(t)
-        assert any(k in kinds(fb) for k in ("correct", "done")), (t, messages(fb))
-    assert finish(s, qid) and s.named_methods() == ["decimal"], (s.phase, s.named_methods())
-
-
-def test_a_fraction_first_step_alone_doesnt_announce_convert_to_decimals():
-    s = session("compare-fractions", 0)
-    assert "Convert to decimals" not in messages(s.submit("3 / 4 = 3/4"))
-
 
 def test_stale_head_marks_go_when_the_route_changes():
     s = session("add-fractions", 0)
@@ -1289,40 +1257,6 @@ def test_to_decimal_refuses_a_fraction_with_a_decimal_in_it(text):
 
 # ---------------------------------------------------------------- PR validation, round I
 
-@pytest.mark.parametrize("key, steps", [
-    ("compare-fractions:2", ["3 / 8 = 0.375", "2 / 5 = 2/5"]),
-    ("compare-fractions:1", ["4 x 25 = 100", "3 x 25 = 75", "75 / 100 = 3/4"]),
-    ("compare-fractions:1", ["4 x 7 = 28", "4 x 25 = 100", "3 x 25 = 75", "75 / 100 = 3/4"]),
-    ("proportion-check:1", ["6 / 8 = 0.75", "72 / 96 = 6/8"]),
-])
-def test_no_decimal_slip_while_convert_ties_with_another_method(key, steps):
-    qid, i = key.split(":")
-    s = session(qid, int(i) - 1)
-    for t in steps:
-        fb = s.submit(t)
-        assert "as a decimal" not in messages(fb), (t, messages(fb))
-    assert "correct" in kinds(fb), messages(fb)
-
-
-@pytest.mark.parametrize("qid", ["compare-fractions", "add-fractions"])
-def test_a_decimal_slip_on_the_first_step_after_picking_convert(qid):
-    s = session(qid, 0)
-    s.choose_method("decimal")
-    fb = s.submit("3 / 4 = 3/4")
-    assert kinds(fb) == ["slip"] and "as a decimal" in fb[0].message, messages(fb)
-
-
-def test_a_decimal_slip_on_the_first_step_after_picking_convert_in_boxes():
-    from fastapi.testclient import TestClient
-    from tutor.web import app
-    client = TestClient(app)
-    sid = client.post("/api/sessions", json={"problem": "compare-fractions:1"}).json()["id"]
-    client.post(f"/api/sessions/{sid}/method", json={"method": "decimal"})
-    r = client.post(f"/api/sessions/{sid}/step", json={"kind": "arithmetic", "op": "divide", "left": {"text": "3"},
-                                                        "right": {"text": "4"}, "result": {"text": "3/4"}}).json()
-    assert [f["kind"] for f in r["feedback"]] == ["slip"] and "as a decimal" in r["feedback"][0]["message"]
-
-
 def test_no_stale_marks_after_a_next_step_changes_the_routes():
     s = session("better-buy", 0)
     for t in ["12 x 5 = 60", "3 x 5 = 15", "lcm(12, 20) = 60"]:
@@ -1330,15 +1264,6 @@ def test_no_stale_marks_after_a_next_step_changes_the_routes():
     on = {step_candidate("x", s.routes[r], j).expression for r in s.live for j in s.inhead.get(r, ())}
     marks = [h[len("(in your head) "):] for h in s.history if h.startswith("(in your head) ")]
     assert all(m in on for m in marks), (marks, on, s.history)
-
-
-def test_a_second_decimal_slip_carries_on():
-    s = session("add-fractions", 0)
-    s.submit("5 / 6 = 0.83")
-    assert kinds(s.submit("3 / 4 = 3/4")) == ["slip"]
-    fb = s.submit("3 / 4 = 3/4")
-    assert any("carry on" in f.message for f in fb) and "correct" in kinds(fb), messages(fb)
-    assert any(k in kinds(s.submit("0.83 + 0.75 = 1.58")) for k in ("correct", "done"))
 
 
 def test_an_added_head_mark_comes_before_the_step_that_uses_it():
@@ -1355,6 +1280,25 @@ def test_an_added_head_mark_comes_before_the_step_that_uses_it():
         for h in s.history[:i]:
             k = pos.get(h.replace(" ", ""))
             assert h.startswith(mark) or k is None or j is None or k < j, (s.history, h, i)
+
+
+# ---------------------------------------------------------------- PR validation, round J
+
+@pytest.mark.parametrize("key, steps", [
+    ("compare-fractions:2", ["3 / 8 = 0.375", "2 / 5 = 2/5", "2 / 5 = 0.4", "0.375 < 0.4"]),
+    ("compare-fractions:1", ["3 / 4 = 3/4", "5 / 7 = 0.71", "3 / 4 = 0.75", "0.75 > 0.71"]),
+    ("compare-fractions:2", ["3 / 8 = 0.4", "3 / 8 = 3/8", "2 / 5 = 0.4", "0.375 < 0.4"]),
+    ("add-fractions:1", ["5 / 6 = 0.83", "3 / 4 = 3/4", "0.83 + 0.75 = 1.58"]),
+])
+def test_a_fraction_result_on_convert_to_decimals_is_no_dead_end(key, steps):
+    """A result written as a fraction (2 ÷ 5 = 2/5) fits Convert to decimals, as on main, so the student who writes
+    it and then the decimals reaches the answer."""
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        s.submit(t)
+    assert s.phase in ("answer", "done"), (s.phase, s.history, s.named_methods())
+    assert finish(s, qid)
 
 
 def test_simplify_doesnt_take_an_unsimplified_pair():

@@ -364,9 +364,6 @@ class QuestionSession:
 
     def _submit_step(self, step):
         self._current = step
-        out = self._decimal_slip(step)
-        if out is not None:
-            return out
         pool = {**self.live, **self._rechosen(step)}  # routes re-run with the student's own factor or power of ten
         cands = self.candidates(pool)
         cls = self.classifier.classify(step, cands)
@@ -870,40 +867,6 @@ class QuestionSession:
                  "steps": [step_candidate("x", self.routes[r], j).expression for j in sorted(self.owed[r])]}
                 for r in self.live if self.owed.get(r)]
         return {"methods": named if len(named) > 1 else [], "head": head, "owed": owed}
-
-    def _decimal_slip(self, step):
-        """She is on Convert to decimals (it is named) and writes one of its steps with the right value as a fraction
-        that ends (3 ÷ 4 = 3/4): a slip on that route, asking for the decimal. She stays on Convert to decimals."""
-        conv = getattr(self.classifier, "as_decimals", set())
-        res = getattr(step, "result", None)
-        if (not conv or not (self.history or self.chosen in conv) or step.kind != "arithmetic" or res is None
-                or not is_fraction_text(res.text) or res.value.denominator == 1 or not engine.terminates(res.value)
-                or not set(self.named_methods()) <= conv):  # Convert alone, not tied with another method
-            return None
-        bare = step.model_copy(update={"result": None})
-        far = {}
-        for r, at in self.live.items():
-            v, env, trace, vis = self.routes[r]
-            if v["method"] not in conv:
-                continue
-            j = next((j for j in sorted(self.owed.get(r, ())) + list(range(at, len(vis)))
-                      if trace[vis[j]][2] == res.value and self._fits(bare, trace[vis[j]])), None)
-            if j is not None:
-                far[r] = j
-        if not far:
-            return None
-        self.slips += 1
-        if self.slips < 2:
-            return [Feedback(kind="slip", message=f"Right step. Write the result as a decimal, not as the fraction "
-                                                  f"{res}: “{written(step)}”.")]
-        r0 = min(far)
-        c = step_candidate("x", self.routes[r0], far[r0])
-        out = [Feedback(kind="slip", message=f"It's {c.expression}. Let's carry on with that.")]
-        before = set(self.named_methods())
-        moved = self._apply(far)
-        self.tree_entries = None
-        self.last_match = "skip"
-        return self._advance(moved, {}, r0, before, out, skipped_to=True, pos=far)
 
     def _rechosen(self, step):
         """Live routes re-run with the student's own choice where the method lets them choose: any common factor

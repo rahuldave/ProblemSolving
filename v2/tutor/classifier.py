@@ -108,13 +108,10 @@ class RuleClassifier:
             return sorted(pairs) == sorted(got)
         if two_steps(step):
             return False
-        result = getattr(step, "result", None)
-        if c.methods and set(c.methods) <= self.as_decimals and (  # 3/4 written as a fraction isn't the 0.75 of
-                any(is_fraction_text(n.text) and n.value.denominator != 1 and _terminates(n.value)  # Convert to
-                    for n in (step.left, step.right))                  # decimals, as an operand in either place,
-                or (result is not None and is_fraction_text(result.text)  # and a result that ends written as a
-                    and result.value.denominator != 1 and _terminates(result.value))):  # fraction (3 ÷ 4 = 3/4)
-            return False
+        if c.methods and set(c.methods) <= self.as_decimals and any(  # 3/4 written as a fraction isn't the 0.75
+                is_fraction_text(n.text) and n.value.denominator != 1 and _terminates(n.value)  # of Convert to
+                for n in (step.left, step.right)):                     # decimals, as an operand in either place
+            return False                                                # (a result as a fraction fits, as on main)
         a, b = step.left, step.right
         x, y = c.operands
         if fits(x, a) and fits(y, b):
