@@ -1287,6 +1287,76 @@ def test_to_decimal_refuses_a_fraction_with_a_decimal_in_it(text):
     assert "done" not in kinds(fb) and "correct" not in kinds(fb), messages(fb)
 
 
+# ---------------------------------------------------------------- PR validation, round I
+
+@pytest.mark.parametrize("key, steps", [
+    ("compare-fractions:2", ["3 / 8 = 0.375", "2 / 5 = 2/5"]),
+    ("compare-fractions:1", ["4 x 25 = 100", "3 x 25 = 75", "75 / 100 = 3/4"]),
+    ("compare-fractions:1", ["4 x 7 = 28", "4 x 25 = 100", "3 x 25 = 75", "75 / 100 = 3/4"]),
+    ("proportion-check:1", ["6 / 8 = 0.75", "72 / 96 = 6/8"]),
+])
+def test_no_decimal_slip_while_convert_ties_with_another_method(key, steps):
+    qid, i = key.split(":")
+    s = session(qid, int(i) - 1)
+    for t in steps:
+        fb = s.submit(t)
+        assert "as a decimal" not in messages(fb), (t, messages(fb))
+    assert "correct" in kinds(fb), messages(fb)
+
+
+@pytest.mark.parametrize("qid", ["compare-fractions", "add-fractions"])
+def test_a_decimal_slip_on_the_first_step_after_picking_convert(qid):
+    s = session(qid, 0)
+    s.choose_method("decimal")
+    fb = s.submit("3 / 4 = 3/4")
+    assert kinds(fb) == ["slip"] and "as a decimal" in fb[0].message, messages(fb)
+
+
+def test_a_decimal_slip_on_the_first_step_after_picking_convert_in_boxes():
+    from fastapi.testclient import TestClient
+    from tutor.web import app
+    client = TestClient(app)
+    sid = client.post("/api/sessions", json={"problem": "compare-fractions:1"}).json()["id"]
+    client.post(f"/api/sessions/{sid}/method", json={"method": "decimal"})
+    r = client.post(f"/api/sessions/{sid}/step", json={"kind": "arithmetic", "op": "divide", "left": {"text": "3"},
+                                                        "right": {"text": "4"}, "result": {"text": "3/4"}}).json()
+    assert [f["kind"] for f in r["feedback"]] == ["slip"] and "as a decimal" in r["feedback"][0]["message"]
+
+
+def test_no_stale_marks_after_a_next_step_changes_the_routes():
+    s = session("better-buy", 0)
+    for t in ["12 x 5 = 60", "3 x 5 = 15", "lcm(12, 20) = 60"]:
+        s.submit(t)
+    on = {step_candidate("x", s.routes[r], j).expression for r in s.live for j in s.inhead.get(r, ())}
+    marks = [h[len("(in your head) "):] for h in s.history if h.startswith("(in your head) ")]
+    assert all(m in on for m in marks), (marks, on, s.history)
+
+
+def test_a_second_decimal_slip_carries_on():
+    s = session("add-fractions", 0)
+    s.submit("5 / 6 = 0.83")
+    assert kinds(s.submit("3 / 4 = 3/4")) == ["slip"]
+    fb = s.submit("3 / 4 = 3/4")
+    assert any("carry on" in f.message for f in fb) and "correct" in kinds(fb), messages(fb)
+    assert any(k in kinds(s.submit("0.83 + 0.75 = 1.58")) for k in ("correct", "done"))
+
+
+def test_an_added_head_mark_comes_before_the_step_that_uses_it():
+    """No written line before a mark is a step that comes after the marked step on the kept route."""
+    s = session("add-fractions", 0)
+    for t in ["lcm(6,4)=12", "10+9=19", "12/6=2"]:
+        s.submit(t)
+    r0 = min(s.live)
+    pos = {step_candidate("x", s.routes[r0], j).expression.replace(" ", ""): j for j in range(len(s.routes[r0][3]))}
+    mark = "(in your head) "
+    marks = [(i, pos.get(h[len(mark):].replace(" ", ""))) for i, h in enumerate(s.history) if h.startswith(mark)]
+    assert marks, s.history
+    for i, j in marks:
+        for h in s.history[:i]:
+            k = pos.get(h.replace(" ", ""))
+            assert h.startswith(mark) or k is None or j is None or k < j, (s.history, h, i)
+
+
 def test_simplify_doesnt_take_an_unsimplified_pair():
     s = session("simplify-fraction", 0)
     x, y = (s.values[k] for k in ("x", "y"))

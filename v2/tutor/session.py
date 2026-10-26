@@ -572,10 +572,16 @@ class QuestionSession:
         self.history = [h for h in self.history if not h.startswith(mark) or h[len(mark):] in on]
         if r0 is not None:
             have = {h[len(mark):] for h in self.history if h.startswith(mark)}
-            new = [mark + step_candidate("x", self.routes[r0], j).expression for j in sorted(self.inhead.get(r0, ()))]
-            new = [h for h in new if h[len(mark):] not in have]
-            if new:
-                self.history[-1:-1] = new
+            later = lambda j: {_plain(step_candidate("x", self.routes[r0], k).expression)
+                               for k in range(j + 1, len(self.routes[r0][3]))}
+            for j in sorted(self.inhead.get(r0, ())):
+                e = step_candidate("x", self.routes[r0], j).expression
+                if e in have:
+                    continue
+                after = later(j)  # before the first written step that comes after it on the route (and so may use it)
+                i = next((i for i, h in enumerate(self.history) if not h.startswith(mark) and _plain(h) in after),
+                         max(len(self.history) - 1, 0))
+                self.history.insert(i, mark + e)
 
     def _ended(self, r):
         """A route is finished when its last step is done and no skipped step is still to write."""
@@ -639,6 +645,7 @@ class QuestionSession:
         carried_on = any(f.kind == "slip" for f in out)
         mine = str(said.value) if said.kind == "value" else done.expression if carried_on else written(said)
         self.history.append(shown or mine)
+        self._remark_head()
         out.append(Feedback(kind="correct", message=f"✓ {shown}" if shown else f"✓ {done.expression}  ({done.say})"))
         after = set(self.named_methods())
         if len(after) == 1 and after != before:
@@ -869,21 +876,34 @@ class QuestionSession:
         that ends (3 ÷ 4 = 3/4): a slip on that route, asking for the decimal. She stays on Convert to decimals."""
         conv = getattr(self.classifier, "as_decimals", set())
         res = getattr(step, "result", None)
-        if (not conv or not self.history or step.kind != "arithmetic" or res is None or not is_fraction_text(res.text)
-                or res.value.denominator == 1 or not engine.terminates(res.value)
-                or not set(self.named_methods()) & conv):
+        if (not conv or not (self.history or self.chosen in conv) or step.kind != "arithmetic" or res is None
+                or not is_fraction_text(res.text) or res.value.denominator == 1 or not engine.terminates(res.value)
+                or not set(self.named_methods()) <= conv):  # Convert alone, not tied with another method
             return None
         bare = step.model_copy(update={"result": None})
+        far = {}
         for r, at in self.live.items():
             v, env, trace, vis = self.routes[r]
             if v["method"] not in conv:
                 continue
-            for j in sorted(self.owed.get(r, ())) + list(range(at, len(vis))):
-                st, args, result = trace[vis[j]]
-                if result == res.value and self._fits(bare, trace[vis[j]]):
-                    return [Feedback(kind="slip", message=f"Right step. Write the result as a decimal, not as the "
-                                                          f"fraction {res}: “{written(step)}”.")]
-        return None
+            j = next((j for j in sorted(self.owed.get(r, ())) + list(range(at, len(vis)))
+                      if trace[vis[j]][2] == res.value and self._fits(bare, trace[vis[j]])), None)
+            if j is not None:
+                far[r] = j
+        if not far:
+            return None
+        self.slips += 1
+        if self.slips < 2:
+            return [Feedback(kind="slip", message=f"Right step. Write the result as a decimal, not as the fraction "
+                                                  f"{res}: “{written(step)}”.")]
+        r0 = min(far)
+        c = step_candidate("x", self.routes[r0], far[r0])
+        out = [Feedback(kind="slip", message=f"It's {c.expression}. Let's carry on with that.")]
+        before = set(self.named_methods())
+        moved = self._apply(far)
+        self.tree_entries = None
+        self.last_match = "skip"
+        return self._advance(moved, {}, r0, before, out, skipped_to=True, pos=far)
 
     def _rechosen(self, step):
         """Live routes re-run with the student's own choice where the method lets them choose: any common factor
@@ -1813,6 +1833,11 @@ class WordProblemSession:
 
 
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
+
+
+def _plain(text):
+    """A step's text compared loosely: no spaces, ≈ read as =."""
+    return text.replace(" ", "").replace("≈", "=")
 _stories, _probes = {}, {}  # word problem → check_word_problem's analysis; → its question on the correct numbers
 
 
