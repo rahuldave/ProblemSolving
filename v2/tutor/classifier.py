@@ -129,6 +129,8 @@ class RuleClassifier:
             return {"arithmetic_ok": step.relation == relation, "expected_result": relation}
         if step.result is None or c.result is None or isinstance(c.result, str):
             return self._own_arithmetic(step)
+        if self.strict and "/" in step.result.text:  # to-decimal: 5 ÷ 8 = 5/8 isn't written as a decimal
+            return {"arithmetic_ok": False, "expected_result": _fmt(c.result)}
         ok = step.result.value == c.result if self.strict and _terminates(c.result) else step.result.close_to(c.result)
         return {"arithmetic_ok": ok, "expected_result": _fmt(c.result)}
 
@@ -152,6 +154,8 @@ class RuleClassifier:
             return {}
         if exact is None:
             return {}
+        if self.strict and "/" in step.result.text:  # to-decimal: 5 ÷ 8 = 5/8 isn't written as a decimal
+            return {"arithmetic_ok": False, "expected_result": _fmt(exact)}
         if step.result.close_to(exact) or _carried(step, exact, self.exact_values):
             return {"arithmetic_ok": True, "expected_result": _fmt(exact)}
         return {"arithmetic_ok": False, "expected_result": _fmt(exact)}

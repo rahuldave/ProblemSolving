@@ -150,6 +150,8 @@ def submit_typed(sid: str, body: dict):
     entry = lookup(sid)
     try:
         inp = TYPED.validate_python(body)
+        if getattr(inp, "typed", False):  # a structured input isn't typed text: its fractions are one number
+            inp = inp.model_copy(update={"typed": False})
     except ValidationError as e:
         raise HTTPException(422, e.errors()[0]["msg"])
     s = entry["session"]

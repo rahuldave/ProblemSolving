@@ -114,6 +114,12 @@ def slip_text(step, c=None) -> str:
             was = f" {rounded[0]} is {engine.fmt(exact)} rounded, and" if exact is not None else ""
             return (f"Your arithmetic is right, but{was} the rounding carried into {res}. With the exact value it's "
                     f"{c.expression or engine.fmt(c.result)}: write that.")
+    if res is not None and res.places and step.kind == "arithmetic" and c is not None \
+            and isinstance(c.result, Fraction) and any(n.places and all(n.value != x for x in c.operands
+                                                                         if isinstance(x, Fraction))
+                                                       for n in (step.left, step.right)):
+        return (f"Right step, but a rounded number carried into {res}. With the exact value it's "
+                f"{c.expression or engine.fmt(c.result)}: write that.")
     if res is not None and res.places and step.kind == "arithmetic":
         a, b = step.left.value, step.right.value
         exact = {"add": a + b, "subtract": a - b, "multiply": a * b, "divide": a / b if b else None}[step.op]
@@ -188,11 +194,13 @@ class QuestionSession:
             strict=self.q.get("output_format") == "decimal",
             as_decimals={mid for mid, m in engine.methods_of(qid).items() if m.get("name") == "Convert to decimals"})
         self.routes, _ = engine.routes_for(qid, self.values)
-        if isinstance(self.classifier, RuleClassifier):  # this session's numbers, each time
-            self.classifier.exact_values = frozenset(  # the numbers a typed decimal can be exactly (not a rounding)
-                {engine.num(v) for v in self.values.values()}
-                | {x for v, env, trace, vis in self.routes for i in vis for x in (trace[i][1] or []) + [trace[i][2]]
-                   if isinstance(x, Fraction)})
+        self._exact = frozenset(  # the numbers a typed decimal can be exactly (not a rounding)
+            {engine.num(v) for v in self.values.values()}
+            | {x for v, env, trace, vis in self.routes for i in vis for x in (trace[i][1] or []) + [trace[i][2]]
+               if isinstance(x, Fraction)})
+        if isinstance(self.classifier, RuleClassifier):
+            self.classifier = copy.copy(self.classifier)  # its own copy: a re-run's numbers stay in this session
+            self.classifier.exact_values = self._exact
         self.expanded = len(self.routes)  # routes past this one are re-runs with the student's own choices
         self.live = {r: 0 for r in range(len(self.routes))}  # route → number of its visible steps done
         self.choices = {}  # route → the student's own picks it was re-run with (run(choices=…))
@@ -224,6 +232,9 @@ class QuestionSession:
         new.live = {r: 0 for r in range(self.expanded)}
         new.choices, new.named, new.tries, new.history, new.announced = {}, None, {}, [], None
         new.inhead, new.owed, new.said, new.shadow, new.chosen, new.last_match = {}, {}, [], {}, None, None
+        if isinstance(self.classifier, RuleClassifier):  # a fresh session starts from the question's numbers only
+            new.classifier = copy.copy(self.classifier)
+            new.classifier.exact_values = self._exact
         new.tree_entries = tree(self.qid)["first_steps"]
         new.slips = new.hints = 0
         new.phase, new.result, new.finished = "steps", None, None
@@ -596,8 +607,7 @@ class QuestionSession:
         self.history += [f"(in your head) {step_candidate('x', self.routes[r0], j).expression}" for j in sorted(heads)]
         said = self._current
         carried_on = any(f.kind == "slip" for f in out)
-        mine = str(said.value) if said.kind == "value" else written(said) if skipped_to and not carried_on \
-            else done.expression
+        mine = str(said.value) if said.kind == "value" else done.expression if carried_on else written(said)
         self.history.append(shown or mine)
         out.append(Feedback(kind="correct", message=f"✓ {shown}" if shown else f"✓ {done.expression}  ({done.say})"))
         after = set(self.named_methods())
@@ -742,6 +752,8 @@ class QuestionSession:
         live route. A number that fits quantities on several routes keeps them all, each at its own position."""
         n = inp.value
         self._current = inp
+        if self.q.get("output_format") == "decimal" and "/" in n.text:
+            return [Feedback(kind="unknown", message=f"{n} is a fraction: write it as a decimal.")]
         ends = lambda pool: {r: len(self.routes[r][3]) for r in pool  # the routes this number is the answer of
                              if isinstance(self.routes[r][1].get("answer"), Fraction) and self._close(n, self.routes[r][1]["answer"])}
         if self.q["outputs"] == ["x1", "y1"] and "/" in n.text:  # simplify's answer is a fraction: 3/4 is x1 = 3, y1 = 4
@@ -779,7 +791,7 @@ class QuestionSession:
         return self._advance(moved, {}, r0, before, out, skipped_to=True, shown=str(n) if len(steps) > 1 else None,
                              pos=far)
 
-    def _answered(self, fin, n):
+    def _answered(self, fin, n, mine=None):
         """The student gave the answer: the routes it ends finish, with the steps not written done in the head."""
         before = set(self.named_methods())
         named = {self.routes[r][0]["method"] for r in fin}
@@ -802,7 +814,7 @@ class QuestionSession:
         self.result = engine.outputs_of(self.qid, self.routes[r0][1])
         how = f"You used {self.names(self.named_methods())}." if self.history and len(self.named_methods()) == 1 \
             else "You did the working in your head."
-        self.history.append(str(n))
+        self.history.append(mine or str(n))
         self.phase = "done"
         shown = "/".join(engine.fmt(v) for v in self.result.values()) if isinstance(self.result, dict) \
             else engine.show(self.result)
@@ -929,7 +941,8 @@ class QuestionSession:
         else:
             if not inp or inp.kind != "value":
                 return [Feedback(kind="error", message="Write the answer as a number.")]
-            ok = self._close(inp.value, expected)
+            ok = self._close(inp.value, expected) and not (
+                self.q.get("output_format") == "decimal" and "/" in inp.value.text)  # a decimal, not 5/8
         if not ok:
             return [Feedback(kind="unknown", message=f"Not quite. Look at your last step: {self.history[-1]}.")]
         self.phase = "done"
@@ -1229,15 +1242,17 @@ class WordProblemSession:
         story; a statement the question doesn't take may still be a step of a trap's reading."""
         if inp is not None and any(f.kind in ("correct", "done") for f in out):
             self._narrow(inp)
-        if self.question.phase == "done":
-            return out + self._after_question()
         if inp is not None and any(f.kind == "slip" for f in out) and getattr(inp, "result", None) is not None:
             t = next(iter(self._traps_of_answer(ValueAnswer(value=inp.result))), None)
             if t and not self._fits_reading(ValueAnswer(value=inp.result), self.paths().readings[0], exact=True):
                 # 3 ÷ 4 = 0.8 lands on the add-tops-and-bottoms answer. If the question carried on with the right
-                # value (a second slip), she sees that too
+                # value (a second slip), she sees that too, and what comes after it
                 trap = self._trap_feedback(t, inp)
-                return out + trap if any(f.kind == "correct" for f in out) else trap
+                if not any(f.kind == "correct" for f in out):
+                    return trap
+                out = out + trap
+        if self.question.phase == "done":
+            return out + self._after_question()
         if inp is not None and inp.kind != "value" and [f.kind for f in out] == ["unknown"]:
             k = self._after_index(inp)
             if k is not None:
@@ -1421,7 +1436,7 @@ class WordProblemSession:
         fin = {r: len(q.routes[r][3]) for r in q.live
                if engine.same_answer(engine.outputs_of(q.qid, q.routes[r][1]), res)} or \
             {r: len(q.routes[r][3]) for r in q.live}
-        q._answered(fin, Number(text=engine.fmt(res)))
+        q._answered(fin, Number(text=engine.fmt(res)), mine=f"(in your head) {engine.fmt(res)}")
         self.phase, self.then_pos = "then", k
         return [Feedback(kind="info", message=f"You found the question's answer, {engine.show(res)}, in your head.")] \
             + self._then(step)

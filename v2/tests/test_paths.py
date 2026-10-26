@@ -1113,6 +1113,65 @@ def test_a_carried_rounding_is_right_only_for_what_the_exact_values_give(key, st
     assert ("slip" not in kinds(fb)) == ok, messages(fb)
 
 
+# ---------------------------------------------------------------- PR validation, round E
+
+@pytest.mark.parametrize("i, text", [(0, "6/8"), (0, "3/4"), (1, "10/16")])
+def test_a_decimal_question_isnt_answered_by_a_fraction(i, text):
+    s = session("to-decimal", i)
+    fb = s.submit(text)
+    assert "done" not in kinds(fb) and s.phase != "done", messages(fb)
+
+
+def test_a_decimal_step_written_as_a_fraction_is_a_slip():
+    s = session("to-decimal", 1)
+    assert "correct" not in kinds(s.submit("5 / 8 = 5/8"))
+
+
+@pytest.mark.parametrize("text", ["4 x 3 = 16", "4 x 3 = 8"])
+def test_a_second_slip_onto_a_traps_answer_at_the_last_step_names_it(text):
+    s = picked("lemonade-more-sugar")
+    s.submit("18 / 6 = 3")
+    s.submit(text)
+    fb = s.submit(text)
+    assert "trap" in kinds(fb) and any("carry on" in f.message for f in fb), messages(fb)
+
+
+def test_a_reruns_numbers_stay_in_its_session():
+    proto = session("to-decimal", 0)
+    a, b = proto.fresh(), proto.fresh()
+    assert a.classifier is not b.classifier
+    before = set(b.classifier.exact_values)
+    a.submit("4 x 250 = 1000")
+    assert set(b.classifier.exact_values) == before
+
+
+def test_the_history_holds_her_steps_as_written():
+    s = session("missing-value", 1)
+    run_all(s, ["4 / 6 = 0.67", "0.67 x 15 = 10"])
+    assert s.history == ["4 ÷ 6 = 0.67", "0.67 × 15 = 10"], s.history
+    w = picked("jacket-sale")
+    w.submit("80 - 12 = 68")
+    assert "12" not in w.question.history and any(h.startswith("(in your head)") for h in w.question.history)
+
+
+def test_a_structured_input_cant_claim_to_be_typed_text():
+    from fastapi.testclient import TestClient
+    from tutor.web import app
+    client = TestClient(app)
+    sid = client.post("/api/sessions", json={"problem": "missing-value:1"}).json()["id"]
+    r = client.post(f"/api/sessions/{sid}/step", json={"kind": "arithmetic", "op": "multiply", "left": {"text": "3"},
+                                                        "right": {"text": "40/5"}, "result": {"text": "24"},
+                                                        "typed": True}).json()
+    assert not any("two steps" in f["message"] for f in r["feedback"])
+
+
+def test_a_rounding_carried_into_a_rounded_result_names_the_routes_value():
+    s = session("missing-value", 1)
+    s.submit("4 / 6 = 0.67")
+    fb = s.submit("0.67 x 15 = 10.1")
+    assert kinds(fb) == ["slip"] and "10.05" not in fb[0].message and "= 10" in fb[0].message, messages(fb)
+
+
 def test_simplify_doesnt_take_an_unsimplified_pair():
     s = session("simplify-fraction", 0)
     x, y = (s.values[k] for k in ("x", "y"))
